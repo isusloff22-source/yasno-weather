@@ -240,7 +240,7 @@ body.night #stars{opacity:1}
 .legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}
 .windbox{display:flex;align-items:center;gap:18px;margin-top:10px}
 .compass{width:96px;height:96px;flex:none}
-.compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50% 50%}
+.compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50px 50px;transform-box:view-box}
 .sunpct{margin-top:14px;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.09)}
 .sunpct div{height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#ffe066,#ff8f3f);transition:width 1.4s cubic-bezier(.3,.8,.3,1)}
 .uvscale{margin-top:16px;height:8px;border-radius:8px;background:linear-gradient(90deg,#39d353,#ffd166,#ff8c00,#e5383b,#9d4edd);position:relative}
@@ -282,7 +282,6 @@ body.night #stars{opacity:1}
 @media(max-width:960px){
   .hero{grid-template-columns:1fr}
   .span4{grid-column:span 6}
-  /* ИСПРАВЛЕНИЕ 3: убираем display:none — часы теперь видны на планшетах */
   #chipClock { margin-left: 0; padding: 8px 14px; font-size: 12px; }
 }
 @media(max-width:640px){
@@ -303,9 +302,7 @@ body.night #stars{opacity:1}
   .windbox{gap:12px}
   .strip{gap:8px}
   .moonwrap{gap:14px}
-  /* ИСПРАВЛЕНИЕ 1: единицы измерения в карточке ветра не переносятся */
   .c-big i { white-space: nowrap; font-size: 15px; }
-  /* ИСПРАВЛЕНИЕ 3: часы на смартфонах — отдельной строкой по центру */
   #chipClock {
     order: 6;
     flex-basis: 100%;
@@ -517,11 +514,12 @@ body.night #stars{opacity:1}
             <circle cx="50" cy="50" r="46" fill="rgba(255,255,255,.04)" stroke="rgba(160,215,255,.25)"/>
             <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(160,215,255,.1)"/>
             <g font-family="JetBrains Mono" font-size="9" fill="#a6c3d6" text-anchor="middle">
-              <text x="50" y="14" id="cN">N</text><text x="90" y="53" id="cE">E</text><text x="50" y="95" id="cS">S</text><text x="10" y="53" id="cW">W</text>
+              <text x="50" y="14" id="cN">N</text><text x="90" y="53" id="cE">E</text>
+              <text x="50" y="95" id="cS">S</text><text x="10" y="53" id="cW">W</text>
             </g>
             <g class="needle" id="windNeedle">
-              <path d="M50 22 L56 54 L50 48 L44 54 Z" fill="#ffd166"/>
-              <path d="M50 78 L55 52 L50 57 L45 52 Z" fill="rgba(160,215,255,.45)"/>
+              <path d="M50 18 L57 50 L50 44 L43 50 Z" fill="#ffd166"/>
+              <path d="M50 82 L57 50 L50 56 L43 50 Z" fill="rgba(160,215,255,.45)"/>
             </g>
             <circle cx="50" cy="50" r="3" fill="#eef7ff"/>
           </svg>
@@ -683,6 +681,36 @@ function dirsArr(){
   const a=(STR.dirs||'').split(',').map(s=>s.trim());
   return a.length===16?a:STR_EN.dirs.split(',');
 }
+
+/* ================== ИСПРАВЛЕНИЕ: правильные переводы "Ясно" ==================
+   Автопереводчик путает "Clear sky" с "Clear action" и пишет "Очистить".
+   Для weather_code === 0 берём перевод из проверенного списка, а не из t('k_clear'). */
+const CLEAR_FIX = {
+  en:'Clear', ru:'Ясно', uk:'Ясно', be:'Ясна', pl:'Bezchmurnie',
+  cs:'Jasno', sk:'Jasno', sl:'Jasno', sr:'Ведро', hr:'Vedro', bs:'Vedro',
+  mk:'Ведро', bg:'Ясно', ro:'Senin', hu:'Derült', de:'Klar', nl:'Helder',
+  fr:'Dégagé', es:'Despejado', pt:'Céu limpo', it:'Sereno', ca:'Serè',
+  gl:'Limpo', eu:'Oskarbi', sv:'Klart', no:'Klart', da:'Klart', fi:'Selkeä',
+  is:'Heiðskýrt', et:'Selge', lv:'Skaidrs', lt:'Giedra', ga:'Glan',
+  cy:'Clir', gd:'Soilleir', el:'Αίθριος', tr:'Açık', az:'Aydın',
+  ka:'მოწმენდილი', hy:'Պարզ', kk:'Ашық', ky:'Ачык', uz:'Ochiq',
+  tg:'Офтобӣ', tk:'Aýdyň', mn:'Цэлмэг', tt:'Аяз', ba:'Аяҙ',
+  ar:'صافٍ', he:'בהיר', fa:'صاف', ur:'صاف', ps:'روښانه', ku:'Zelal',
+  hi:'साफ', bn:'পরিষ্কার', pa:'ਸਾਫ਼', gu:'સ્વચ્છ', mr:'स्वच्छ',
+  ne:'सफा', si:'පැහැදිලි', ta:'தெளிவு', te:'స్పష్టం', kn:'ಸ್ಪಷ್ಟ',
+  ml:'തെളിഞ്ഞ', or:'ପରିଷ୍କାର', as:'পৰিষ্কাৰ', th:'แจ่มใส', lo:'ໃສ',
+  km:'ស្រឡះ', my:'သာယာ', vi:'Quang đãng', id:'Cerah', ms:'Cerah',
+  tl:'Malinaw', zh:'晴', ja:'快晴', ko:'맑음', sw:'Angavu', am:'ገልቶ',
+  ha:'Tsabta', yo:'Mímọ́', ig:'Ihicha', zu:'Licwebile', xh:'Licwebile',
+  af:'Helder', so:'Saafi', rw:'Ikeye', mg:'Madio', ti:'ጽሩይ',
+  om:'Qulqulluu', eo:'Klara', ht:'Klè', jv:'Cerah', su:'Cerah',
+  ceb:'Klaro', ny:'Kuyera', sn:'Yakajeka', st:'Hloekileng', tn:'Phepa',
+  lb:'Kloer', mt:'Ċar', sq:'Kthjellët', fy:'Helder', co:'Chjaru',
+  oc:'Clar', br:'Sklaer', yi:'קלאָר', la:'Serenus', bo:'དྭངས་པ',
+  dz:'ཕྱི་སངས'
+};
+function clearLabel(){ return CLEAR_FIX[LANG] || CLEAR_FIX['en'] || 'Clear'; }
+function weatherLabel(code, wk){ return code === 0 ? clearLabel() : t('k_'+wk); }
 
 async function translateToEn(text){
   try{
@@ -1242,12 +1270,7 @@ function tempColor(tv){
   if(u) u.style.color=tv>=25?'#ffd166':(tv<=0?'#9fdcff':'#eaf2f8');
 }
 
-/* ================== ИСПРАВЛЕНИЕ 2: фиксирование анимации после первого рендера ==================
-   Раньше: при каждом повторном renderAll (смена языка, единиц, города, времени суток)
-   блоки с .reveal заново проигрывали анимацию появления, что на мобилках при скролле
-   давало эффект «прыжков».
-   Теперь: первая отрисовка играет анимацию как положено. Все последующие рендеры просто
-   фиксируют элементы в видимом состоянии — без повторов. */
+/* ================== ИСПРАВЛЕНИЕ: фиксирование анимации после первого рендера ================== */
 function freezeReveals(){
   document.querySelectorAll('.reveal').forEach(el=>{
     el.style.opacity = '1';
@@ -1281,7 +1304,8 @@ function renderAll(data,place){
     if(place.geo) subHtml+=`<span title="GPS">📍 ${(+place.lat).toFixed(2)}°, ${(+place.lon).toFixed(2)}°</span>`;
     $('#citySub').innerHTML=subHtml;
 
-    $('#condText').textContent=t('k_'+wk);
+    /* ИСПРАВЛЕНИЕ: если weather_code === 0 (ясно), берём перевод из CLEAR_FIX */
+    $('#condText').textContent=weatherLabel(c.weather_code, wk);
     $('#unitLab').textContent='°'+state.unit.toUpperCase();
     animNum($('#tempNow'),c.temperature_2m,dispT);
     tempColor(c.temperature_2m);
@@ -1314,12 +1338,9 @@ function renderAll(data,place){
   safe(()=>renderDetails(data));
   safe(()=>{ $('#updAt').textContent=t('updated')+' '+new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'}); });
 
-  /* ИСПРАВЛЕНИЕ 2: после первого рендера навсегда фиксируем .reveal,
-     чтобы больше никаких перезапусков анимации при скролле/обновлении */
   if(renderAll._seen){
     freezeReveals();
   } else {
-    /* первый рендер — даём анимации проиграться, потом фиксируем */
     setTimeout(freezeReveals, 1500);
   }
   renderAll._seen=true;
@@ -1334,7 +1355,8 @@ function renderHours(data){
     const wk=WC[h.weather_code[i]]||'over';
     const kk=KIND[wk];
     const prob=h.precipitation_probability[i];
-    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${t('k_'+wk)}">
+    /* ИСПРАВЛЕНИЕ: weather_code === 0 → берём перевод из CLEAR_FIX */
+    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${weatherLabel(h.weather_code[i], wk)}">
       <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
       ${ICON[kk.icon]||ICON.cloud}
       <span class="htv">${dispT(h.temperature_2m[i])}°</span>
@@ -1361,7 +1383,8 @@ function renderDays5(data){
     const hum=hums.length?Math.round(hums.reduce((a,b)=>a+b,0)/hums.length):null;
     const pmm=Math.round((d.pressure_msl_min[i]+d.pressure_msl_max[i])/2*0.750062);
     const prob=d.precipitation_probability_max[i];
-    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${t('k_'+wk)}">
+    /* ИСПРАВЛЕНИЕ: weather_code === 0 → берём перевод из CLEAR_FIX */
+    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${weatherLabel(d.weather_code[i], wk)}">
       <div class="dhead"><b>${dayName(d.time[i],i)}</b><span>${dateShort(d.time[i])}</span></div>
       <div class="dico">${ICON[kk.icon]||ICON.cloud}</div>
       <div class="dtemps"><b>${dispT(d.temperature_2m_max[i])}°</b><span>${t('night')} ${dispT(d.temperature_2m_min[i])}°</span></div>
