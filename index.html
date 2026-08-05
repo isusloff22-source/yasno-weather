@@ -282,7 +282,8 @@ body.night #stars{opacity:1}
 @media(max-width:960px){
   .hero{grid-template-columns:1fr}
   .span4{grid-column:span 6}
-  #chipClock{display:none}
+  /* ИСПРАВЛЕНИЕ 3: убираем display:none — часы теперь видны на планшетах */
+  #chipClock { margin-left: 0; padding: 8px 14px; font-size: 12px; }
 }
 @media(max-width:640px){
   #app{padding:16px 12px 32px}
@@ -302,6 +303,17 @@ body.night #stars{opacity:1}
   .windbox{gap:12px}
   .strip{gap:8px}
   .moonwrap{gap:14px}
+  /* ИСПРАВЛЕНИЕ 1: единицы измерения в карточке ветра не переносятся */
+  .c-big i { white-space: nowrap; font-size: 15px; }
+  /* ИСПРАВЛЕНИЕ 3: часы на смартфонах — отдельной строкой по центру */
+  #chipClock {
+    order: 6;
+    flex-basis: 100%;
+    margin: 4px 0 0 0;
+    justify-content: center;
+    padding: 7px 14px;
+    font-size: 12px;
+  }
 }
 @media(max-width:480px){
   .days5{grid-template-columns:1fr 1fr}
@@ -625,7 +637,6 @@ const STR_EN={
 };
 let STR={...STR_EN};
 
-/* НОВОЕ: любой запрос ждёт максимум 10 секунд — бесконечных зависаний больше нет */
 async function fetchRetry(url,tries=3,signal){
   let lastErr;
   for(let i=0;i<tries;i++){
@@ -657,7 +668,7 @@ async function translateDict(code){
   const joined=keys.map(k=>STR_EN[k]).join('\n');
   const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='
     +encodeURIComponent(code)+'&dt=t&q='+encodeURIComponent(joined);
-  const r=await fetchRetry(url,1); /* одна попытка, 10 секунд максимум */
+  const r=await fetchRetry(url,1);
   const j=await r.json();
   let out=''; (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
   const parts=out.split('\n');
@@ -684,7 +695,6 @@ async function translateToEn(text){
 }
 function hasNonLatin(s){ return /[^\u0000-\u024f\u1e00-\u1eff\s'’\-.,()]/.test(s); }
 
-/* ================== СПРАВОЧНИКИ ================== */
 const KIND = {
   clear:{icon:'sun',cls:'',amb:1,tint:'#ffb703'},
   ptcl:{icon:'ptcl',cls:'wx-2',amb:1,tint:'#ffd166'},
@@ -744,7 +754,6 @@ function toLatin(s){
   return hadCyr?out:null;
 }
 
-/* ================== ЛУНА ================== */
 const SYNODIC=29.53058867;
 const NEW_MOON=Date.UTC(2000,0,6,18,14);
 function moonInfo(date){
@@ -836,7 +845,6 @@ function normNMItem(p){
   };
 }
 
-/* ================== ИКОНКИ ПОГОДЫ ================== */
 const SUN_S = '<g class="rays" stroke="#ffc61a" stroke-width="2.6" stroke-linecap="round" fill="none"><path d="M23 7v5M23 34v5M7 23h5M34 23h5M11.7 11.7l3.5 3.5M30.8 30.8l3.5 3.5M34.3 11.7l-3.5 3.5M15.2 30.8l-3.5 3.5"/></g><circle cx="23" cy="23" r="8" fill="url(#gSun)"/>';
 const ICON = {
   sun:`<svg viewBox="0 0 64 64"><g class="rays" stroke="#ffc61a" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4.3 4.3M44.7 44.7 49 49M49 15l-4.3 4.3M19.3 44.7 15 49"/></g><circle cx="32" cy="32" r="11.5" fill="url(#gSun)"/></svg>`,
@@ -856,7 +864,6 @@ const ICON = {
   storm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".9"><path d="M21 42l-2 6M43 42l-2 6"/></g><path class="bolt" fill="#ffd166" d="M33 38l-7.5 11h5.5l-3.5 10 11-13.5h-6l4.5-7.5z"/></svg>`,
 };
 
-/* ================== СОСТОЯНИЕ ================== */
 const $ = s => document.querySelector(s);
 const state = { unit:'c', data:null, place:null, ctrl:null, lastPlace:null, astro:null };
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -880,7 +887,6 @@ $('#errRetry').addEventListener('click',()=>{
   if(state.lastPlace) loadWeather(state.lastPlace); else submitSearch();
 });
 
-/* ================== НОВОЕ: PWA ================== */
 function makeIcon(size){
   const c=document.createElement('canvas'); c.width=c.height=size;
   const x=c.getContext('2d');
@@ -931,7 +937,6 @@ window.addEventListener('appinstalled',()=>{
   toast('✅ '+t('installed'));
 });
 
-/* ================== ФОН ================== */
 (function stars(){ const box=$('#stars'); if(RM) return; let h='';
   for(let i=0;i<90;i++){ const s=(Math.random()*1.8+1).toFixed(1);
     h+=`<span class="star" style="left:${Math.random()*100}%;top:${Math.random()*72}%;width:${s}px;height:${s}px;--d:${(Math.random()*3+2).toFixed(1)}s;--dl:${(Math.random()*4).toFixed(1)}s"></span>`; }
@@ -969,7 +974,6 @@ function cityClock(){
 }
 setInterval(cityClock,1000);
 
-/* ================== ПОИСК ================== */
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
 q.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
@@ -1114,7 +1118,6 @@ async function submitSearch(){
   toast(t('notFound').replace('__X__',name));
 }
 
-/* ================== ГЕОЛОКАЦИЯ ================== */
 $('#geo').addEventListener('click',()=>{
   if(!navigator.geolocation){ toast('Geolocation not supported'); return; }
   const btn=$('#geo'); btn.classList.add('spin');
@@ -1133,7 +1136,6 @@ $('#geo').addEventListener('click',()=>{
   },()=>{ btn.classList.remove('spin'); toast('Location unavailable'); },{timeout:9000});
 });
 
-/* ================== ЕДИНИЦЫ И ЯЗЫК ================== */
 $('#unit').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||b.classList.contains('on')) return;
   state.unit=b.dataset.u;
@@ -1171,7 +1173,6 @@ function applyLang(){
   if(state.data&&state.place) renderAll(state.data,state.place);
 }
 
-/* ================== ЗАГРУЗКА ПОГОДЫ ================== */
 async function loadWeather(place){
   if(state.ctrl) state.ctrl.abort();
   const ctrl=new AbortController();
@@ -1216,7 +1217,6 @@ async function loadWeather(place){
   document.getElementById('splash-screen').classList.add('hidden');
 }
 
-/* ================== РЕНДЕР ================== */
 function safe(fn){ try{ fn(); }catch(e){ console.warn(e); } }
 function animNum(el,to,fmtFn){
   fmtFn=fmtFn||fmt;
@@ -1240,6 +1240,20 @@ function tempColor(tv){
   el.classList.toggle('cold',tv<=0);
   const u=$('#unitLab');
   if(u) u.style.color=tv>=25?'#ffd166':(tv<=0?'#9fdcff':'#eaf2f8');
+}
+
+/* ================== ИСПРАВЛЕНИЕ 2: фиксирование анимации после первого рендера ==================
+   Раньше: при каждом повторном renderAll (смена языка, единиц, города, времени суток)
+   блоки с .reveal заново проигрывали анимацию появления, что на мобилках при скролле
+   давало эффект «прыжков».
+   Теперь: первая отрисовка играет анимацию как положено. Все последующие рендеры просто
+   фиксируют элементы в видимом состоянии — без повторов. */
+function freezeReveals(){
+  document.querySelectorAll('.reveal').forEach(el=>{
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+    el.style.animation = 'none';
+  });
 }
 
 function renderAll(data,place){
@@ -1300,11 +1314,13 @@ function renderAll(data,place){
   safe(()=>renderDetails(data));
   safe(()=>{ $('#updAt').textContent=t('updated')+' '+new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'}); });
 
+  /* ИСПРАВЛЕНИЕ 2: после первого рендера навсегда фиксируем .reveal,
+     чтобы больше никаких перезапусков анимации при скролле/обновлении */
   if(renderAll._seen){
-    document.querySelectorAll('.reveal').forEach((el,i)=>{
-      el.style.animation='none'; void el.offsetWidth;
-      el.style.animation=''; el.style.setProperty('--d',(i*0.045)+'s');
-    });
+    freezeReveals();
+  } else {
+    /* первый рендер — даём анимации проиграться, потом фиксируем */
+    setTimeout(freezeReveals, 1500);
   }
   renderAll._seen=true;
 }
@@ -1469,9 +1485,6 @@ function renderDetails(data){
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
 }
 
-/* ================== СТАРТ ==================
-НОВОЕ: сначала показываем погоду, перевод интерфейса — в фоне и с таймаутом, поэтому сайт больше никогда не виснет на загрузке.
-*/
 (async function init(){
     setupPWA();
     buildLangSelect();
@@ -1489,20 +1502,16 @@ function renderDetails(data){
 
     applyLang();
 
-    // --- НАЧАЛО БЛОКА ГЕОЛОКАЦИИ ---
     let saved = null;
     try { 
         saved = JSON.parse(localStorage.getItem('atmos-place')); 
     } catch(e) {}
 
-    // 1. Если пользователь уже выбирал город раньше — берём его из памяти
     if (saved && saved.lat != null) {
         loadWeather(saved);
     } 
-    // 2. Если зашли впервые, спрашиваем разрешение у браузера
     else if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            // Если пользователь разрешил доступ к ГЕО:
             (position) => {
                 const geoPlace = {
                     name: 'Моё местоположение',
@@ -1512,18 +1521,15 @@ function renderDetails(data){
                 };
                 loadWeather(geoPlace);
             },
-            // Если пользователь нажал "Блокировать" или произошла ошибка:
             () => {
                 console.log("Доступ к гео отклонен, включаем Москву");
                 loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
             }
         );
     } 
-    // 3. Если браузер совсем древний и не поддерживает гео:
     else {
         loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
     }
-    // --- КОНЕЦ БЛОКА ГЕОЛОКАЦИИ ---
 
     if(LANG!=='en'){
         translateDict(LANG)
