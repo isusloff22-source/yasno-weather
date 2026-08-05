@@ -240,7 +240,7 @@ body.night #stars{opacity:1}
 .legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}
 .windbox{display:flex;align-items:center;gap:18px;margin-top:10px}
 .compass{width:96px;height:96px;flex:none}
-.compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50% 50%}
+.compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50px 50px;transform-box:view-box}
 .sunpct{margin-top:14px;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.09)}
 .sunpct div{height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#ffe066,#ff8f3f);transition:width 1.4s cubic-bezier(.3,.8,.3,1)}
 .uvscale{margin-top:16px;height:8px;border-radius:8px;background:linear-gradient(90deg,#39d353,#ffd166,#ff8c00,#e5383b,#9d4edd);position:relative}
@@ -278,11 +278,14 @@ body.night #stars{opacity:1}
   border:1px solid rgba(255,209,102,.6);color:#ffedc2;max-width:min(92vw,600px);padding:15px 22px;font-size:14.5px;
   box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 30px rgba(255,183,3,.15)}
 
+/* ===== ПУНКТ 3: подгон единиц измерения на мобилках — nowrap + пропорциональный шрифт ===== */
+@media(max-width:768px){
+  .c-big i{white-space:nowrap;font-size:clamp(13px,3.8vw,18px)}
+}
 @media(max-width:1020px){ .days5{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))} }
 @media(max-width:960px){
   .hero{grid-template-columns:1fr}
   .span4{grid-column:span 6}
-  /* ИСПРАВЛЕНИЕ 3: убираем display:none — часы теперь видны на планшетах */
   #chipClock { margin-left: 0; padding: 8px 14px; font-size: 12px; }
 }
 @media(max-width:640px){
@@ -303,17 +306,7 @@ body.night #stars{opacity:1}
   .windbox{gap:12px}
   .strip{gap:8px}
   .moonwrap{gap:14px}
-  /* ИСПРАВЛЕНИЕ 1: единицы измерения в карточке ветра не переносятся */
-  .c-big i { white-space: nowrap; font-size: 15px; }
-  /* ИСПРАВЛЕНИЕ 3: часы на смартфонах — отдельной строкой по центру */
-  #chipClock {
-    order: 6;
-    flex-basis: 100%;
-    margin: 4px 0 0 0;
-    justify-content: center;
-    padding: 7px 14px;
-    font-size: 12px;
-  }
+  .c-big i{white-space:nowrap;font-size:clamp(13px,3.8vw,18px)}
 }
 @media(max-width:480px){
   .days5{grid-template-columns:1fr 1fr}
@@ -517,11 +510,12 @@ body.night #stars{opacity:1}
             <circle cx="50" cy="50" r="46" fill="rgba(255,255,255,.04)" stroke="rgba(160,215,255,.25)"/>
             <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(160,215,255,.1)"/>
             <g font-family="JetBrains Mono" font-size="9" fill="#a6c3d6" text-anchor="middle">
-              <text x="50" y="14" id="cN">N</text><text x="90" y="53" id="cE">E</text><text x="50" y="95" id="cS">S</text><text x="10" y="53" id="cW">W</text>
+              <text x="50" y="14" id="cN">N</text><text x="90" y="53" id="cE">E</text>
+              <text x="50" y="95" id="cS">S</text><text x="10" y="53" id="cW">W</text>
             </g>
             <g class="needle" id="windNeedle">
-              <path d="M50 22 L56 54 L50 48 L44 54 Z" fill="#ffd166"/>
-              <path d="M50 78 L55 52 L50 57 L45 52 Z" fill="rgba(160,215,255,.45)"/>
+              <path d="M50 18 L57 50 L50 44 L43 50 Z" fill="#ffd166"/>
+              <path d="M50 82 L57 50 L50 56 L43 50 Z" fill="rgba(160,215,255,.45)"/>
             </g>
             <circle cx="50" cy="50" r="3" fill="#eef7ff"/>
           </svg>
@@ -561,8 +555,9 @@ body.night #stars{opacity:1}
         <div class="uvscale"><b id="uvDot"></b></div>
       </div>
 
+      <!-- ПУНКТ 2: иконка осадков заменена на зонтик -->
       <div class="card span4 reveal" style="--d:.44s">
-        <div class="ctitle"><span class="ci" style="--chip:rgba(96,165,250,.14);--cic:#93c5fd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 15s1.5-2 4-2 4 2 6.5 2 4-2 4-2M3 19s1.5-2 4-2 4 2 6.5 2 4-2 4-2"/><circle cx="16" cy="7" r="3.4"/></svg></span><span data-i18n="prec">Precipitation (24 h)</span></div>
+        <div class="ctitle"><span class="ci" style="--chip:rgba(96,165,250,.14);--cic:#93c5fd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z"/><path d="M12 12v6a2 2 0 0 0 4 0"/><path d="M12 3v1.5"/></svg></span><span data-i18n="prec">Precipitation (24 h)</span></div>
         <div class="c-big" id="precipVal">--<i data-i18n="mm">mm</i></div>
         <div class="c-sub" id="precipProb"></div>
         <div class="c-sub" id="snowWrap" style="display:none">❄ <span data-i18n="snow">Snow</span>: <b id="snowVal" style="color:var(--ink)"></b></div>
@@ -628,14 +623,146 @@ const STR_EN={
  moonN5:'Full Moon', moonN6:'Waning Gibbous', moonN7:'Last Quarter', moonN8:'Waning Crescent',
  dirs:'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW',
  install:'Install app', installed:'App installed',
- iosHint:'On iPhone/iPad: Share → "Add to Home Screen"',
- k_clear:'Clear', k_ptcl:'Partly cloudy', k_cloud:'Mostly cloudy', k_over:'Overcast',
- k_fog:'Fog', k_fog2:'Freezing fog', k_drz:'Drizzle', k_rain:'Rain', k_hrain:'Heavy rain',
- k_frz:'Freezing rain', k_ssn:'Rain and snow', k_snow:'Snow', k_hsnow:'Heavy snow',
- k_grn:'Snow grains', k_showers:'Showers', k_hshow:'Heavy showers', k_sshow:'Snow showers',
- k_storm:'Thunderstorm', k_hstorm:'Severe thunderstorm'
+ iosHint:'On iPhone/iPad: Share → "Add to Home Screen"'
 };
 let STR={...STR_EN};
+
+/* ================== ПУНКТ 1: ВЫВЕРЕННЫЕ ПЕРЕВОДЫ ПОГОДЫ ==================
+   ПОЛНЫЙ ОТКАЗ от автоперевода описаний погоды. Статус выводится строго по
+   WMO-коду (который возвращает Open-Meteo) через этот внутренний словарь.
+   Ключи: w_clear(ясно), w_clouds(облачно), w_rain(дождь), w_drizzle(морось),
+   w_snow(снег), w_thunder(гроза), w_fog(туман).
+   Автопереводчик к этим строкам НЕ прикасается — только ручные переводы. */
+const WEATHER_FIX={
+ en:{w_clear:'Clear',w_clouds:'Clouds',w_rain:'Rain',w_drizzle:'Drizzle',w_snow:'Snow',w_thunder:'Thunderstorm',w_fog:'Fog'},
+ ru:{w_clear:'Ясно',w_clouds:'Облачно',w_rain:'Дождь',w_drizzle:'Морось',w_snow:'Снег',w_thunder:'Гроза',w_fog:'Туман'},
+ uk:{w_clear:'Ясно',w_clouds:'Хмарно',w_rain:'Дощ',w_drizzle:'Мряка',w_snow:'Сніг',w_thunder:'Гроза',w_fog:'Туман'},
+ be:{w_clear:'Ясна',w_clouds:'Воблачна',w_rain:'Дождж',w_drizzle:'Імжа',w_snow:'Снег',w_thunder:'Навальніца',w_fog:'Туман'},
+ pl:{w_clear:'Bezchmurnie',w_clouds:'Pochmurno',w_rain:'Deszcz',w_drizzle:'Mżawka',w_snow:'Śnieg',w_thunder:'Burza',w_fog:'Mgła'},
+ cs:{w_clear:'Jasno',w_clouds:'Zataženo',w_rain:'Déšť',w_drizzle:'Mrholení',w_snow:'Sníh',w_thunder:'Bouřka',w_fog:'Mlha'},
+ sk:{w_clear:'Jasno',w_clouds:'Zamračené',w_rain:'Dážď',w_drizzle:'Mrholenie',w_snow:'Sneh',w_thunder:'Búrka',w_fog:'Hmla'},
+ sl:{w_clear:'Jasno',w_clouds:'Oblačno',w_rain:'Dež',w_drizzle:'Pršenje',w_snow:'Sneg',w_thunder:'Nevihta',w_fog:'Megla'},
+ sr:{w_clear:'Ведро',w_clouds:'Облачно',w_rain:'Киша',w_drizzle:'Ромињање',w_snow:'Снег',w_thunder:'Грмљавина',w_fog:'Магла'},
+ hr:{w_clear:'Vedro',w_clouds:'Oblačno',w_rain:'Kiša',w_drizzle:'Rominjanje',w_snow:'Snijeg',w_thunder:'Grmljavina',w_fog:'Magla'},
+ bs:{w_clear:'Vedro',w_clouds:'Oblačno',w_rain:'Kiša',w_drizzle:'Rominjanje',w_snow:'Snijeg',w_thunder:'Grmljavina',w_fog:'Magla'},
+ mk:{w_clear:'Ведро',w_clouds:'Облачно',w_rain:'Дожд',w_drizzle:'Роса',w_snow:'Снег',w_thunder:'Грмотевица',w_fog:'Магла'},
+ bg:{w_clear:'Ясно',w_clouds:'Облачно',w_rain:'Дъжд',w_drizzle:'Ръмеж',w_snow:'Сняг',w_thunder:'Гръмотевица',w_fog:'Мъгла'},
+ ro:{w_clear:'Senin',w_clouds:'Înnorat',w_rain:'Ploaie',w_drizzle:'Burniță',w_snow:'Zăpadă',w_thunder:'Furtună',w_fog:'Ceață'},
+ hu:{w_clear:'Derült',w_clouds:'Felhős',w_rain:'Eső',w_drizzle:'Szitálás',w_snow:'Hó',w_thunder:'Zivatar',w_fog:'Köd'},
+ de:{w_clear:'Klar',w_clouds:'Bewölkt',w_rain:'Regen',w_drizzle:'Nieselregen',w_snow:'Schnee',w_thunder:'Gewitter',w_fog:'Nebel'},
+ nl:{w_clear:'Helder',w_clouds:'Bewolkt',w_rain:'Regen',w_drizzle:'Motregen',w_snow:'Sneeuw',w_thunder:'Onweer',w_fog:'Mist'},
+ fr:{w_clear:'Ensoleillé',w_clouds:'Nuageux',w_rain:'Pluie',w_drizzle:'Bruine',w_snow:'Neige',w_thunder:'Orage',w_fog:'Brouillard'},
+ es:{w_clear:'Despejado',w_clouds:'Nublado',w_rain:'Lluvia',w_drizzle:'Llovizna',w_snow:'Nieve',w_thunder:'Tormenta',w_fog:'Niebla'},
+ pt:{w_clear:'Céu limpo',w_clouds:'Nublado',w_rain:'Chuva',w_drizzle:'Chuvisco',w_snow:'Neve',w_thunder:'Trovoada',w_fog:'Nevoeiro'},
+ it:{w_clear:'Sereno',w_clouds:'Nuvoloso',w_rain:'Pioggia',w_drizzle:'Pioggerella',w_snow:'Neve',w_thunder:'Temporale',w_fog:'Nebbia'},
+ ca:{w_clear:'Serè',w_clouds:'Ennuvolat',w_rain:'Pluja',w_drizzle:'Plugim',w_snow:'Neu',w_thunder:'Tempesta',w_fog:'Boira'},
+ gl:{w_clear:'Despexado',w_clouds:'Nubrado',w_rain:'Chuvia',w_drizzle:'Orballo',w_snow:'Neve',w_thunder:'Tormenta',w_fog:'Néboa'},
+ eu:{w_clear:'Oskarbi',w_clouds:'Hodeitsu',w_rain:'Euri',w_drizzle:'Zirimiri',w_snow:'Elur',w_thunder:'Ekaitz',w_fog:'Laino'},
+ sv:{w_clear:'Klart',w_clouds:'Molnigt',w_rain:'Regn',w_drizzle:'Duggregn',w_snow:'Snö',w_thunder:'Åska',w_fog:'Dimma'},
+ no:{w_clear:'Klart',w_clouds:'Skyet',w_rain:'Regn',w_drizzle:'Yr',w_snow:'Snø',w_thunder:'Torden',w_fog:'Tåke'},
+ da:{w_clear:'Klart',w_clouds:'Overskyet',w_rain:'Regn',w_drizzle:'Støvregn',w_snow:'Sne',w_thunder:'Torden',w_fog:'Tåge'},
+ fi:{w_clear:'Selkeä',w_clouds:'Pilvinen',w_rain:'Sade',w_drizzle:'Tihkusade',w_snow:'Lumi',w_thunder:'Ukkonen',w_fog:'Sumu'},
+ is:{w_clear:'Heiðskýrt',w_clouds:'Skýjað',w_rain:'Rigning',w_drizzle:'Úði',w_snow:'Snjór',w_thunder:'Þrumur',w_fog:'Þoka'},
+ et:{w_clear:'Selge',w_clouds:'Pilvine',w_rain:'Vihm',w_drizzle:'Uduvihm',w_snow:'Lumi',w_thunder:'Äike',w_fog:'Udu'},
+ lv:{w_clear:'Skaidrs',w_clouds:'Mākoņains',w_rain:'Lietus',w_drizzle:'Smidzina',w_snow:'Sniegs',w_thunder:'Pērkons',w_fog:'Migla'},
+ lt:{w_clear:'Giedra',w_clouds:'Debesuota',w_rain:'Lietus',w_drizzle:'Dulkiana',w_snow:'Sniegas',w_thunder:'Perkūnija',w_fog:'Rūkas'},
+ ga:{w_clear:'Glan',w_clouds:'Scamallach',w_rain:'Báisteach',w_drizzle:'Ceobhrán',w_snow:'Sneachta',w_thunder:'Stoirm',w_fog:'Ceo'},
+ cy:{w_clear:'Clir',w_clouds:'Cymylog',w_rain:'Glaw',w_drizzle:'Mânlaw',w_snow:'Eira',w_thunder:'Mellt',w_fog:'Niwl'},
+ gd:{w_clear:'Soilleir',w_clouds:'Neulach',w_rain:'Uisge',w_drizzle:'Ceobhran',w_snow:'Sneachd',w_thunder:'Stoirm',w_fog:'Ceò'},
+ el:{w_clear:'Αίθριος',w_clouds:'Συννεφιά',w_rain:'Βροχή',w_drizzle:'Ψιχάλα',w_snow:'Χιόνι',w_thunder:'Καταιγίδα',w_fog:'Ομίχλη'},
+ tr:{w_clear:'Açık',w_clouds:'Bulutlu',w_rain:'Yağmur',w_drizzle:'Çisenti',w_snow:'Kar',w_thunder:'Fırtına',w_fog:'Sis'},
+ az:{w_clear:'Aydın',w_clouds:'Buludlu',w_rain:'Yağış',w_drizzle:'Çiskin',w_snow:'Qar',w_thunder:'Tufan',w_fog:'Duman'},
+ ka:{w_clear:'მოწმენდილი',w_clouds:'ღრუბლიანი',w_rain:'წვიმა',w_drizzle:'ჟინჟღლი',w_snow:'თოვლი',w_thunder:'ჭექა-ქუხილი',w_fog:'ნისლი'},
+ hy:{w_clear:'Պարզ',w_clouds:'Ամպամած',w_rain:'Անձրև',w_drizzle:'Մաղող',w_snow:'Ձյուն',w_thunder:'Ամպրոպ',w_fog:'Մառախուղ'},
+ kk:{w_clear:'Ашық',w_clouds:'Бұлтты',w_rain:'Жаңбыр',w_drizzle:'Сілтілдеу',w_snow:'Қар',w_thunder:'Найзағай',w_fog:'Тұман'},
+ ky:{w_clear:'Ачык',w_clouds:'Булуттуу',w_rain:'Жамгыр',w_drizzle:'Кыска',w_snow:'Кар',w_thunder:'Күн күркүрөө',w_fog:'Туман'},
+ uz:{w_clear:'Ochiq',w_clouds:'Bulutli',w_rain:"Yomg'ir",w_drizzle:'Shivala',w_snow:'Qor',w_thunder:'Chaqmoq',w_fog:'Tuman'},
+ tg:{w_clear:'Офтобӣ',w_clouds:'Абрнок',w_rain:'Борон',w_drizzle:'Намнок',w_snow:'Барф',w_thunder:'Раъду барқ',w_fog:'Туман'},
+ tk:{w_clear:'Aýdyň',w_clouds:'Bulutly',w_rain:'Ýagyş',w_drizzle:'Çyg',w_snow:'Gar',w_thunder:'Ýyldyrym',w_fog:'Tuman'},
+ mn:{w_clear:'Цэлмэг',w_clouds:'Үүлэрхэг',w_rain:'Бороо',w_drizzle:'Шиврээ',w_snow:'Цас',w_thunder:'Аянга',w_fog:'Манан'},
+ tt:{w_clear:'Аяз',w_clouds:'Болытлы',w_rain:'Яңгыр',w_drizzle:'Сибелү',w_snow:'Кар',w_thunder:'Яшен',w_fog:'Туман'},
+ ba:{w_clear:'Аяҙ',w_clouds:'Болотло',w_rain:'Ямғыр',w_drizzle:'Һипкәләү',w_snow:'Ҡар',w_thunder:'Күк күкрәү',w_fog:'Томан'},
+ ar:{w_clear:'صافٍ',w_clouds:'غائم',w_rain:'مطر',w_drizzle:'رذاذ',w_snow:'ثلج',w_thunder:'عاصفة رعدية',w_fog:'ضباب'},
+ he:{w_clear:'בהיר',w_clouds:'מעונן',w_rain:'גשם',w_drizzle:'טפטוף',w_snow:'שלג',w_thunder:'סופת רעמים',w_fog:'ערפל'},
+ fa:{w_clear:'صاف',w_clouds:'ابری',w_rain:'باران',w_drizzle:'نم‌نم',w_snow:'برف',w_thunder:'رعد و برق',w_fog:'مه'},
+ ur:{w_clear:'صاف',w_clouds:'ابر آلود',w_rain:'بارش',w_drizzle:'بوندا باندی',w_snow:'برف',w_thunder:'طوفانِ بدلی',w_fog:'دھند'},
+ ps:{w_clear:'صاف',w_clouds:'ورېځ',w_rain:'باران',w_drizzle:'شبنم',w_snow:'واوره',w_thunder:'تندر',w_fog:'دود'},
+ ku:{w_clear:'Zelal',w_clouds:'Ewrî',w_rain:'Baran',w_drizzle:'Barîna hûr',w_snow:'Berf',w_thunder:'Bahoz',w_fog:'Mij'},
+ hi:{w_clear:'साफ',w_clouds:'बादल',w_rain:'बारिश',w_drizzle:'बूंदाबांदी',w_snow:'बर्फ',w_thunder:'आंधी-तूफान',w_fog:'कोहरा'},
+ bn:{w_clear:'পরিষ্কার',w_clouds:'মেঘলা',w_rain:'বৃষ্টি',w_drizzle:'গুঁড়ি গুঁড়ি',w_snow:'তুষার',w_thunder:'ঝড়',w_fog:'কুয়াশা'},
+ pa:{w_clear:'ਸਾਫ',w_clouds:'ਬੱਦਲਵਾਈ',w_rain:'ਮੀਂਹ',w_drizzle:'ਬੂੰਦਾ-ਬਾਂਦੀ',w_snow:'ਬਰਫ',w_thunder:'ਤੂਫਾਨ',w_fog:'ਧੁੰਦ'},
+ gu:{w_clear:'સાફ',w_clouds:'વાદળછાયું',w_rain:'વરસાદ',w_drizzle:'ઝરમર',w_snow:'બરફ',w_thunder:'તોફાન',w_fog:'ધુમ્મસ'},
+ mr:{w_clear:'स्वच्छ',w_clouds:'ढगाळ',w_rain:'पाऊस',w_drizzle:'रिमझिम',w_snow:'बर्फ',w_thunder:'वादळ',w_fog:'धुके'},
+ ne:{w_clear:'सफा',w_clouds:'बादल',w_rain:'वर्षा',w_drizzle:'झरी',w_snow:'हिउँ',w_thunder:'आँधी',w_fog:'कुहिरो'},
+ si:{w_clear:'පැහැදිලි',w_clouds:'වලාකුළු',w_rain:'වැසි',w_drizzle:'සිහින් වැසි',w_snow:'හිම',w_thunder:'කුණාටුව',w_fog:'මීදුම'},
+ ta:{w_clear:'தெளிவு',w_clouds:'மேகம்',w_rain:'மழை',w_drizzle:'தூறல்',w_snow:'பனி',w_thunder:'இடி மின்னல்',w_fog:'பனிமூட்டம்'},
+ te:{w_clear:'స్పష్టం',w_clouds:'మేఘం',w_rain:'వర్షం',w_drizzle:'చినుకులు',w_snow:'మంచు',w_thunder:'ఉరుము',w_fog:'పొగమంచు'},
+ kn:{w_clear:'ಸ್ಪಷ್ಟ',w_clouds:'ಮೋಡ',w_rain:'ಮಳೆ',w_drizzle:'ತುಂತುರು',w_snow:'ಹಿಮ',w_thunder:'ಗುಡುಗು',w_fog:'ಮಂಜು'},
+ ml:{w_clear:'തെളിഞ്ഞ',w_clouds:'മേഘം',w_rain:'മഴ',w_drizzle:'ചാറ്റൽ',w_snow:'മഞ്ഞ്',w_thunder:'ഇടിമിന്നൽ',w_fog:'മൂടൽമഞ്ഞ്'},
+ or:{w_clear:'ସଫା',w_clouds:'ମେଘୁଆ',w_rain:'ବର୍ଷା',w_drizzle:'ଝିପିଝିପି',w_snow:'ତୁଷାର',w_thunder:'ଝଡ଼',w_fog:'କୁହୁଡ଼ି'},
+ as:{w_clear:'পৰিষ্কাৰ',w_clouds:'ডাৱৰীয়া',w_rain:'বৰষুণ',w_drizzle:'গুটিগুটি',w_snow:'বৰফ',w_thunder:'ধুমুহা',w_fog:'কুঁৱলী'},
+ th:{w_clear:'แจ่มใส',w_clouds:'มีเมฆ',w_rain:'ฝน',w_drizzle:'ฝนพรำ',w_snow:'หิมะ',w_thunder:'พายุฝนฟ้าคะนอง',w_fog:'หมอก'},
+ lo:{w_clear:'ໃສ',w_clouds:'ມີເມກ',w_rain:'ຝົນ',w_drizzle:'ຝົນປົບ',w_snow:'ຫິມະ',w_thunder:'ພາຍຸຟ້າຜ່າ',w_fog:'ໝອກ'},
+ km:{w_clear:'ស្រឡះ',w_clouds:'មានពពក',w_rain:'ភ្លៀង',w_drizzle:'ភ្លៀងរលឹម',w_snow:'ព្រិល',w_thunder:'រន្ទះ',w_fog:'អ័ព្ទ'},
+ my:{w_clear:'သာယာ',w_clouds:'တိမ်ဖုံး',w_rain:'မိုး',w_drizzle:'မိုးဖွဲ့',w_snow:'နှင်း',w_thunder:'မိုးကြိုး',w_fog:'မြူ'},
+ vi:{w_clear:'Quang đãng',w_clouds:'Nhiều mây',w_rain:'Mưa',w_drizzle:'Mưa phùn',w_snow:'Tuyết',w_thunder:'Dông',w_fog:'Sương mù'},
+ id:{w_clear:'Cerah',w_clouds:'Berawan',w_rain:'Hujan',w_drizzle:'Gerimis',w_snow:'Salju',w_thunder:'Badai petir',w_fog:'Kabut'},
+ ms:{w_clear:'Cerah',w_clouds:'Mendung',w_rain:'Hujan',w_drizzle:'Renyai',w_snow:'Salji',w_thunder:'Ribut petir',w_fog:'Kabus'},
+ tl:{w_clear:'Malinaw',w_clouds:'Maulap',w_rain:'Ulan',w_drizzle:'Ambon',w_snow:'Niyebe',w_thunder:'Bagyo',w_fog:'Hamog'},
+ zh:{w_clear:'晴',w_clouds:'多云',w_rain:'雨',w_drizzle:'毛毛雨',w_snow:'雪',w_thunder:'雷雨',w_fog:'雾'},
+ ja:{w_clear:'快晴',w_clouds:'曇り',w_rain:'雨',w_drizzle:'霧雨',w_snow:'雪',w_thunder:'雷雨',w_fog:'霧'},
+ ko:{w_clear:'맑음',w_clouds:'흐림',w_rain:'비',w_drizzle:'이슬비',w_snow:'눈',w_thunder:'뇌우',w_fog:'안개'},
+ sw:{w_clear:'Angavu',w_clouds:'Mawingu',w_rain:'Mvua',w_drizzle:'Manyunyu',w_snow:'Theluji',w_thunder:'Radi',w_fog:'Ukungu'},
+ am:{w_clear:'ገልቶ',w_clouds:'ደመናማ',w_rain:'ዝናብ',w_drizzle:'ሹርሹር',w_snow:'በረድ',w_thunder:'ነጎድጓድ',w_fog:'ጭጋግ'},
+ ha:{w_clear:'Tsabta',w_clouds:'Gizgizai',w_rain:'Ruwan sama',w_drizzle:'Ƙwallon ruwa',w_snow:'Kankara',w_thunder:'Tsawa',w_fog:'Hazo'},
+ yo:{w_clear:'Mímọ́',w_clouds:'Àwọsánmà',w_rain:'Òjò',w_drizzle:'Ìrìn-òjò',w_snow:'Yinyin',w_thunder:'Àrá',w_fog:'Ìkùùku'},
+ ig:{w_clear:'Ihe doro anya',w_clouds:'Igwe ojii',w_rain:'Mmiri',w_drizzle:'Mmiri ozuzo',w_snow:'Snow',w_thunder:'Égbè',w_fog:'Anwụrụọkụ'},
+ zu:{w_clear:'Licwebile',w_clouds:'Amafu',w_rain:'Imvula',w_drizzle:'Imvula encane',w_snow:'Iqhwa',w_thunder:'Ukuduma',w_fog:'Inkungu'},
+ xh:{w_clear:'Licwebile',w_clouds:'Amafu',w_rain:'Imvula',w_drizzle:'Imvula encinane',w_snow:'Ikhephu',w_thunder:'Ukuduma',w_fog:'Inkungu'},
+ af:{w_clear:'Helder',w_clouds:'Bewolk',w_rain:'Reën',w_drizzle:'Motrëen',w_snow:'Sneeu',w_thunder:'Donderstorm',w_fog:'Mis'},
+ so:{w_clear:'Saafi',w_clouds:'Daruuro',w_rain:'Roob',w_drizzle:'Roob yar',w_snow:'Baraf',w_thunder:'Onkod',w_fog:'Ceeryaamo'},
+ rw:{w_clear:'Ikeye',w_clouds:'Ibicu',w_rain:'Imvura',w_drizzle:'Imvura nkeya',w_snow:'Urubura',w_thunder:'Inkuba',w_fog:'Igihu'},
+ mg:{w_clear:'Madio',w_clouds:'Andro',w_rain:'Orana',w_drizzle:'Orana kely',w_snow:'Ranomandry',w_thunder:'Varatra',w_fog:'Zavona'},
+ ti:{w_clear:'ጽሩይ',w_clouds:'ደመና',w_rain:'ዝናም',w_drizzle:'ንጥብጣብ',w_snow:'በረድ',w_thunder:'ነጎድጓድ',w_fog:'ጭጋራ'},
+ om:{w_clear:'Qulqulluu',w_clouds:'Dukkana',w_rain:'Roobii',w_drizzle:'Roobii xiqqaa',w_snow:'Cabbii',w_thunder:'Bakakkaa',w_fog:'Hurrii'},
+ eo:{w_clear:'Klara',w_clouds:'Nuba',w_rain:'Pluvo',w_drizzle:'Drizlo',w_snow:'Neĝo',w_thunder:'Tondro',w_fog:'Nebulo'},
+ ht:{w_clear:'Klè',w_clouds:'Nyaj',w_rain:'Lapli',w_drizzle:'Ti lapli',w_snow:'Nèj',w_thunder:'Loray',w_fog:'Bouya'},
+ jv:{w_clear:'Padhang',w_clouds:'Mendhung',w_rain:'Udan',w_drizzle:'Grimis',w_snow:'Salju',w_thunder:'Bledeg',w_fog:'Pedhut'},
+ su:{w_clear:'Caang',w_clouds:'Mendung',w_rain:'Hujan',w_drizzle:'Rintik',w_snow:'Salju',w_thunder:'Guludug',w_fog:'Halimun'},
+ ceb:{w_clear:'Klaro',w_clouds:'Panganod',w_rain:'Ulan',w_drizzle:'Ambon',w_snow:'Niyebe',w_thunder:'Bagyo',w_fog:'Kabut'},
+ ny:{w_clear:'Yoyera',w_clouds:'Mitambo',w_rain:'Mvula',w_drizzle:'Mvula yochepa',w_snow:'Chisanu',w_thunder:'Bingu',w_fog:'Chifunga'},
+ sn:{w_clear:'Yakajeka',w_clouds:'Makore',w_rain:'Mvura',w_drizzle:'Mvura shoma',w_snow:'Chando',w_thunder:'Mheni',w_fog:'Mhute'},
+ st:{w_clear:'E hlwekileng',w_clouds:'Maru',w_rain:'Pula',w_drizzle:'Pula e nyane',w_snow:'Lehloa',w_thunder:'Lehalima',w_fog:'Mohodi'},
+ tn:{w_clear:'Phepa',w_clouds:'Maru',w_rain:'Pula',w_drizzle:'Pula e nnye',w_snow:'Kapoko',w_thunder:'Legadima',w_fog:'Kgotsi'},
+ lb:{w_clear:'Kloer',w_clouds:'Wolkeg',w_rain:'Reen',w_drizzle:'Niselreen',w_snow:'Schnéi',w_thunder:'Wiederliicht',w_fog:'Niwwel'},
+ mt:{w_clear:'Ċar',w_clouds:'Sħab',w_rain:'Xita',w_drizzle:'Xita ħafifa',w_snow:'Silġ',w_thunder:'Maltempata',w_fog:'Ċpar'},
+ sq:{w_clear:'Kthjellët',w_clouds:'Vranët',w_rain:'Shi',w_drizzle:'Shi i imët',w_snow:'Borë',w_thunder:'Stuhi',w_fog:'Mjegull'},
+ fy:{w_clear:'Helder',w_clouds:'Bewolke',w_rain:'Rein',w_drizzle:'Motrein',w_snow:'Snie',w_thunder:'Tonger',w_fog:'Mist'},
+ co:{w_clear:'Chjaru',w_clouds:'Nivulu',w_rain:'Piogghja',w_drizzle:'Piogghja fina',w_snow:'Nevi',w_thunder:'Timpesta',w_fog:'Nebbia'},
+ oc:{w_clear:'Clar',w_clouds:'Nivolós',w_rain:'Pluèja',w_drizzle:'Plovinada',w_snow:'Neu',w_thunder:'Tempèsta',w_fog:'Boira'},
+ br:{w_clear:'Sklaer',w_clouds:'Koumoulek',w_rain:'Glav',w_drizzle:'Glav munut',w_snow:"Erc'h",w_thunder:'Kurun',w_fog:'Latar'},
+ yi:{w_clear:'קלאָר',w_clouds:'וואָלקיק',w_rain:'רעגן',w_drizzle:'שמעקל',w_snow:'שניי',w_thunder:'דונער',w_fog:'נעפּל'},
+ la:{w_clear:'Serenus',w_clouds:'Nubilus',w_rain:'Pluvia',w_drizzle:'Pluvia',w_snow:'Nix',w_thunder:'Tempestas',w_fog:'Nebula'}
+};
+
+/* WMO-код Open-Meteo → ключ погоды. Это и есть "вывод по ID погоды". */
+function weatherKey(code){
+  if(code===0||code===1) return 'w_clear';
+  if(code>=2&&code<=3) return 'w_clouds';
+  if(code===45||code===48) return 'w_fog';
+  if(code>=51&&code<=57) return 'w_drizzle';
+  if((code>=61&&code<=67)||(code>=80&&code<=82)) return 'w_rain';
+  if((code>=71&&code<=77)||(code>=85&&code<=86)) return 'w_snow';
+  if(code>=95&&code<=99) return 'w_thunder';
+  return 'w_clouds';
+}
+/* Перевод берём ТОЛЬКО из WEATHER_FIX (никакого автоперевода). Откат — английский. */
+function weatherDesc(code){
+  const key=weatherKey(code);
+  const wf=WEATHER_FIX[LANG];
+  if(wf&&wf[key]) return wf[key];
+  return WEATHER_FIX['en'][key]||'—';
+}
 
 async function fetchRetry(url,tries=3,signal){
   let lastErr;
@@ -807,6 +934,8 @@ function showCountryNotice(){
   tEl._h=setTimeout(()=>{ tEl.classList.remove('show'); tEl.classList.remove('country'); },5500);
 }
 
+/* ПУНКТ 4: извлекаем также мелкие административные деления (admin2/admin3/admin4
+   = район/округ) и местное название, чтобы различать одинаковые города. */
 function filterPlaces(res,forms){
   let pool=res.filter(p=>!COUNTRY_FC.has(p.feature_code) && !DEAD_CODES.has(p.feature_code));
   const okCode=p=>{const f=p.feature_code||'';
@@ -823,7 +952,7 @@ function filterPlaces(res,forms){
   for(const p of pool){
     const key=(p.latitude!=null?p.latitude.toFixed(2):'?')+'|'+(p.longitude!=null?p.longitude.toFixed(2):'?')+'|'+(p.country_code||'');
     if(seen.has(key)) continue; seen.add(key);
-    out.push({name:p.name,nameEn:p.name_en||p.name,admin:p.admin1||'',country:p.country||'',
+    out.push({name:p.name,nameEn:p.name_en||p.name,admin:p.admin1||'',admin2:p.admin2||'',admin3:p.admin3||'',admin4:p.admin4||'',country:p.country||'',
       countryEn:p.country_en||p.country||'',cc:p.country_code||'',
       lat:p.latitude,lon:p.longitude,tz:p.timezone||'auto',pop:p.population||0,popReal:true});
     if(out.length>=6) break;
@@ -837,7 +966,9 @@ function normNMItem(p){
   return {
     name:p.name||(p.display_name||'').split(',')[0]||'',
     nameEn:nd['name:en']||p.name||'',
-    admin:a.state||a.region||a.province||a.county||a.district||'',
+    admin:a.state||a.region||a.province||'',
+    admin2:a.county||a.district||a.city_district||a.suburb||'',
+    admin3:a.municipality||a.town||'',admin4:'',
     country:a.country||'', countryEn:a.country||'',
     cc:(a.country_code||'').toUpperCase(),
     lat:+p.lat, lon:+p.lon, tz:'auto',
@@ -988,14 +1119,40 @@ function popLabel(p){
   if(pop>=1000) return ' · '+fmt(pop/1000)+' '+t('thous');
   return ' · '+pop;
 }
+
+/* ПУНКТ 4: ДЕТАЛИЗАЦИЯ ОДИНАКОВЫХ ГОРОДОВ.
+   Если есть дубликаты (одинаковые имя+область), дописываем более мелкое
+   деление (admin2/admin3/admin4 = район/округ) или местное название,
+   чтобы кнопки отличались. Если мелких делений нет — оставляем как есть. */
 function showPickBar(items,name){
   $('#pickMsg').textContent=t('pick').replace('__X__','«'+cap(name)+'»');
   const box=$('#pickBtns'); box.innerHTML='';
+  // считаем, сколько раз встречается каждая комбинация имя+область
+  const comboCount={};
+  items.forEach(p=>{
+    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'');
+    comboCount[combo]=(comboCount[combo]||0)+1;
+  });
+  const usedLabels={};
   items.forEach(p=>{
     const b=document.createElement('button'); b.className='pbtn';
-    const where=[p.country&&p.country!==p.name?p.country:'',p.admin&&p.admin!==p.country?p.admin:''].filter(Boolean).join(', ');
+    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'');
+    const isDup=comboCount[combo]>1;
+    let whereParts=[];
+    if(p.country&&p.country!==p.name) whereParts.push(p.country);
+    if(p.admin&&p.admin!==p.country) whereParts.push(p.admin);
+    if(isDup){
+      // дописываем район/округ/местное название, чтобы различить дубли
+      const extra=[p.admin2,p.admin3,p.admin4].find(x=>x&&x!==p.admin&&x!==p.country);
+      if(extra) whereParts.push(extra);
+      else if(p.localName&&p.localName!==p.name) whereParts.push(p.localName);
+    }
+    const where=whereParts.filter(Boolean).join(', ');
     let label=`${p.cc?flag(p.cc)+' ':''}${where||p.name}${popLabel(p)}`;
     if(LANG!=='en'&&p.nameEn&&normStr(p.nameEn)!==normStr(p.name)) label+=` · ${p.nameEn}`;
+    // страховка от полностью одинаковых кнопок
+    if(usedLabels[label]!==undefined){ usedLabels[label]++; label=label+' ('+(usedLabels[label]+1)+')'; }
+    else usedLabels[label]=0;
     b.textContent=label;
     b.addEventListener('click',()=>{ hidePickBar(); hideErr(); loadWeather(p); });
     box.appendChild(b);
@@ -1242,12 +1399,6 @@ function tempColor(tv){
   if(u) u.style.color=tv>=25?'#ffd166':(tv<=0?'#9fdcff':'#eaf2f8');
 }
 
-/* ================== ИСПРАВЛЕНИЕ 2: фиксирование анимации после первого рендера ==================
-   Раньше: при каждом повторном renderAll (смена языка, единиц, города, времени суток)
-   блоки с .reveal заново проигрывали анимацию появления, что на мобилках при скролле
-   давало эффект «прыжков».
-   Теперь: первая отрисовка играет анимацию как положено. Все последующие рендеры просто
-   фиксируют элементы в видимом состоянии — без повторов. */
 function freezeReveals(){
   document.querySelectorAll('.reveal').forEach(el=>{
     el.style.opacity = '1';
@@ -1281,7 +1432,8 @@ function renderAll(data,place){
     if(place.geo) subHtml+=`<span title="GPS">📍 ${(+place.lat).toFixed(2)}°, ${(+place.lon).toFixed(2)}°</span>`;
     $('#citySub').innerHTML=subHtml;
 
-    $('#condText').textContent=t('k_'+wk);
+    /* ПУНКТ 1: статус погоды через внутренний словарь по коду */
+    $('#condText').textContent=weatherDesc(c.weather_code);
     $('#unitLab').textContent='°'+state.unit.toUpperCase();
     animNum($('#tempNow'),c.temperature_2m,dispT);
     tempColor(c.temperature_2m);
@@ -1314,12 +1466,9 @@ function renderAll(data,place){
   safe(()=>renderDetails(data));
   safe(()=>{ $('#updAt').textContent=t('updated')+' '+new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'}); });
 
-  /* ИСПРАВЛЕНИЕ 2: после первого рендера навсегда фиксируем .reveal,
-     чтобы больше никаких перезапусков анимации при скролле/обновлении */
   if(renderAll._seen){
     freezeReveals();
   } else {
-    /* первый рендер — даём анимации проиграться, потом фиксируем */
     setTimeout(freezeReveals, 1500);
   }
   renderAll._seen=true;
@@ -1332,17 +1481,17 @@ function renderHours(data){
   let html='';
   for(let i=idx;i<Math.min(idx+24,h.time.length);i++){
     const wk=WC[h.weather_code[i]]||'over';
-    const kk=KIND[wk];
     const prob=h.precipitation_probability[i];
-    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${t('k_'+wk)}">
+    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${weatherDesc(h.weather_code[i])}">
       <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
-      ${ICON[kk.icon]||ICON.cloud}
+      ${ICON[ICON_BY_WC(h.weather_code[i])]||ICON.cloud}
       <span class="htv">${dispT(h.temperature_2m[i])}°</span>
       <span class="hp">${prob>=15?prob+'%':''}</span>
     </div>`;
   }
   box.innerHTML=html; box.scrollTo({left:0});
 }
+function ICON_BY_WC(code){ const wk=WC[code]||'over'; return KIND[wk]?KIND[wk].icon:'cloud'; }
 
 const MI = {
   drop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3s6 6.6 6 11a6 6 0 1 1-12 0c0-4.4 6-11 6-11z"/></svg>',
@@ -1361,7 +1510,7 @@ function renderDays5(data){
     const hum=hums.length?Math.round(hums.reduce((a,b)=>a+b,0)/hums.length):null;
     const pmm=Math.round((d.pressure_msl_min[i]+d.pressure_msl_max[i])/2*0.750062);
     const prob=d.precipitation_probability_max[i];
-    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${t('k_'+wk)}">
+    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${weatherDesc(d.weather_code[i])}">
       <div class="dhead"><b>${dayName(d.time[i],i)}</b><span>${dateShort(d.time[i])}</span></div>
       <div class="dico">${ICON[kk.icon]||ICON.cloud}</div>
       <div class="dtemps"><b>${dispT(d.temperature_2m_max[i])}°</b><span>${t('night')} ${dispT(d.temperature_2m_min[i])}°</span></div>
