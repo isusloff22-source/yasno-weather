@@ -1431,33 +1431,71 @@ function renderDetails(data){
 }
 
 /* ================== СТАРТ ==================
-   НОВОЕ: сначала показываем погоду, перевод интерфейса — в фоне и с таймаутом,
-   поэтому сайт больше никогда не виснет на загрузке. */
+НОВОЕ: сначала показываем погоду, перевод интерфейса — в фоне и с таймаутом, поэтому сайт больше никогда не виснет на загрузке.
+*/
 (async function init(){
-  setupPWA();
-  buildLangSelect();
-  $('#installBtn').addEventListener('click',async()=>{
-    if(deferredPrompt){
-      deferredPrompt.prompt();
-      const ch=await deferredPrompt.userChoice;
-      if(ch.outcome==='accepted') $('#installBtn').style.display='none';
-      deferredPrompt=null;
-    }else{
-      toast(t('iosHint'));
+    setupPWA();
+    buildLangSelect();
+    
+    $('#installBtn').addEventListener('click',async()=>{
+        if(deferredPrompt){
+            deferredPrompt.prompt();
+            const ch=await deferredPrompt.userChoice;
+            if(ch.outcome==='accepted') $('#installBtn').style.display='none';
+            deferredPrompt=null;
+        }else{
+            toast(t('iosHint'));
+        }
+    });
+
+    applyLang();
+
+    // --- НАЧАЛО БЛОКА ГЕОЛОКАЦИИ ---
+    let saved = null;
+    try { 
+        saved = JSON.parse(localStorage.getItem('atmos-place')); 
+    } catch(e) {}
+
+    // 1. Если пользователь уже выбирал город раньше — берём его из памяти
+    if (saved && saved.lat != null) {
+        loadWeather(saved);
+    } 
+    // 2. Если зашли впервые, спрашиваем разрешение у браузера
+    else if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            // Если пользователь разрешил доступ к ГЕО:
+            (position) => {
+                const geoPlace = {
+                    name: 'Моё местоположение',
+                    nameEn: 'My Location',
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude
+                };
+                loadWeather(geoPlace);
+            },
+            // Если пользователь нажал "Блокировать" или произошла ошибка:
+            () => {
+                console.log("Доступ к гео отклонен, включаем Москву");
+                loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
+            }
+        );
+    } 
+    // 3. Если браузер совсем древний и не поддерживает гео:
+    else {
+        loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
     }
-  });
-  applyLang();
+    // --- КОНЕЦ БЛОКА ГЕОЛОКАЦИИ ---
 
-  let saved=null;
-  try{ saved=JSON.parse(localStorage.getItem('atmos-place')); }catch(e){}
-  if(saved&&saved.lat!=null) loadWeather(saved);
-  else loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
-
-  if(LANG!=='en'){
-    translateDict(LANG)
-      .then(d=>{ STR=d; applyLang(); })
-      .catch(()=>{ STR={...STR_EN}; });
-  }
+    if(LANG!=='en'){
+        translateDict(LANG)
+        .then(d=>{
+            STR=d;
+            applyLang();
+        })
+        .catch(()=>{
+            STR={...STR_EN};
+        });
+    }
 })();
 </script>
 </body>
