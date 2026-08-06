@@ -1426,9 +1426,21 @@ function flag(cc){ try{ return cc.toUpperCase().replace(/./g,c=>String.fromCodeP
 
 function renderHours(data){
   const h=data.hourly, box=$('#hourStrip');
-  let idx=h.time.findIndex(tt=>tt>=data.current.time); if(idx<0) idx=0; idx=Math.max(0,idx-1);
+  
+  // Находим индекс точного текущего часа (округляем время API вниз до начала часа)
+  const currentHourStr = data.current.time.slice(0, 13) + ":00";
+  let idx = h.time.indexOf(currentHourStr);
+  
+  // Фоллбэк, если точное совпадение по каким-то причинам не найдено
+  if (idx < 0) {
+    idx = h.time.findIndex(tt => tt >= data.current.time);
+    if (idx < 0) idx = h.time.length - 1;
+    else if (h.time[idx] > currentHourStr) idx = Math.max(0, idx - 1);
+  }
+  
   let html='';
-  for(let i=idx;i<Math.min(idx+24,h.time.length);i++){
+  // Цикл всегда берет до 24 часов вперед, начиная строго с текущего часа
+  for(let i=idx; i<Math.min(idx+24, h.time.length); i++){
     const wk=WC[h.weather_code[i]]||'over';
     const prob=h.precipitation_probability[i];
     html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${weatherDesc(h.weather_code[i])}">
