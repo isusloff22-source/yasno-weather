@@ -6,6 +6,11 @@
   "background_color": "#0d233a",
   "theme_color": "#0d233a",
   "orientation": "portrait",
+  "scope": "./",
+  "id": "/yasno-weather/",
+  "description": "Yasno - smart weather worldwide",
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "icon-192.png",
