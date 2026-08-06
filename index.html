@@ -1061,6 +1061,26 @@ function cityClock(){
   try{ $('#cityTime').textContent=new Date().toLocaleTimeString(LANG,{timeZone:state.place.tz,hour:'2-digit',minute:'2-digit',second:'2-digit'}); }catch(e){}
 }
 setInterval(cityClock,1000);
+// Автоматический сдвиг плашки "Сейчас" при смене часа
+let _lastRenderedHour = '';
+setInterval(() => {
+  if (!state.data || !state.place) return;
+  try {
+    // Узнаем текущую дату и час в часовом поясе выбранного города
+    const dtf = new Intl.DateTimeFormat('en-US', { 
+      timeZone: state.place.tz, 
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', hour12: false 
+    });
+    const currentDT = dtf.format(new Date());
+    
+    // Если час (или день) сменился — перерисовываем ленту
+    if (currentDT !== _lastRenderedHour) {
+      _lastRenderedHour = currentDT;
+      safe(() => renderHours(state.data));
+    }
+  } catch (e) {}
+}, 30000); // Проверяем каждые 30 секунд
 
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
