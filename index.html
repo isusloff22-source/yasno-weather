@@ -1353,7 +1353,20 @@ function animNum(el,to,fmtFn){
   (function step(tt){ const p=Math.min(1,(tt-t0)/D), e=1-Math.pow(1-p,3);
     el.textContent=fmtFn(start+(to-start)*e); if(p<1) requestAnimationFrame(step); })(t0);
 }
-function cityTimeStr(iso){ try{ return new Date(iso).toLocaleTimeString(LANG,{timeZone:state.place.tz,hour:'2-digit',minute:'2-digit'}); }catch(e){ return String(iso).slice(11,16); } }
+function cityTimeStr(iso){
+  const hm = String(iso).slice(11,16);
+  if(!hm || hm.length<5) return hm||'';
+  try{
+    const probe = new Intl.DateTimeFormat(LANG,{hour:'2-digit',minute:'2-digit'}).format(new Date(2026,0,1,13,0));
+    if(probe.includes('PM')||probe.includes('pm')||probe.includes('م')||probe.includes('ص')){
+      let [hh,mm]=hm.split(':').map(Number);
+      const ampm=hh>=12?'PM':'AM';
+      hh=hh%12||12;
+      return String(hh)+':'+String(mm).padStart(2,'0')+' '+ampm;
+    }
+  }catch(e){}
+  return hm;
+}
 function cap(s){ return s?s[0].toUpperCase()+s.slice(1):s; }
 function dayName(iso,i){ if(i===0) return t('today'); if(i===1) return t('tomorrow');
   try{ return new Date(iso).toLocaleDateString(LANG,{weekday:'short'}); }catch(e){ return iso; } }
