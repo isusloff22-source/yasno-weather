@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- НОВОЕ: манифест прописан статически через Data URL (вместо генерации в JS) -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"Yasno","short_name":"Yasno","start_url":"./index.html","display":"standalone","background_color":"#0d233a","theme_color":"#0d233a","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}'>
 <style>
 :root{
   --ink:#eef7ff; --mut:#a6c3d6; --dim:#7f9bb0;
@@ -1005,46 +1007,13 @@ $('#errRetry').addEventListener('click',()=>{
   if(state.lastPlace) loadWeather(state.lastPlace); else submitSearch();
 });
 
-function makeIcon(size){
-  const c=document.createElement('canvas'); c.width=c.height=size;
-  const x=c.getContext('2d');
-  const g=x.createLinearGradient(0,0,0,size);
-  g.addColorStop(0,'#041e30'); g.addColorStop(.55,'#0c4468'); g.addColorStop(1,'#1f86c0');
-  x.fillStyle=g; x.fillRect(0,0,size,size);
-  const cx=size/2, cy=size/2, r=size*0.21;
-  const sg=x.createRadialGradient(cx-r*0.3,cy-r*0.3,r*0.1,cx,cy,r);
-  sg.addColorStop(0,'#ffe566'); sg.addColorStop(1,'#ffab00');
-  x.fillStyle=sg; x.beginPath(); x.arc(cx,cy,r,0,7); x.fill();
-  x.strokeStyle='#ffc61a'; x.lineCap='round'; x.lineWidth=Math.max(2,size*0.045);
-  for(let i=0;i<8;i++){
-    const a=i*Math.PI/4, r1=r*1.5, r2=r*2.05;
-    x.beginPath();
-    x.moveTo(cx+Math.cos(a)*r1, cy+Math.sin(a)*r1);
-    x.lineTo(cx+Math.cos(a)*r2, cy+Math.sin(a)*r2);
-    x.stroke();
-  }
-  return c.toDataURL('image/png');
-}
+/* ИЗМЕНЕНО: манифест больше НЕ генерируется через JS.
+   Он теперь прописан статически в <head> через Data URL (см. тег <link rel="manifest"> в <head>).
+   Функция оставлена пустой, чтобы не ломать вызов в init(). */
 function setupPWA(){
-  try{
-    const base=location.href.split('#')[0];
-    const manifest={
-      name:'Yasno — smart weather worldwide',
-      short_name:'Yasno',
-      description:'Weather, moon calendar and forecasts for every place on Earth.',
-      start_url:base, scope:base.replace(/[^/]*$/,''),
-      display:'standalone', background_color:'#041e30', theme_color:'#041e30',
-      icons:[
-        {src:'icon-192.png',sizes:'192x192',type:'image/png'},
-        {src:'icon-512.png',sizes:'512x512',type:'image/png'}
-      ]
-    };
-    const link=document.createElement('link');
-    link.rel='manifest';
-    link.href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
-    document.head.appendChild(link);
-  }catch(e){}
+  // Манифест прописан статически в <head> через Data URL.
 }
+
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault(); deferredPrompt=e;
