@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Yasno">
 <title>Yasno — smart weather worldwide</title>
+<meta name="description" content="Yasno — accurate weather forecast for any city, village or island worldwide. Free, no ads, works offline.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -323,6 +324,18 @@ body.night #stars{opacity:1}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+#geoModal{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px}
+#geoModal .geo-back{position:absolute;inset:0;background:rgba(3,11,23,.82);backdrop-filter:blur(8px)}
+#geoModal .geo-box{position:relative;z-index:1;max-width:460px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:24px;padding:28px 26px 24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.geo-icon{font-size:52px;margin-bottom:10px}
+.geo-box h2{font:700 20px/1.3 var(--disp);margin-bottom:10px;color:var(--ink)}
+.geo-box p{font-size:14.5px;color:var(--mut);line-height:1.55;margin-bottom:22px}
+.geo-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.geo-actions button{padding:12px 22px;border-radius:999px;font:600 14px var(--body);border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);cursor:pointer;transition:.2s}
+.geo-actions button:hover{transform:translateY(-2px)}
+#geoAllow{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04;border-color:transparent;box-shadow:0 6px 18px rgba(255,183,3,.3)}
+#geoAllow:hover{box-shadow:0 10px 24px rgba(255,183,3,.42)}
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -355,6 +368,19 @@ body.night #stars{opacity:1}
 <base target="_blank">
 </head>
 <body>
+<div id="geoModal" style="display:none">
+  <div class="geo-back"></div>
+  <div class="geo-box">
+    <div class="geo-icon">📍</div>
+        <h2 data-i18n="geoTitle">Know your location?</h2>
+    <p data-i18n="geoDesc">We use your location to instantly show the weather in your city — accurate forecast, current temperature, wind, humidity and details for the next 5 days. Your coordinates are processed only on your device and are not stored anywhere. If you prefer, you can enter the city manually.</p>
+    <div class="geo-actions">
+      <button id="geoDecline" data-i18n="geoNo">No, thanks</button>
+      <button id="geoAllow" data-i18n="geoOk">Ok</button>
+    </div>
+  </div>
+</div>
+
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -584,6 +610,16 @@ body.night #stars{opacity:1}
 
 <script>
 'use strict';
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline', {status:503}))));`;
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url)
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW failed', err));
+  });
+}
 const LANGS=("en:English|ru:Русский|uk:Українська|be:Беларуская|pl:Polski|cs:Čeština|sk:Slovenčina|sl:Slovenščina|sr:Српски|hr:Hrvatski|bs:Bosanski|mk:Македонски|bg:Български|ro:Română|hu:Magyar|de:Deutsch|nl:Nederlands|fr:Français|es:Español|pt:Português|it:Italiano|ca:Català|gl:Galego|eu:Euskara|sv:Svenska|no:Norsk|da:Dansk|fi:Suomi|is:Íslenska|et:Eesti|lv:Latviešu|lt:Lietuvių|ga:Gaeilge|cy:Cymraeg|gd:Gàidhlig|el:Ελληνικά|tr:Türkçe|az:Azərbaycanca|ka:ქართული|hy:Հայերեն|kk:Қазақша|ky:Кыргызча|uz:Oʻzbekcha|tg:Тоҷикӣ|tk:Türkmençe|mn:Монгол|tt:Татарча|ba:Башҡортса|ar:العربية|he:עברית|fa:فارسی|ur:اردو|ps:پښتو|ku:Kurdî|hi:हिन्दी|bn:বাংলা|pa:ਪੰਜਾਬੀ|gu:ગુજરાતી|mr:मराठी|ne:नेपाली|si:සිංහල|ta:தமிழ்|te:తెలుగు|kn:ಕನ್ನಡ|ml:മലയാളം|or:ଓଡ଼ିଆ|as:অসমীয়া|th:ไทย|lo:ລາວ|km:ខ្មែរ|my:မြန်မာ|vi:Tiếng Việt|id:Bahasa Indonesia|ms:Bahasa Melayu|tl:Filipino|zh:中文|ja:日本語|ko:한국어|sw:Kiswahili|am:አማርኛ|ha:Hausa|yo:Yorùbá|ig:Igbo|zu:isiZulu|xh:isiXhosa|af:Afrikaans|so:Soomaali|rw:Kinyarwanda|mg:Malagasy|ti:ትግርኛ|om:Afaan Oromoo|eo:Esperanto|ht:Kreyòl Ayisyen|jv:Basa Jawa|su:Basa Sunda|ceb:Cebuano|ny:Chichewa|sn:Shona|st:Sesotho|tn:Setswana|lb:Lëtzebuergesch|mt:Malti|sq:Shqip|fy:Frysk|co:Corsu|oc:Occitan|br:Brezhoneg|yi:ייִדיש|la:Latina|bo:བོད་སྐད།|dz:རྫོང་ཁ").split("|").map(s=>{const i=s.indexOf(":");return [s.slice(0,i),s.slice(i+1)];});
 const RTL=new Set(['ar','he','fa','ur','ps','sd','yi','dv','ug']);
 
@@ -623,9 +659,16 @@ const STR_EN={
  moonN5:'Full Moon', moonN6:'Waning Gibbous', moonN7:'Last Quarter', moonN8:'Waning Crescent',
  dirs:'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW',
  install:'Install app', installed:'App installed',
+  geoTitle:'Know your location?',
+ geoDesc:'We use your location to instantly show the weather in your city — accurate forecast, current temperature, wind, humidity and details for the next 5 days. Your coordinates are processed only on your device and are not stored anywhere. If you prefer, you can enter the city manually.',
+ geoOk:'Ok',
+ geoNo:'No, thanks',
+
  iosHint:'On iPhone/iPad: Share → "Add to Home Screen"'
 };
 let STR={...STR_EN};
+function t(key){ return STR[key] || STR_EN[key] || key; }
+function dirsArr(){ return (STR.dirs || STR_EN.dirs || 'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW').split(','); }
 
 const WEATHER_FIX={
  en:{w_clear:'Clear',w_clouds:'Clouds',w_rain:'Rain',w_drizzle:'Drizzle',w_snow:'Snow',w_thunder:'Thunderstorm',w_fog:'Fog'},
@@ -777,40 +820,57 @@ async function fetchRetry(url,tries=3,signal){
   }
   throw lastErr;
 }
-
 async function translateDict(code){
+  if(code==='en') return {...STR_EN};
+  
+  // 1. Проверяем кэш
   try{
     const c=localStorage.getItem('yasno-tr-'+code);
-    if(c){ const d=JSON.parse(c); if(d&&d.__ok) return d; }
-  }catch(e){}
-  const keys=Object.keys(STR_EN);
-  const joined=keys.map(k=>STR_EN[k]).join('\n');
-  const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='
-    +encodeURIComponent(code)+'&dt=t&q='+encodeURIComponent(joined);
-  const r=await fetchRetry(url,1);
-  const j=await r.json();
-  let out=''; (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
-  const parts=out.split('\n');
-  if(parts.length!==keys.length) throw new Error('translate-mismatch');
-  const d={__ok:1};
-  keys.forEach((k,i)=>{ d[k]=(parts[i]||'').trim()||STR_EN[k]; });
-  try{ localStorage.setItem('yasno-tr-'+code, JSON.stringify(d)); }catch(e){}
-  return d;
+    if(c){ 
+      const d=JSON.parse(c); 
+      if(d && d.__ok) return d; 
+    }
+  }catch(e){ /* ignore corrupt cache */ }
+  
+  // 2. Пытаемся перевести через Google
+  try{
+    const keys=Object.keys(STR_EN);
+    const joined=keys.map(k=>STR_EN[k]).join('\n');
+    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='
+      +encodeURIComponent(code)+'&dt=t&q='+encodeURIComponent(joined);
+    const r=await fetchRetry(url,1);
+    const j=await r.json();
+    let out=''; 
+    (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
+    const parts=out.split('\n');
+    if(parts.length!==keys.length) throw new Error('translate-mismatch');
+    
+    const d={__ok:1};
+    keys.forEach((k,i)=>{ d[k]=(parts[i]||'').trim()||STR_EN[k]; });
+    
+    try{ 
+      localStorage.setItem('yasno-tr-'+code, JSON.stringify(d)); 
+    }catch(e){ /* ignore quota error */ }
+    
+    return d;
+  }catch(e){
+    // 3. Жёсткий fallback — если Google недоступен, возвращаем английский
+    console.warn('Translation failed for', code, e);
+    return {...STR_EN, __ok:1};
+  }
 }
-function t(k){ return (STR&&STR[k])||STR_EN[k]||k; }
-function dirsArr(){
-  const a=(STR.dirs||'').split(',').map(s=>s.trim());
-  return a.length===16?a:STR_EN.dirs.split(',');
-}
-
 async function translateToEn(text){
   try{
     const r=await fetchRetry('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q='+encodeURIComponent(text),1);
     const j=await r.json();
-    let out=''; (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
+    let out=''; 
+    (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
     out=out.trim().replace(/[«»".,!?]+$/,'');
     return out||null;
-  }catch(e){ return null; }
+  }catch(e){
+    console.warn('Translation failed for', text);
+    return null;
+  }
 }
 function hasNonLatin(s){ return /[^\u0000-\u024f\u1e00-\u1eff\s'’\-.,()]/.test(s); }
 
@@ -1008,13 +1068,6 @@ $('#errRetry').addEventListener('click',()=>{
   if(state.lastPlace) loadWeather(state.lastPlace); else submitSearch();
 });
 
-/* ИЗМЕНЕНО: манифест больше НЕ генерируется через JS.
-   Он теперь прописан статически в <head> через Data URL (см. тег <link rel="manifest"> в <head>).
-   Функция оставлена пустой, чтобы не ломать вызов в init(). */
-function setupPWA(){
-  // Манифест прописан статически в <head> через Data URL.
-}
-
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault(); deferredPrompt=e;
@@ -1188,7 +1241,7 @@ async function geocode(name){
   const nm1=await nmSearch(name);
   if(nm1){ nmOk=true; nmRaw.push(...nm1); }
   if(variants[1]){
-    await new Promise(s=>setTimeout(s,250));
+    await new Promise(s=>setTimeout(s,1100));
     const nm2=await nmSearch(variants[1]);
     if(nm2){ nmOk=true;
       for(const p of nm2){
@@ -1251,8 +1304,8 @@ async function submitSearch(){
   toast(t('notFound').replace('__X__',name));
 }
 
-$('#geo').addEventListener('click',()=>{
-  if(!navigator.geolocation){ toast('Geolocation not supported'); return; }
+function requestGeo(){
+  if(!navigator.geolocation){ toast('Geolocation not supported'); q.focus(); return; }
   const btn=$('#geo'); btn.classList.add('spin');
   navigator.geolocation.getCurrentPosition(async pos=>{
     const {latitude:la,longitude:lo}=pos.coords;
@@ -1266,7 +1319,26 @@ $('#geo').addEventListener('click',()=>{
       btn.classList.remove('spin');
       loadWeather({name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'});
     }
-  },()=>{ btn.classList.remove('spin'); toast('Location unavailable'); },{timeout:9000});
+  },()=>{ btn.classList.remove('spin'); toast('Location unavailable'); q.focus(); },{timeout:9000});
+}
+$('#geo').addEventListener('click',requestGeo);
+
+function showGeoModal(){
+  document.getElementById('splash-screen').classList.add('hidden');
+  $('#geoModal').style.display='flex';
+}
+function hideGeoModal(){
+  $('#geoModal').style.display='none';
+}
+$('#geoAllow').addEventListener('click',()=>{ 
+    try { localStorage.setItem('yasno-geo-asked','1'); } catch(e){}
+    hideGeoModal(); 
+    requestGeo(); 
+});
+$('#geoDecline').addEventListener('click',()=>{ 
+    try { localStorage.setItem('yasno-geo-asked','1'); } catch(e){}
+    hideGeoModal(); 
+    q.focus(); 
 });
 
 $('#unit').addEventListener('click',e=>{
@@ -1405,7 +1477,7 @@ function renderAll(data,place){
   cityClock();
 
   safe(()=>{
-    const primary = LANG==='en' ? (place.nameEn||place.name) : (place.name||place.nameEn);
+    const primary = LANG==='en' ? (place.nameEn||place.name||'') : (place.name||place.nameEn||'');
     if(place.geo&&place.geoCity){
       $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}:</span> ${place.geoCity}`;
     }else if(place.geo){
@@ -1633,9 +1705,7 @@ function renderDetails(data){
   $('#sunPct').textContent=fmt(sunPct)+'%';
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
 }
-
 (async function init(){
-    setupPWA();
     buildLangSelect();
     
     $('#installBtn').addEventListener('click',async()=>{
@@ -1656,28 +1726,15 @@ function renderDetails(data){
         saved = JSON.parse(localStorage.getItem('atmos-place')); 
     } catch(e) {}
 
-    if (saved && saved.lat != null) {
+    const geoAsked = (()=>{ try{ return localStorage.getItem('yasno-geo-asked')==='1'; }catch(e){ return false; } })();
+
+    if (!geoAsked) {
+        showGeoModal();
+    } else if (saved && saved.lat != null) {
         loadWeather(saved);
-    } 
-    else if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const geoPlace = {
-                    name: 'Моё местоположение',
-                    nameEn: 'My Location',
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude
-                };
-                loadWeather(geoPlace);
-            },
-            () => {
-                console.log("Доступ к гео отклонен, включаем Москву");
-                loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
-            }
-        );
-    } 
-    else {
-        loadWeather({name:'Москва',nameEn:'Moscow',admin:'Московская область',country:'Россия',cc:'RU',lat:55.7522,lon:37.6156,tz:'Europe/Moscow'});
+    } else {
+        document.getElementById('splash-screen').classList.add('hidden');
+        q.focus();
     }
 
     if(LANG!=='en'){
@@ -1690,6 +1747,9 @@ function renderDetails(data){
             STR={...STR_EN};
         });
     }
+    setTimeout(() => {
+        document.getElementById('splash-screen')?.classList.add('hidden');
+    }, 8000);
 })();
 </script>
 </body>
