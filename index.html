@@ -334,6 +334,10 @@ body.night #stars{opacity:1}
 .geo-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .geo-actions button{padding:12px 22px;border-radius:999px;font:600 14px var(--body);border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);cursor:pointer;transition:.2s}
 .geo-actions button:hover{transform:translateY(-2px)}
+.geo-lang{margin-bottom:16px}
+#geoLangSel{appearance:none;-webkit-appearance:none;width:100%;max-width:240px;padding:10px 34px 10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 12px center;color:var(--ink);font:600 13px var(--mono);cursor:pointer;transition:.25s}
+#geoLangSel:hover{border-color:rgba(255,209,102,.5)}
+#geoLangSel option{background:#0a1a28;color:#eef7ff}
 #geoAllow{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04;border-color:transparent;box-shadow:0 6px 18px rgba(255,183,3,.3)}
 #geoAllow:hover{box-shadow:0 10px 24px rgba(255,183,3,.42)}
 #splash-screen {
@@ -372,7 +376,10 @@ body.night #stars{opacity:1}
   <div class="geo-back"></div>
   <div class="geo-box">
     <div class="geo-icon">📍</div>
-        <h2 data-i18n="geoTitle">Know your location?</h2>
+            <div class="geo-lang">
+      <select id="geoLangSel" title="Language"></select>
+    </div>
+    <h2 data-i18n="geoTitle">Know your location?</h2>
     <p data-i18n="geoDesc">We use your location to instantly show the weather in your city — accurate forecast, current temperature, wind, humidity and details for the next 5 days. Your coordinates are processed only on your device and are not stored anywhere. If you prefer, you can enter the city manually.</p>
     <div class="geo-actions">
       <button id="geoDecline" data-i18n="geoNo">No, thanks</button>
@@ -1362,6 +1369,21 @@ function buildLangSelect(){
     catch(err){ STR={...STR_EN}; toast('Translation unavailable — English'); }
     applyLang();
   });
+  
+  const geoSel=$('#geoLangSel');
+  if(geoSel){
+    geoSel.innerHTML=LANGS.map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
+    geoSel.value=LANG;
+    geoSel.addEventListener('change',async e=>{
+      const code=e.target.value;
+      LANG=code;
+      try{ localStorage.setItem('yasno-lang',code); }catch(err){}
+      if(code==='en'){ STR={...STR_EN}; applyLang(); return; }
+      try{ STR=await translateDict(code); }
+      catch(err){ STR={...STR_EN}; }
+      applyLang();
+    });
+  }
 }
 
 function applyLang(){
@@ -1370,7 +1392,8 @@ function applyLang(){
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
-  $('#langSel').value=LANG;
+    $('#langSel').value=LANG;
+  const geoSel=$('#geoLangSel'); if(geoSel) geoSel.value=LANG;
   $('#unit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.u===state.unit));
   $('#installBtn').title=t('install');
   const da=dirsArr();
