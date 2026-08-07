@@ -353,6 +353,7 @@ body.night #stars{opacity:1}
 }
 #splash-screen.hidden { opacity: 0; visibility: hidden; }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -1102,21 +1103,27 @@ function showPickBar(items,name){
   const box=$('#pickBtns'); box.innerHTML='';
   const comboCount={};
   items.forEach(p=>{
-    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'');
+    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'')+'|'+(p.country||'');
     comboCount[combo]=(comboCount[combo]||0)+1;
   });
   const usedLabels={};
   items.forEach(p=>{
     const b=document.createElement('button'); b.className='pbtn';
-    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'');
+    const combo=normStr(p.name||'')+'|'+normStr(p.admin||'')+'|'+(p.country||'');
     const isDup=comboCount[combo]>1;
     let whereParts=[];
     if(p.country&&p.country!==p.name) whereParts.push(p.country);
     if(p.admin&&p.admin!==p.country) whereParts.push(p.admin);
     if(isDup){
-      const extra=[p.admin2,p.admin3,p.admin4].find(x=>x&&x!==p.admin&&x!==p.country);
-      if(extra) whereParts.push(extra);
-      else if(p.localName&&p.localName!==p.name) whereParts.push(p.localName);
+      // Для тёзок показываем все доступные конкретные детали (район, округ, станция...)
+      [p.admin2,p.admin3,p.admin4].forEach(x=>{
+        if(x && x!==p.admin && x!==p.country && !whereParts.includes(x)) whereParts.push(x);
+      });
+      // Если ничего конкретного нет — фоллбэк на координаты
+      const hasSpecific = [p.admin2,p.admin3,p.admin4].some(x => x && whereParts.includes(x));
+      if(!hasSpecific){
+        whereParts.push(`${(+p.lat).toFixed(2)}°, ${(+p.lon).toFixed(2)}°`);
+      }
     }
     const where=whereParts.filter(Boolean).join(', ');
     let label=`${p.cc?flag(p.cc)+' ':''}${where||p.name}${popLabel(p)}`;
