@@ -3,6 +3,7 @@
   "short_name": "Yasno",
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0d233a",
   "theme_color": "#0d233a",
   "orientation": "portrait",
@@ -11,16 +12,34 @@
   "description": "Yasno - smart weather worldwide",
   "lang": "en",
   "dir": "ltr",
+  "categories": ["weather", "utilities"],
   "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "screenshots": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Current weather in Yasno"
     },
     {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "5-day forecast and details"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My Location",
+      "short_name": "Location",
+      "description": "Show weather for current location",
+      "url": "./?action=geo",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
