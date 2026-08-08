@@ -1276,7 +1276,9 @@ async function nmSearch(qq){
     const j=await r.json(); return (j&&j.length)?j:[];
   }catch(e){ return null; }
 }
-
+async function translateToEn(text){
+  return null;
+}
 async function geocode(name){
   if(isCountryName(name)) return {country:true};
   const nq=normStr(name);
