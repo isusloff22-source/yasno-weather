@@ -95,12 +95,12 @@ body.night #stars{opacity:1}
 .logo small{display:block;font:400 10.5px var(--body);letter-spacing:.24em;text-transform:uppercase;color:var(--mut);margin-top:4px}
 .searchRow{display:flex;gap:10px;flex:1;min-width:260px;max-width:640px}
 .search{position:relative;flex:1}
-.search>svg{position:absolute;left:15px;top:50%;translate:0 -50%;width:17px;height:17px;color:var(--mut);pointer-events:none}
+.search>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--mut);pointer-events:none}
 #q{width:100%;padding:13px 46px 13px 42px;border-radius:999px;border:1px solid var(--line);
   background:rgba(6,18,30,.55);color:var(--ink);font:500 15px var(--body);transition:.25s}
 #q::placeholder{color:var(--dim)}
 #q:focus{outline:none;border-color:rgba(255,209,102,.55);box-shadow:0 0 0 4px rgba(255,209,102,.13);background:rgba(6,18,30,.75)}
-#clear{position:absolute;right:8px;top:50%;translate:0 -50%;width:30px;height:30px;border-radius:50%;
+#clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;
   color:var(--mut);font-size:17px;display:none;transition:.2s}
 #clear:hover{background:rgba(255,255,255,.1);color:#fff}
 #clear.show{display:block}
@@ -619,10 +619,7 @@ body.night #stars{opacity:1}
 'use strict';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swCode = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline', {status:503}))));`;
-    const blob = new Blob([swCode], {type:'application/javascript'});
-    const url = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(url)
+    navigator.serviceWorker.register('./sw.js')
       .then(reg => console.log('SW registered'))
       .catch(err => console.log('SW failed', err));
   });
@@ -827,57 +824,12 @@ async function fetchRetry(url,tries=3,signal){
   }
   throw lastErr;
 }
-async function translateDict(code){
+  async function translateDict(code){
   if(code==='en') return {...STR_EN};
-  
-  // 1. Проверяем кэш
-  try{
-    const c=localStorage.getItem('yasno-tr-'+code);
-    if(c){ 
-      const d=JSON.parse(c); 
-      if(d && d.__ok) return d; 
-    }
-  }catch(e){ /* ignore corrupt cache */ }
-  
-  // 2. Пытаемся перевести через Google
-  try{
-    const keys=Object.keys(STR_EN);
-    const joined=keys.map(k=>STR_EN[k]).join('\n');
-    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='
-      +encodeURIComponent(code)+'&dt=t&q='+encodeURIComponent(joined);
-    const r=await fetchRetry(url,1);
-    const j=await r.json();
-    let out=''; 
-    (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
-    const parts=out.split('\n');
-    if(parts.length!==keys.length) throw new Error('translate-mismatch');
-    
-    const d={__ok:1};
-    keys.forEach((k,i)=>{ d[k]=(parts[i]||'').trim()||STR_EN[k]; });
-    
-    try{ 
-      localStorage.setItem('yasno-tr-'+code, JSON.stringify(d)); 
-    }catch(e){ /* ignore quota error */ }
-    
-    return d;
-  }catch(e){
-    // 3. Жёсткий fallback — если Google недоступен, возвращаем английский
-    console.warn('Translation failed for', code, e);
-    return {...STR_EN, __ok:1};
-  }
+  return {...STR_EN, __ok:1};
 }
-async function translateToEn(text){
-  try{
-    const r=await fetchRetry('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q='+encodeURIComponent(text),1);
-    const j=await r.json();
-    let out=''; 
-    (j[0]||[]).forEach(sg=>{ out+=(sg&&sg[0])||''; });
-    out=out.trim().replace(/[«»".,!?]+$/,'');
-    return out||null;
-  }catch(e){
-    console.warn('Translation failed for', text);
-    return null;
-  }
+  async function translateToEn(text){
+  return null;
 }
 function hasNonLatin(s){ return /[^\u0000-\u024f\u1e00-\u1eff\s'’\-.,()]/.test(s); }
 
@@ -1108,6 +1060,8 @@ function setStorm(on){
   if(on){ flashTimer=setTimeout(loop,1200); } else el.classList.remove('flash');
 }
 function setScene(k,isDay){
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if(metaTheme) metaTheme.setAttribute('content', getComputedStyle(document.body).getPropertyValue('--sky1').trim() || '#041e30');
   document.body.classList.remove('wx-2','wx-3','wx-45','wx-48','wx-rain','wx-frz','wx-snow','wx-storm','night');
   if(!isDay) document.body.classList.add('night');
   if(k.cls) document.body.classList.add(k.cls);
@@ -1499,19 +1453,21 @@ function renderAll(data,place){
   safe(()=>setScene(k,isDay));
   cityClock();
 
-  safe(()=>{
+    safe(()=>{
+    function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     const primary = LANG==='en' ? (place.nameEn||place.name||'') : (place.name||place.nameEn||'');
     if(place.geo&&place.geoCity){
-      $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}:</span> ${place.geoCity}`;
+      $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}:</span> `;
+      $('#cityName').insertAdjacentText('beforeend', esc(place.geoCity));
     }else if(place.geo){
       $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}</span>`;
     }else{
       $('#cityName').textContent=primary;
     }
     const sub=[place.admin,place.country].filter(Boolean).join(' · ');
-    let subHtml=`<span>${flag(place.cc)}</span><span>${sub||t('coords')+': '+(+place.lat).toFixed(2)+'°, '+(+place.lon).toFixed(2)+'°'}</span>`;
+    let subHtml=`<span>${flag(place.cc)}</span><span>${esc(sub)||t('coords')+': '+(+place.lat).toFixed(2)+'°, '+(+place.lon).toFixed(2)+'°'}</span>`;
     if(LANG!=='en' && place.nameEn && normStr(place.nameEn)!==normStr(place.name)){
-      subHtml+=`<span class="enName">· ${place.nameEn}</span>`;
+      subHtml+=`<span class="enName">· ${esc(place.nameEn)}</span>`;
     }
     if(place.geo) subHtml+=`<span title="GPS">📍 ${(+place.lat).toFixed(2)}°, ${(+place.lon).toFixed(2)}°</span>`;
     $('#citySub').innerHTML=subHtml;
@@ -1577,7 +1533,7 @@ function renderHours(data){
   for(let i=idx; i<Math.min(idx+24, h.time.length); i++){
     const wk=WC[h.weather_code[i]]||'over';
     const prob=h.precipitation_probability[i];
-    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${weatherDesc(h.weather_code[i])}">
+    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${(weatherDesc(h.weather_code[i])||'').replace(/"/g,'&quot;')}">
       <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
       ${ICON[ICON_BY_WC(h.weather_code[i])]||ICON.cloud}
       <span class="htv">${dispT(h.temperature_2m[i])}°</span>
@@ -1605,7 +1561,7 @@ function renderDays5(data){
     const hum=hums.length?Math.round(hums.reduce((a,b)=>a+b,0)/hums.length):null;
     const pmm=Math.round((d.pressure_msl_min[i]+d.pressure_msl_max[i])/2*0.750062);
     const prob=d.precipitation_probability_max[i];
-    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${weatherDesc(d.weather_code[i])}">
+    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${(weatherDesc(d.weather_code[i])||'').replace(/"/g,'&quot;')}">
       <div class="dhead"><b>${dayName(d.time[i],i)}</b><span>${dateShort(d.time[i])}</span></div>
       <div class="dico">${ICON[kk.icon]||ICON.cloud}</div>
       <div class="dtemps"><b>${dispT(d.temperature_2m_max[i])}°</b><span>${t('night')} ${dispT(d.temperature_2m_min[i])}°</span></div>
@@ -1724,7 +1680,7 @@ function renderDetails(data){
     $('#visVal').textContent=vis>=1000?(vis/1000).toFixed(vis>=10000?0:1).replace('.',',')+' '+t('km'):fmt(vis)+' '+t('m');
     $('#visLbl').textContent=vis>=10000?t('visL1'):vis>=4000?t('visL2'):vis>=1000?t('visL3'):t('visL4');
   }
-  const sunPct=d.sunshine_duration[0]/Math.max(d.daylight_duration[0],1)*100;
+  const sunPct=Math.min(100, d.sunshine_duration[0]/Math.max(d.daylight_duration[0],1)*100);
   $('#sunPct').textContent=fmt(sunPct)+'%';
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
 }
@@ -1770,9 +1726,6 @@ function renderDetails(data){
             STR={...STR_EN};
         });
     }
-    setTimeout(() => {
-        document.getElementById('splash-screen')?.classList.add('hidden');
-    }, 8000);
 })();
 </script>
 </body>
