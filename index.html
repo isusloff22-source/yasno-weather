@@ -671,6 +671,127 @@ const STR_EN={
  iosHint:'On iPhone/iPad: Share → "Add to Home Screen"'
 };
 let STR={...STR_EN};
+// ========== ВСТРОЕННЫЕ ТОЧНЫЕ ПЕРЕВОДЫ ==========
+const I18N = {
+  ru: {
+    tagline:'умная погода · по всему миру', ph:'Город, деревня, остров, регион…',
+    find:'Поиск', searching:'Поиск…',
+    hours:'Ближайшие часы', now:'Сейчас',
+    d5:'Прогноз на 5 дней', d5sub:'по ощущениям · влажность · давление',
+    week:'Температура · неделя', weeksub:'дневная и по ощущениям',
+    legDay:'дневная', legFeel:'по ощущениям',
+    wind:'Ветер', hum:'Влажность', press:'Давление', uv:'УФ-индекс', prec:'Осадки (24 ч)', vis:'Видимость',
+    feels:'Ощущается как', precS:'Осадки', night:'ночью',
+    sun:'Солнце', sunrise:'Восход', sunset:'Закат',
+    dew:'Точка росы', range:'диапазон 24 ч', clear:'Ясное небо',
+    prob:'вероятность до', snow:'Снег',
+    moon:'Лунный календарь', illum:'Освещённость', age:'возраст', days:'дней',
+    moonrise:'Восход луны', moonset:'Закат луны',
+    moonSouthNote:'Южное полушарие — Луна выглядит зеркально',
+    yourPlace:'Ваше местоположение',
+    country:'Вы ввели страну. Укажите конкретный город, регион или остров внутри неё.',
+    notFound:'Место не найдено: __X__. Проверьте написание.',
+    pick:'Найдено несколько мест с названием __X__. Выберите одно:',
+    netErr:'Нет связи с сервером погоды. Проверьте интернет или нажмите Повторить.',
+    retry:'Повторить', updated:'Обновлено:',
+    foot:'Поиск по двум мировым базам: Open-Meteo + OpenStreetMap',
+    thous:'тыс. чел.', mln:'млн чел.',
+    today:'Сегодня', tomorrow:'Завтра',
+    kmh:'км/ч', mmhg:'мм рт.ст.', hpa:'гПа', mm:'мм', cm:'см', km:'км', m:'м',
+    hShort:'ч', minShort:'мин',
+    gust:'порывы до', toNoon:'к полудню до', coords:'координаты',
+    visL1:'отличная', visL2:'хорошая', visL3:'умеренная', visL4:'плохая',
+    uvL1:'Низкий', uvL2:'Умеренный', uvL3:'Высокий', uvL4:'Очень высокий', uvL5:'Экстремальный',
+    moonN1:'Новолуние', moonN2:'Растущий серп', moonN3:'Первая четверть', moonN4:'Растущая луна',
+    moonN5:'Полнолуние', moonN6:'Убывающая луна', moonN7:'Последняя четверть', moonN8:'Убывающий серп',
+    dirs:'С,ССВ,СВ,ВСВ,В,ВЮВ,ЮВ,ЮЮВ,Ю,ЮЮЗ,ЮЗ,ЗЮЗ,З,ЗСЗ,СЗ,ССЗ',
+    install:'Установить приложение', installed:'Приложение установлено',
+    geoTitle:'Узнать ваше местоположение?',
+    geoDesc:'Мы используем ваше местоположение, чтобы мгновенно показать погоду в вашем городе — точный прогноз, текущая температура, ветер, влажность и детали на 5 дней вперёд. Координаты обрабатываются только на вашем устройстве и никуда не сохраняются. Если хотите, можете ввести город вручную.',
+    geoOk:'Ок', geoNo:'Нет, спасибо',
+    iosHint:'На iPhone/iPad: Поделиться → «На экран Домой»'
+  }
+};
+
+// ========== АВТОПЕРЕВОД НА ЛЮБОЙ ЯЗЫК ==========
+async function fetchGoogleTranslate(targetLang, sourceDict) {
+  const keys = [];
+  const values = [];
+  const escapePh = s => s.replace(/__X__/g, '<x>');
+  const restorePh = s => s.replace(/<x>/gi, '__X__');
+
+  for (const [k, v] of Object.entries(sourceDict)) {
+    keys.push(k);
+    // Направления ветра не трогаем — иначе компас сломается
+    values.push(k === 'dirs' ? v : escapePh(v));
+  }
+
+  const q = values.join('\n');
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(q)}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  if (!data || !data[0]) throw new Error('Bad response');
+
+  let translatedText = '';
+  for (const part of data[0]) {
+    if (part[0]) translatedText += part[0];
+  }
+
+  const translatedValues = translatedText.split('\n');
+  if (translatedValues.length !== values.length) {
+    return await fetchGoogleTranslateOneByOne(targetLang, sourceDict);
+  }
+
+  const result = { __ok: 1 };
+  keys.forEach((k, i) => {
+    result[k] = restorePh(translatedValues[i] || sourceDict[k]);
+  });
+  return result;
+}
+
+async function fetchGoogleTranslateOneByOne(targetLang, sourceDict) {
+  const result = { __ok: 1 };
+  const escapePh = s => s.replace(/__X__/g, '<x>');
+  const restorePh = s => s.replace(/<x>/gi, '__X__');
+
+  for (const [k, v] of Object.entries(sourceDict)) {
+    if (k === 'dirs') { result[k] = v; continue; }
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(escapePh(v))}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      result[k] = restorePh(data[0][0][0]);
+      await new Promise(r => setTimeout(r, 80));
+    } catch (e) {
+      result[k] = v;
+    }
+  }
+  return result;
+}
+
+async function translateDict(code){
+  if(code==='en') return {...STR_EN};
+  if(I18N[code]) return {...I18N[code]};
+
+  try {
+    const cached = localStorage.getItem('yasno-dict-' + code);
+    if (cached) return {...JSON.parse(cached)};
+  } catch(e){}
+
+  try {
+    const dict = await fetchGoogleTranslate(code, STR_EN);
+    if (dict && dict.__ok) {
+      try { localStorage.setItem('yasno-dict-' + code, JSON.stringify(dict)); } catch(e){}
+      return dict;
+    }
+  } catch(e) {
+    console.warn('Auto-translate failed for', code, e);
+  }
+
+  return {...STR_EN, __fallback:1};
+}
 function t(key){ return STR[key] || STR_EN[key] || key; }
 function dirsArr(){ return (STR.dirs || STR_EN.dirs || 'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW').split(','); }
 
@@ -823,13 +944,6 @@ async function fetchRetry(url,tries=3,signal){
     if(i<tries-1) await new Promise(s=>setTimeout(s,700*(i+1)));
   }
   throw lastErr;
-}
-  async function translateDict(code){
-  if(code==='en') return {...STR_EN};
-  return {...STR_EN, __ok:1};
-}
-  async function translateToEn(text){
-  return null;
 }
 function hasNonLatin(s){ return /[^\u0000-\u024f\u1e00-\u1eff\s'’\-.,()]/.test(s); }
 
@@ -1318,12 +1432,11 @@ function buildLangSelect(){
     LANG=code;
     try{ localStorage.setItem('yasno-lang',code); }catch(err){}
     if(code==='en'){ STR={...STR_EN}; applyLang(); return; }
-    toast('🌐 '+t('searching'));
+    toast('🌐 Translating…');
     try{ STR=await translateDict(code); }
     catch(err){ STR={...STR_EN}; toast('Translation unavailable — English'); }
     applyLang();
-  });
-  
+  });  
   const geoSel=$('#geoLangSel');
   if(geoSel){
     geoSel.innerHTML=LANGS.map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
@@ -1698,6 +1811,14 @@ function renderDetails(data){
         }
     });
 
+    // Загружаем словарь ПЕРЕД первым рендером
+    if(LANG!=='en'){
+        try {
+            STR = await translateDict(LANG);
+        } catch(e) {
+            STR = {...STR_EN};
+        }
+    }
     applyLang();
 
     let saved = null;
@@ -1714,17 +1835,6 @@ function renderDetails(data){
     } else {
         document.getElementById('splash-screen').classList.add('hidden');
         q.focus();
-    }
-
-    if(LANG!=='en'){
-        translateDict(LANG)
-        .then(d=>{
-            STR=d;
-            applyLang();
-        })
-        .catch(()=>{
-            STR={...STR_EN};
-        });
     }
 })();
 </script>
