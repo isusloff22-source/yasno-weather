@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.isusloff22_source.twa",
-        "sha256_cert_fingerprints": ["38:C0:94:CA:62:84:79:9C:A0:80:60:26:27:FF:EE:F4:3F:03:97:50:50:1D:9B:40:9B:B2:79:FB:8A:AD:45:EA"]
-      }
-    }]
