@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "io.github.isusloff22_source.twa",
-        "sha256_cert_fingerprints": ["B5:89:B8:31:D8:38:B2:82:A7:55:09:75:61:F1:53:F5:9F:70:23:DB:AD:09:C4:E3:76:10:61:BE:AC:B4:53:D9"]
+        "package_name": "com.github.isusloff22_source.yasno_weather"
+        "sha256_cert_fingerprints": ["22:B3:9C:68:1D:AF:3E:EA:AA:31:9A:86:1F:A6:82:9D:DE:CE:3F:58:9B:AD:EE:63:E3:73:3C:47:F6:91:72:F2"]
       }
     }]
