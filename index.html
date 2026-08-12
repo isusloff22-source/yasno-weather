@@ -851,7 +851,6 @@ async function fetchGoogleTranslate(targetLang, sourceDict) {
 
   for (const [k, v] of Object.entries(sourceDict)) {
     keys.push(k);
-    // Направления ветра не трогаем — иначе компас сломается
     values.push(k === 'dirs' ? v : escapePh(v));
   }
 
@@ -1298,7 +1297,7 @@ function setPrecip(rain,snow){
 let flashTimer=null;
 function setStorm(on){
   const el=$('#lightning'); clearTimeout(flashTimer);
-  const loop=()=>{ if(!on&&RM) return; if(!on) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  const loop=()=>{ if(!on) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     flashTimer=setTimeout(loop, 3500+Math.random()*6500); };
   if(on){ flashTimer=setTimeout(loop,1200); } else el.classList.remove('flash');
 }
@@ -1318,7 +1317,6 @@ function cityClock(){
   try{ $('#cityTime').textContent=new Date().toLocaleTimeString(LANG,{timeZone:state.place.tz,hour:'2-digit',minute:'2-digit',second:'2-digit'}); }catch(e){}
 }
 setInterval(cityClock,1000);
-// Автоматический сдвиг плашки "Сейчас" при смене часа
 let _lastRenderedHour = '';
 setInterval(() => {
   if (!state.data || !state.place) return;
@@ -2000,22 +1998,22 @@ const PRIVACY_EN = {
   p3a:'If you allow geolocation, your device coordinates are used only to fetch the weather for your current city.',
   p3l1:'Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.',
   p3l2:'We do not save your location anywhere — not on a server, not in analytics.',
-  p3l3:'You can always disable location in your browser settings or type the city manually.',
+  p3l3:'You can always disable location in your device settings or type the city manually.',
   p4t:'4. Weather data',
   p4a:'Forecast is loaded from the free open service Open-Meteo. Geocoding (city search) uses OpenStreetMap Nominatim.',
   p4b:'These services see only the coordinates or the city name you are searching for. They do not receive any identifier tied to you personally.',
   p5t:'5. Local storage',
-  p5a:'Yasno stores only in the browser localStorage on your device:',
+  p5a:'Yasno stores data only locally on your device:',
   p5l1:'Selected language',
   p5l2:'Temperature unit (°C / °F)',
   p5l3:'Last searched city — to open it again next time',
   p5l4:'Your consent to this Privacy Policy',
-  p5b:'This data never leaves your device. You can delete it at any time by clearing the site data in your browser.',
+  p5b:'This data never leaves your device. You can delete it at any time by clearing the app data in your device settings.',
   p6t:'6. Automatic translation',
   p6a:'For languages that do not have a hand-written translation, Yasno may use Google Translate API to translate interface strings.',
   p6b:'Only short UI labels are sent for translation — never your search queries, location or any user data.',
   p7t:'7. Children',
-  p7a:'Yasno does not knowingly collect any data from anyone, including children. The app is safe for users of all ages.',
+  p7a:'Yasno does not knowingly collect any data from anyone, including children under the age specified by applicable local regulations. Age rating may vary by region.',
   p8t:'8. Changes to this policy',
   p8a:'If this policy changes, we will update the "Last updated" date above. Continued use of the app means you accept the new version.',
   p9t:'9. Contact',
@@ -2043,22 +2041,22 @@ const PRIVACY_RU = {
   p3a:'Если вы разрешаете геолокацию, координаты вашего устройства используются только для получения погоды в вашем текущем городе.',
   p3l1:'Координаты отправляются напрямую с вашего устройства в погодный API (Open-Meteo) — они никогда не проходят через наши серверы.',
   p3l2:'Мы нигде не сохраняем ваше местоположение — ни на сервере, ни в аналитике.',
-  p3l3:'Вы всегда можете отключить геолокацию в настройках браузера или ввести город вручную.',
+  p3l3:'Вы всегда можете отключить геолокацию в настройках устройства или ввести город вручную.',
   p4t:'4. Погодные данные',
   p4a:'Прогноз загружается из бесплатного открытого сервиса Open-Meteo. Геокодирование (поиск городов) использует OpenStreetMap Nominatim.',
   p4b:'Эти сервисы видят только координаты или название города, который вы ищете. Они не получают никаких идентификаторов, связанных с вами лично.',
   p5t:'5. Локальное хранилище',
-  p5a:'Yasno хранит только в localStorage браузера на вашем устройстве:',
+  p5a:'Yasno хранит данные только локально на вашем устройстве:',
   p5l1:'Выбранный язык',
   p5l2:'Единицу температуры (°C / °F)',
   p5l3:'Последний найденный город — чтобы открыть его в следующий раз',
   p5l4:'Ваше согласие с этой Политикой конфиденциальности',
-  p5b:'Эти данные никогда не покидают ваше устройство. Вы можете удалить их в любой момент, очистив данные сайта в браузере.',
+  p5b:'Эти данные никогда не покидают ваше устройство. Вы можете удалить их в любой момент, очистив данные приложения в настройках устройства.',
   p6t:'6. Автоматический перевод',
   p6a:'Для языков, у которых нет готового перевода, Yasno может использовать Google Translate API для перевода строк интерфейса.',
   p6b:'На перевод отправляются только короткие элементы интерфейса — никогда ваши поисковые запросы, местоположение или любые пользовательские данные.',
   p7t:'7. Дети',
-  p7a:'Yasno сознательно не собирает никаких данных ни от кого, включая детей. Приложение безопасно для пользователей всех возрастов.',
+  p7a:'Yasno сознательно не собирает никаких данных ни от кого, включая детей младше возраста, установленного применимым местным законодательством. Возрастной рейтинг может отличаться в зависимости от региона.',
   p8t:'8. Изменения этой политики',
   p8a:'Если политика изменится, мы обновим дату «Обновлено» выше. Продолжение использования приложения означает принятие новой версии.',
   p9t:'9. Контакты',
