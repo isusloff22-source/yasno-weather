@@ -384,11 +384,68 @@ body.night #stars{opacity:1}
 #privWarn.show{display:block}
 .priv-link{display:inline-block;margin-bottom:18px;color:var(--acc2);font-size:13.5px;text-decoration:none;border-bottom:1px dashed rgba(143,216,255,.4);transition:.2s}
 .priv-link:hover{color:#fff;border-bottom-color:rgba(255,255,255,.5)}
+button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,216,255,.4);cursor:pointer;font-family:inherit;padding:0}
 @media(max-width:480px){
   #privacyModal .priv-box{padding:22px 18px 20px}
   .priv-box h2{font-size:18px}
   .priv-box p{font-size:13.5px}
   .priv-actions button{padding:11px 18px;font-size:13.5px}
+}
+
+/* ===== ПОЛНАЯ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ (встроена в приложение) ===== */
+#privacyFullModal{position:fixed;inset:0;z-index:100002;display:none;align-items:center;justify-content:center;padding:16px}
+#privacyFullModal.show{display:flex}
+.privf-back{position:absolute;inset:0;background:rgba(3,11,23,.88);backdrop-filter:blur(10px)}
+.privf-box{position:relative;z-index:1;max-width:640px;width:100%;max-height:88vh;display:flex;flex-direction:column;
+  background:var(--panel2);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.privf-head{display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.privf-head .ico{font-size:30px}
+.privf-head h2{font:700 17px/1.3 var(--disp);color:var(--ink);flex:1;min-width:140px}
+.privf-lang{appearance:none;-webkit-appearance:none;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 10px center;
+  color:var(--ink);font:600 12px var(--mono);cursor:pointer;transition:.25s}
+.privf-lang:hover{border-color:rgba(255,209,102,.5)}
+.privf-lang option{background:#0a1a28;color:#eef7ff}
+.privf-close{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+  background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--mut);font-size:16px;transition:.2s;flex:none}
+.privf-close:hover{background:rgba(255,100,100,.2);color:#fff}
+.privf-body{flex:1;overflow-y:auto;padding:20px 24px;line-height:1.65;text-align:left}
+.privf-body::-webkit-scrollbar{width:6px}
+.privf-body::-webkit-scrollbar-thumb{background:rgba(160,215,255,.2);border-radius:6px}
+.privf-updated{font:500 12px var(--mono);color:var(--dim);margin-bottom:14px}
+.privf-tldr{background:rgba(255,183,3,.1);border-left:3px solid var(--acc);border-radius:10px;padding:14px 16px;
+  margin-bottom:20px;font-size:14px;color:#ffe9bd}
+.privf-tldr b{color:var(--acc)}
+.privf-section{margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid rgba(160,215,255,.08)}
+.privf-section:last-child{border-bottom:none;margin-bottom:0}
+.privf-section h3{font:700 15px/1.3 var(--disp);color:var(--acc2);margin-bottom:10px}
+.privf-section p{font-size:14px;color:var(--mut);margin-bottom:10px}
+.privf-section p:last-child{margin-bottom:0}
+.privf-section ul{margin:8px 0 12px 0;padding-left:0;list-style:none}
+.privf-section ul li{position:relative;padding-left:20px;margin-bottom:8px;font-size:14px;color:var(--mut)}
+.privf-section ul li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,#ffd166,#ff8f3f)}
+.privf-actions{display:flex;gap:12px;padding:18px 24px;border-top:1px solid var(--line);flex-wrap:wrap;justify-content:center}
+.privf-actions button{padding:12px 24px;border-radius:999px;font:600 14px var(--body);cursor:pointer;transition:.2s;
+  border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink)}
+.privf-actions button:hover{transform:translateY(-2px)}
+#privfAccept{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04;border-color:transparent;box-shadow:0 6px 18px rgba(255,183,3,.3)}
+#privfAccept:hover{box-shadow:0 10px 24px rgba(255,183,3,.42)}
+#privfDecline:hover{background:rgba(255,100,100,.15);border-color:rgba(255,120,120,.5);color:#ffd7d7}
+#privfWarn{display:none;margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(80,20,30,.6);
+  border:1px solid rgba(255,120,120,.4);color:#ffd7d7;font-size:13.5px;text-align:center}
+#privfWarn.show{display:block}
+.privf-translating{display:none;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;margin-bottom:14px;
+  background:rgba(143,216,255,.08);border:1px solid rgba(143,216,255,.25);color:#d7ecfb;font-size:13px}
+.privf-translating.show{display:flex}
+.privf-translating .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--acc2);
+  border-radius:50%;animation:spin 1s linear infinite;flex:none}
+@media(max-width:560px){
+  .privf-box{max-height:92vh;border-radius:18px}
+  .privf-head{padding:16px 18px}
+  .privf-body{padding:16px 18px}
+  .privf-actions{padding:14px 18px}
+  .privf-lang{max-width:120px;font-size:11px}
 }
 </style>
 <base target="_blank">
@@ -416,16 +473,36 @@ body.night #stars{opacity:1}
     <div class="priv-icon">🛡️</div>
     <h2 data-i18n="privacyTitle">Privacy Policy</h2>
     <p data-i18n="privacyText">To use Yasno, you must agree to our Privacy Policy. We do not collect personal data — your location and search queries are processed only on your device.</p>
-    <a href="https://isusloff22-source.github.io/yasno-weather/privacy.html" 
-   class="priv-link" 
-   data-i18n="privacyRead" 
-   target="_blank"
-   id="privacyReadLink">Read the full policy</a>
+    <button class="priv-link" id="openFullPrivacy" data-i18n="privacyRead">Read the full policy</button>
     <div class="priv-actions">
       <button id="privDecline" data-i18n="privacyDecline">Decline</button>
       <button id="privAccept" data-i18n="privacyAccept">Accept</button>
     </div>
     <div id="privWarn" data-i18n="privacyWarn">⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.</div>
+  </div>
+</div>
+
+<!-- ===== ПОЛНАЯ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ===== -->
+<div id="privacyFullModal">
+  <div class="privf-back"></div>
+  <div class="privf-box">
+    <div class="privf-head">
+      <span class="ico">🛡️</span>
+      <h2 id="privfTitle">Privacy Policy</h2>
+      <select id="privfLangSel" class="privf-lang" title="Language"></select>
+      <button class="privf-close" id="privfClose">✕</button>
+    </div>
+    <div class="privf-body">
+      <div class="privf-translating" id="privfTranslating"><div class="spin"></div><span id="privfTranslatingTxt">Translating…</span></div>
+      <div class="privf-updated" id="privfUpdated">Last updated: 12 August 2026</div>
+      <div class="privf-tldr" id="privfTldr"></div>
+      <div id="privfContent"></div>
+      <div id="privfWarn" data-i18n="privacyWarn">⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.</div>
+    </div>
+    <div class="privf-actions">
+      <button id="privfDecline" data-i18n="privacyDecline">Decline</button>
+      <button id="privfAccept" data-i18n="privacyAccept">Accept</button>
+    </div>
   </div>
 </div>
 
@@ -1221,7 +1298,7 @@ function setPrecip(rain,snow){
 let flashTimer=null;
 function setStorm(on){
   const el=$('#lightning'); clearTimeout(flashTimer);
-  const loop=()=>{ if(!on||RM) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  const loop=()=>{ if(!on&&RM) return; if(!on) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     flashTimer=setTimeout(loop, 3500+Math.random()*6500); };
   if(on){ flashTimer=setTimeout(loop,1200); } else el.classList.remove('flash');
 }
@@ -1246,21 +1323,18 @@ let _lastRenderedHour = '';
 setInterval(() => {
   if (!state.data || !state.place) return;
   try {
-    // Узнаем текущую дату и час в часовом поясе выбранного города
     const dtf = new Intl.DateTimeFormat('en-US', { 
       timeZone: state.place.tz, 
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', hour12: false 
     });
     const currentDT = dtf.format(new Date());
-    
-    // Если час (или день) сменился — перерисовываем ленту
     if (currentDT !== _lastRenderedHour) {
       _lastRenderedHour = currentDT;
       safe(() => renderHours(state.data));
     }
   } catch (e) {}
-}, 30000); // Проверяем каждые 30 секунд
+}, 30000);
 
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
@@ -1294,11 +1368,9 @@ function showPickBar(items,name){
     if(p.country&&p.country!==p.name) whereParts.push(p.country);
     if(p.admin&&p.admin!==p.country) whereParts.push(p.admin);
     if(isDup){
-      // Для тёзок показываем все доступные конкретные детали (район, округ, станция...)
       [p.admin2,p.admin3,p.admin4].forEach(x=>{
         if(x && x!==p.admin && x!==p.country && !whereParts.includes(x)) whereParts.push(x);
       });
-      // Если ничего конкретного нет — фоллбэк на координаты
       const hasSpecific = [p.admin2,p.admin3,p.admin4].some(x => x && whereParts.includes(x));
       if(!hasSpecific){
         whereParts.push(`${(+p.lat).toFixed(2)}°, ${(+p.lon).toFixed(2)}°`);
@@ -1533,11 +1605,8 @@ function applyLang(){
   $('#installBtn').title=t('install');
   const da=dirsArr();
   $('#cN').textContent=da[0]; $('#cE').textContent=da[4]; $('#cS').textContent=da[8]; $('#cW').textContent=da[12];
+  const privfSel=$('#privfLangSel'); if(privfSel) privfSel.value=LANG;
   if(state.data&&state.place) renderAll(state.data,state.place);
-const privLink = document.getElementById('privacyReadLink');
-if (privLink) {
-  privLink.href = 'https://isusloff22-source.github.io/yasno-weather/privacy.html?lang=' + LANG;
- }
 }
 
 async function loadWeather(place){
@@ -1701,22 +1770,15 @@ function flag(cc){ try{ return cc.toUpperCase().replace(/./g,c=>String.fromCodeP
 
 function renderHours(data){
   const h=data.hourly, box=$('#hourStrip');
-  
-  // Находим индекс точного текущего часа (округляем время API вниз до начала часа)
   const currentHourStr = data.current.time.slice(0, 13) + ":00";
   let idx = h.time.indexOf(currentHourStr);
-  
-  // Фоллбэк, если точное совпадение по каким-то причинам не найдено
   if (idx < 0) {
     idx = h.time.findIndex(tt => tt >= data.current.time);
     if (idx < 0) idx = h.time.length - 1;
     else if (h.time[idx] > currentHourStr) idx = Math.max(0, idx - 1);
   }
-  
   let html='';
-  // Цикл всегда берет до 24 часов вперед, начиная строго с текущего часа
   for(let i=idx; i<Math.min(idx+24, h.time.length); i++){
-    const wk=WC[h.weather_code[i]]||'over';
     const prob=h.precipitation_probability[i];
     html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${(weatherDesc(h.weather_code[i])||'').replace(/"/g,'&quot;')}">
       <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
@@ -1883,7 +1945,6 @@ function renderDetails(data){
         }
     });
 
-    // Загружаем словарь ПЕРЕД первым рендером
     if(LANG!=='en'){
         try {
             STR = await translateDict(LANG);
@@ -1893,14 +1954,12 @@ function renderDetails(data){
     }
     applyLang();
 
-    // --- НОВОЕ: проверка согласия с политикой ---
     const privacyAccepted = (()=>{ try{ return localStorage.getItem('privacy-accepted')==='true'; }catch(e){ return false; } })();
     if(!privacyAccepted){
         document.getElementById('splash-screen').classList.add('hidden');
         showPrivacyModal();
         return;
     }
-    // --- КОНЕЦ НОВОГО ---
 
     continueInit();
 })();
@@ -1920,6 +1979,205 @@ function continueInit(){
         q.focus();
     }
 }
+
+// ===== ПОЛНАЯ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ (встроена в приложение) =====
+const PRIVACY_EN = {
+  pTitle:'Privacy Policy',
+  pUpdated:'Last updated: 12 August 2026',
+  pTldr:'Yasno does not collect, store or share your personal data. Everything works on your device.',
+  p1t:'1. Introduction',
+  p1a:'Yasno ("we", "the app") is a free weather application that works worldwide. This Privacy Policy explains what data the app processes and how.',
+  p1b:'By using Yasno you agree to the terms described below. If you do not agree — please do not use the app.',
+  p2t:'2. We do not collect personal data',
+  p2a:'Yasno is built with privacy as the top priority. We do not collect, do not store on any server and do not share with anyone:',
+  p2l1:'Your name, email, phone number or any identity',
+  p2l2:'Your location history',
+  p2l3:'Your search queries for cities',
+  p2l4:'Device identifiers, IP addresses, fingerprints',
+  p2l5:'Usage statistics or analytics',
+  p2b:'The app contains no advertising, no trackers and no third-party analytics SDKs.',
+  p3t:'3. Location data',
+  p3a:'If you allow geolocation, your device coordinates are used only to fetch the weather for your current city.',
+  p3l1:'Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.',
+  p3l2:'We do not save your location anywhere — not on a server, not in analytics.',
+  p3l3:'You can always disable location in your browser settings or type the city manually.',
+  p4t:'4. Weather data',
+  p4a:'Forecast is loaded from the free open service Open-Meteo. Geocoding (city search) uses OpenStreetMap Nominatim.',
+  p4b:'These services see only the coordinates or the city name you are searching for. They do not receive any identifier tied to you personally.',
+  p5t:'5. Local storage',
+  p5a:'Yasno stores only in the browser localStorage on your device:',
+  p5l1:'Selected language',
+  p5l2:'Temperature unit (°C / °F)',
+  p5l3:'Last searched city — to open it again next time',
+  p5l4:'Your consent to this Privacy Policy',
+  p5b:'This data never leaves your device. You can delete it at any time by clearing the site data in your browser.',
+  p6t:'6. Automatic translation',
+  p6a:'For languages that do not have a hand-written translation, Yasno may use Google Translate API to translate interface strings.',
+  p6b:'Only short UI labels are sent for translation — never your search queries, location or any user data.',
+  p7t:'7. Children',
+  p7a:'Yasno does not knowingly collect any data from anyone, including children. The app is safe for users of all ages.',
+  p8t:'8. Changes to this policy',
+  p8a:'If this policy changes, we will update the "Last updated" date above. Continued use of the app means you accept the new version.',
+  p9t:'9. Contact',
+  p9a:'Questions about this policy? Open an issue in the project GitHub repository.',
+  pAccept:'Accept',
+  pDecline:'Decline',
+  pTranslating:'Translating…'
+};
+const PRIVACY_RU = {
+  pTitle:'Политика конфиденциальности',
+  pUpdated:'Обновлено: 12 августа 2026',
+  pTldr:'Yasno не собирает, не хранит и не передаёт ваши личные данные. Всё работает на вашем устройстве.',
+  p1t:'1. Введение',
+  p1a:'Yasno («мы», «приложение») — бесплатное погодное приложение, работающее по всему миру. Эта Политика конфиденциальности объясняет, какие данные обрабатывает приложение и как.',
+  p1b:'Используя Yasno, вы соглашаетесь с описанными ниже условиями. Если вы не согласны — пожалуйста, не используйте приложение.',
+  p2t:'2. Мы не собираем личные данные',
+  p2a:'Yasno создан с приоритетом на конфиденциальность. Мы не собираем, не храним на серверах и не передаём никому:',
+  p2l1:'Ваше имя, email, номер телефона или любые личные данные',
+  p2l2:'Историю ваших перемещений',
+  p2l3:'Ваши поисковые запросы городов',
+  p2l4:'Идентификаторы устройства, IP-адреса, отпечатки',
+  p2l5:'Статистику использования или аналитику',
+  p2b:'В приложении нет рекламы, трекеров и сторонних аналитических SDK.',
+  p3t:'3. Данные о местоположении',
+  p3a:'Если вы разрешаете геолокацию, координаты вашего устройства используются только для получения погоды в вашем текущем городе.',
+  p3l1:'Координаты отправляются напрямую с вашего устройства в погодный API (Open-Meteo) — они никогда не проходят через наши серверы.',
+  p3l2:'Мы нигде не сохраняем ваше местоположение — ни на сервере, ни в аналитике.',
+  p3l3:'Вы всегда можете отключить геолокацию в настройках браузера или ввести город вручную.',
+  p4t:'4. Погодные данные',
+  p4a:'Прогноз загружается из бесплатного открытого сервиса Open-Meteo. Геокодирование (поиск городов) использует OpenStreetMap Nominatim.',
+  p4b:'Эти сервисы видят только координаты или название города, который вы ищете. Они не получают никаких идентификаторов, связанных с вами лично.',
+  p5t:'5. Локальное хранилище',
+  p5a:'Yasno хранит только в localStorage браузера на вашем устройстве:',
+  p5l1:'Выбранный язык',
+  p5l2:'Единицу температуры (°C / °F)',
+  p5l3:'Последний найденный город — чтобы открыть его в следующий раз',
+  p5l4:'Ваше согласие с этой Политикой конфиденциальности',
+  p5b:'Эти данные никогда не покидают ваше устройство. Вы можете удалить их в любой момент, очистив данные сайта в браузере.',
+  p6t:'6. Автоматический перевод',
+  p6a:'Для языков, у которых нет готового перевода, Yasno может использовать Google Translate API для перевода строк интерфейса.',
+  p6b:'На перевод отправляются только короткие элементы интерфейса — никогда ваши поисковые запросы, местоположение или любые пользовательские данные.',
+  p7t:'7. Дети',
+  p7a:'Yasno сознательно не собирает никаких данных ни от кого, включая детей. Приложение безопасно для пользователей всех возрастов.',
+  p8t:'8. Изменения этой политики',
+  p8a:'Если политика изменится, мы обновим дату «Обновлено» выше. Продолжение использования приложения означает принятие новой версии.',
+  p9t:'9. Контакты',
+  p9a:'Вопросы по этой политике? Откройте issue в GitHub-репозитории проекта.',
+  pAccept:'Принять',
+  pDecline:'Отклонить',
+  pTranslating:'Переводим…'
+};
+let PRIVACY_STR = {...PRIVACY_EN};
+
+async function translatePrivacy(lang){
+  if(lang === 'en') return {...PRIVACY_EN};
+  if(lang === 'ru') return {...PRIVACY_RU};
+  const cacheKey = 'yasno-privacy-' + lang;
+  try{
+    const cached = localStorage.getItem(cacheKey);
+    if(cached) return JSON.parse(cached);
+  }catch(e){}
+  try{
+    const keys = Object.keys(PRIVACY_EN);
+    const values = keys.map(k => PRIVACY_EN[k]);
+    const q = values.join('\n');
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(q)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    let text = '';
+    for(const part of data[0]) if(part[0]) text += part[0];
+    const translated = text.split('\n');
+    if(translated.length !== keys.length) throw new Error('Bad length');
+    const out = {};
+    keys.forEach((k,i) => out[k] = translated[i] || PRIVACY_EN[k]);
+    try{ localStorage.setItem(cacheKey, JSON.stringify(out)); }catch(e){}
+    return out;
+  }catch(e){
+    console.warn('Privacy translate failed', e);
+    return {...PRIVACY_EN};
+  }
+}
+
+function renderPrivacyContent(){
+  const s = PRIVACY_STR;
+  $('#privfTitle').textContent = s.pTitle || 'Privacy Policy';
+  $('#privfUpdated').textContent = s.pUpdated || '';
+  $('#privfTldr').innerHTML = '<b>TL;DR</b> — ' + (s.pTldr || '');
+  $('#privfAccept').textContent = s.pAccept || 'Accept';
+  $('#privfDecline').textContent = s.pDecline || 'Decline';
+  $('#privfTranslatingTxt').textContent = s.pTranslating || 'Translating…';
+
+  let html = '';
+  const sections = [
+    {t:'p1t', ps:['p1a','p1b']},
+    {t:'p2t', ps:['p2a'], list:['p2l1','p2l2','p2l3','p2l4','p2l5'], after:['p2b']},
+    {t:'p3t', ps:['p3a'], list:['p3l1','p3l2','p3l3']},
+    {t:'p4t', ps:['p4a','p4b']},
+    {t:'p5t', ps:['p5a'], list:['p5l1','p5l2','p5l3','p5l4'], after:['p5b']},
+    {t:'p6t', ps:['p6a','p6b']},
+    {t:'p7t', ps:['p7a']},
+    {t:'p8t', ps:['p8a']},
+    {t:'p9t', ps:['p9a']}
+  ];
+  for(const sec of sections){
+    html += `<div class="privf-section"><h3>${s[sec.t]||''}</h3>`;
+    if(sec.ps) sec.ps.forEach(p => html += `<p>${s[p]||''}</p>`);
+    if(sec.list){
+      html += '<ul>';
+      sec.list.forEach(l => html += `<li>${s[l]||''}</li>`);
+      html += '</ul>';
+    }
+    if(sec.after) sec.after.forEach(p => html += `<p>${s[p]||''}</p>`);
+    html += '</div>';
+  }
+  $('#privfContent').innerHTML = html;
+}
+
+async function loadPrivacyLang(lang){
+  $('#privfTranslating').classList.add('show');
+  PRIVACY_STR = await translatePrivacy(lang);
+  $('#privfTranslating').classList.remove('show');
+  renderPrivacyContent();
+}
+
+(function(){
+  const sel = $('#privfLangSel');
+  if(sel){
+    sel.innerHTML = LANGS.map(([c,n]) => `<option value="${c}">${n}</option>`).join('');
+    sel.value = LANG;
+    sel.addEventListener('change', async e => {
+      LANG = e.target.value;
+      try{ localStorage.setItem('yasno-lang', LANG); }catch(err){}
+      await loadPrivacyLang(LANG);
+      if(LANG === 'en'){ STR = {...STR_EN}; }
+      else{ try{ STR = await translateDict(LANG); }catch(err){ STR = {...STR_EN}; } }
+      applyLang();
+    });
+  }
+})();
+
+$('#openFullPrivacy').addEventListener('click', () => {
+  $('#privfLangSel').value = LANG;
+  $('#privfWarn').classList.remove('show');
+  $('#privacyFullModal').classList.add('show');
+  loadPrivacyLang(LANG);
+});
+$('#privfClose').addEventListener('click', () => {
+  $('#privacyFullModal').classList.remove('show');
+});
+document.querySelector('#privacyFullModal .privf-back').addEventListener('click', () => {
+  $('#privacyFullModal').classList.remove('show');
+});
+$('#privfAccept').addEventListener('click', () => {
+  try{ localStorage.setItem('privacy-accepted','true'); }catch(e){}
+  $('#privacyFullModal').classList.remove('show');
+  hidePrivacyModal();
+  continueInit();
+});
+$('#privfDecline').addEventListener('click', () => {
+  $('#privfWarn').classList.add('show');
+  if(navigator.vibrate) navigator.vibrate(40);
+});
 </script>
 </body>
 </html>
