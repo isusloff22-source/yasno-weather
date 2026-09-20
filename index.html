@@ -1503,8 +1503,11 @@ async function submitSearch(){
   toast(t('notFound').replace('__X__',name));
 }
 
-function requestGeo(){
-  if(!navigator.geolocation){ toast('Geolocation not supported'); q.focus(); return; }
+function requestGeo(silent=false){
+  if(!navigator.geolocation){
+    if(!silent){ toast('Geolocation not supported'); q.focus(); }
+    return;
+  }
   const btn=$('#geo'); btn.classList.add('spin');
   navigator.geolocation.getCurrentPosition(async pos=>{
     const {latitude:la,longitude:lo}=pos.coords;
@@ -1518,9 +1521,12 @@ function requestGeo(){
       btn.classList.remove('spin');
       loadWeather({name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'});
     }
-  },()=>{ btn.classList.remove('spin'); toast('Location unavailable'); q.focus(); },{timeout:9000});
+  },()=>{
+    btn.classList.remove('spin');
+    if(!silent){ toast('Location unavailable'); q.focus(); }
+  },{timeout:9000});
 }
-$('#geo').addEventListener('click',requestGeo);
+$('#geo').addEventListener('click',()=>requestGeo(false));
 
 function showGeoModal(){
   document.getElementById('splash-screen').classList.add('hidden');
@@ -1971,7 +1977,20 @@ function continueInit(){
     if (!geoAsked) {
         showGeoModal();
     } else if (saved && saved.lat != null) {
-        loadWeather(saved);
+        /*
+         * If the last selected place was "My location", refresh the device
+         * coordinates on every app start. This keeps the saved "Your location"
+         * card from becoming stuck on the old city after travelling.
+         *
+         * If the last selected place was a manually searched city, do NOT
+         * replace it with geolocation: its timezone and live clock should
+         * continue to follow that searched city.
+         */
+        if (saved.geo === true) {
+            requestGeo(true);
+        } else {
+            loadWeather(saved);
+        }
     } else {
         document.getElementById('splash-screen').classList.add('hidden');
         q.focus();
