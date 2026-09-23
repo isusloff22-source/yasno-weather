@@ -368,6 +368,23 @@ body.night #stars{opacity:1}
     100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 165, 0, 0.5)); }
 }
 #splash-screen.hidden { opacity: 0; visibility: hidden; }
+#offlineModal{position:fixed;inset:0;z-index:100003;display:none;align-items:center;justify-content:center;padding:16px;background:#041e30;}
+#offlineModal.show{display:flex}
+#offlineModal .offline-back{position:absolute;inset:0;background:#041e30;}
+#offlineModal .offline-box{position:relative;z-index:1;max-width:480px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:24px;padding:30px 26px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45);}
+.offline-icon{font-size:52px;margin-bottom:12px}
+.offline-box h2{font:700 20px/1.3 var(--disp);margin-bottom:10px;color:var(--ink)}
+.offline-box p{font-size:14.5px;color:var(--mut);line-height:1.55;margin-bottom:22px}
+.offline-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.offline-actions button{padding:12px 24px;border-radius:999px;font:600 14px var(--body);border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);cursor:pointer;transition:.2s}
+.offline-actions button:hover{transform:translateY(-2px)}
+#offlineRetry{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04;border-color:transparent;box-shadow:0 6px 18px rgba(255,183,3,.3)}
+#offlineRetry:hover{box-shadow:0 10px 24px rgba(255,183,3,.42)}
+@media(max-width:480px){
+  #offlineModal .offline-box{padding:24px 18px 22px}
+  .offline-box h2{font-size:18px}
+  .offline-box p{font-size:13.5px}
+}
 #privacyModal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:16px}
 #privacyModal .priv-back{position:absolute;inset:0;background:rgba(3,11,23,.82);backdrop-filter:blur(10px)}
 #privacyModal .priv-box{position:relative;z-index:1;max-width:480px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:24px;padding:28px 26px 24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
@@ -529,8 +546,18 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
     <div class="splash-content">
         <div class="splash-sun">☀️</div>
         <h1 class="splash-title">YASNO</h1>
-        <p class="splash-subtitle">УМНАЯ ПОГОДА · ПО ВСЕМУ МИРУ</p>
+            </div>
+</div>
+<div id="offlineModal" aria-live="polite">
+  <div class="offline-back"></div>
+  <div class="offline-box">
+    <div class="offline-icon">📡</div>
+    <h2 data-i18n="offlineTitle">No internet connection</h2>
+    <p data-i18n="offlineText">Connect to the internet and press Retry to continue using Yasno.</p>
+    <div class="offline-actions">
+      <button id="offlineRetry" data-i18n="retry">Retry</button>
     </div>
+  </div>
 </div>
 
 <div id="sky">
@@ -745,7 +772,10 @@ const LANGS=("en:English|ru:Русский|uk:Українська|be:Белар
 const RTL=new Set(['ar','he','fa','ur','ps','sd','yi','dv','ug']);
 
 let LANG='en';
-try{ LANG=localStorage.getItem('yasno-lang')||'en'; }catch(e){}
+try{
+  const savedLang=localStorage.getItem('yasno-lang');
+  if(savedLang && LANGS.some(([c])=>c===savedLang)) LANG=savedLang;
+}catch(e){}
 
 const STR_EN={
  tagline:'smart weather · worldwide', ph:'City, village, island, region…',
@@ -767,6 +797,8 @@ const STR_EN={
  notFound:'No such place: __X__. Check the spelling.',
  pick:'Several places named __X__ found. Pick one:',
  netErr:'No connection to the weather server. Check your internet, or press Retry in a moment.',
+ offlineTitle:'No internet connection',
+ offlineText:'Connect to the internet and press Retry to continue using Yasno.',
  retry:'Retry', updated:'Updated:',
  foot:'Search across two world databases: Open-Meteo + OpenStreetMap',
  thous:'k people', mln:'M people',
@@ -816,6 +848,8 @@ const I18N = {
     notFound:'Место не найдено: __X__. Проверьте написание.',
     pick:'Найдено несколько мест с названием __X__. Выберите одно:',
     netErr:'Нет связи с сервером погоды. Проверьте интернет или нажмите Повторить.',
+    offlineTitle:'Нет подключения к интернету',
+    offlineText:'Подключитесь к интернету и нажмите «Повторить», чтобы продолжить пользоваться Yasno.',
     retry:'Повторить', updated:'Обновлено:',
     foot:'Поиск по двум мировым базам: Open-Meteo + OpenStreetMap',
     thous:'тыс. чел.', mln:'млн чел.',
@@ -1935,6 +1969,50 @@ function renderDetails(data){
   $('#sunPct').textContent=fmt(sunPct)+'%';
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
 }
+async function hasInternetConnection(){
+  if(!navigator.onLine) return false;
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),6000);
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=temperature_2m&timezone=UTC&forecast_days=1',{cache:'no-store',signal:ctrl.signal});
+    return r.ok;
+  }catch(e){
+    return false;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+function showOfflineScreen(){
+  // Always refresh the offline screen from the currently selected Yasno language.
+  // First launch = English; returning users = their saved language.
+  applyLang();
+  document.getElementById('splash-screen').classList.add('hidden');
+  $('#offlineModal').classList.add('show');
+}
+
+function hideOfflineScreen(){
+  $('#offlineModal').classList.remove('show');
+}
+
+$('#offlineRetry').addEventListener('click',async()=>{
+  const btn=$('#offlineRetry');
+  btn.disabled=true;
+  try{
+    if(await hasInternetConnection()){
+      hideOfflineScreen();
+      const privacyAccepted = (()=>{ try{ return localStorage.getItem('privacy-accepted')==='true'; }catch(e){ return false; } })();
+      if(!privacyAccepted){
+        showPrivacyModal();
+        return;
+      }
+      continueInit();
+    }
+  }finally{
+    btn.disabled=false;
+  }
+});
+
 (async function init(){
     buildLangSelect();
     
@@ -1956,7 +2034,13 @@ function renderDetails(data){
             STR = {...STR_EN};
         }
     }
+    // Language is fully loaded before any startup modal is shown.
     applyLang();
+
+    if(!(await hasInternetConnection())){
+        showOfflineScreen();
+        return;
+    }
 
     const privacyAccepted = (()=>{ try{ return localStorage.getItem('privacy-accepted')==='true'; }catch(e){ return false; } })();
     if(!privacyAccepted){
