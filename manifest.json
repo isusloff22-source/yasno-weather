@@ -7,8 +7,8 @@
   "background_color": "#0d233a",
   "theme_color": "#0d233a",
   "orientation": "portrait",
-  "scope": "/yasno-weather/",
-  "id": "/yasno-weather/",
+  "scope": "com.github.isusloff22_source.yasno_weather/",
+  "id": "com.github.isusloff22_source.yasno_weather/",
   "description": "Yasno - smart weather worldwide",
   "lang": "en",
   "dir": "ltr",
@@ -25,5 +25,12 @@
       "url": "./?action=geo",
       "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
+  ],
+   "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.github.isusloff22_source.yasno_weather"
+    }
   ]
 }
+
