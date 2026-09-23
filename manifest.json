@@ -8,7 +8,7 @@
   "theme_color": "#0d233a",
   "orientation": "portrait",
   "scope": "/yasno-weather/",
-  "id": "/yasno-weather/",
+  "id": "com.github.isusloff22_source.yasno_weather",
   "description": "Yasno - smart weather worldwide",
   "lang": "en",
   "dir": "ltr",
