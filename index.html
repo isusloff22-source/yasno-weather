@@ -464,6 +464,26 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
   .privf-actions{padding:14px 18px}
   .privf-lang{max-width:120px;font-size:11px}
 }
+
+#weatherLegendModal{position:fixed;inset:0;z-index:100004;display:none;align-items:center;justify-content:center;padding:16px}
+#weatherLegendModal.show{display:flex}
+.weather-legend-back{position:absolute;inset:0;background:rgba(3,11,23,.84);backdrop-filter:blur(10px)}
+.weather-legend-box{position:relative;z-index:1;max-width:680px;width:100%;max-height:88vh;display:flex;flex-direction:column;background:var(--panel2);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.weather-legend-head{display:flex;align-items:flex-start;gap:14px;padding:20px 22px;border-bottom:1px solid var(--line)}
+.weather-legend-head h2{font:700 18px/1.3 var(--disp);color:var(--ink)}
+.weather-legend-head p{margin-top:5px;font-size:13px;color:var(--mut)}
+.weather-legend-close{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;margin-left:auto;flex:none;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--mut);font-size:16px}
+.weather-legend-close:hover{background:rgba(255,100,100,.2);color:#fff}
+.weather-legend-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow-y:auto;padding:16px 18px 20px}
+.weather-legend-item{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(160,215,255,.08)}
+.weather-legend-item svg{width:46px;height:46px;flex:none;filter:drop-shadow(0 5px 12px rgba(0,0,0,.25))}
+.weather-legend-num{font:600 11px var(--mono);color:var(--dim);min-width:22px}
+.weather-legend-name{font:600 13.5px/1.3 var(--body);color:var(--ink)}
+@media(max-width:560px){
+  .weather-legend-box{max-height:92vh;border-radius:18px}
+  .weather-legend-list{grid-template-columns:1fr;padding:12px}
+  .weather-legend-head{padding:16px 18px}
+}
 </style>
 <base target="_blank">
 </head>
@@ -542,6 +562,20 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
   </defs>
 </svg>
 
+<div id="weatherLegendModal" style="display:none" aria-hidden="true">
+  <div class="weather-legend-back"></div>
+  <div class="weather-legend-box" role="dialog" aria-modal="true" aria-labelledby="weatherLegendTitle">
+    <div class="weather-legend-head">
+      <div>
+        <h2 id="weatherLegendTitle" data-i18n="weatherLegend">Weather phenomena</h2>
+        <p id="weatherLegendSub" data-i18n="weatherLegendSub">All weather states used by Yasno</p>
+      </div>
+      <button class="weather-legend-close" id="weatherLegendClose" aria-label="Close">✕</button>
+    </div>
+    <div id="weatherLegendList" class="weather-legend-list"></div>
+  </div>
+</div>
+
 <div id="splash-screen">
     <div class="splash-content">
         <div class="splash-sun">☀️</div>
@@ -595,6 +629,9 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 
     <button class="icoBtn" id="geo" title="My location">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+    </button>
+    <button class="icoBtn" id="weatherLegendBtn" title="Weather phenomena" data-i18n-title="weatherLegend">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10"/><path d="M7 9h10"/><path d="M7 14h10"/><path d="M7 19h10"/><circle cx="4" cy="4" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="9" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="14" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="19" r=".8" fill="currentColor" stroke="none"/></svg>
     </button>
     <button class="icoBtn" id="installBtn" style="display:none" title="Install app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
@@ -812,7 +849,13 @@ const STR_EN={
  moonN5:'Full Moon', moonN6:'Waning Gibbous', moonN7:'Last Quarter', moonN8:'Waning Crescent',
  dirs:'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW',
  install:'Install app', installed:'App installed',
-  geoTitle:'Know your location?',
+ weatherLegend:'Weather phenomena', weatherLegendSub:'All weather states used by Yasno',
+ wx_clear:'Clear sky', wx_ptcl:'Partly cloudy', wx_cloud:'Cloudy', wx_over:'Overcast',
+ wx_fog:'Fog', wx_fog2:'Fog with frost', wx_drz:'Drizzle', wx_rain:'Rain', wx_hrain:'Heavy rain',
+ wx_frz:'Freezing rain', wx_ssn:'Rain and snow', wx_snow:'Snow', wx_hsnow:'Heavy snow',
+ wx_grn:'Snow grains', wx_showers:'Rain showers', wx_hshow:'Heavy rain showers', wx_sshow:'Snow showers',
+ wx_storm:'Thunderstorm', wx_hstorm:'Severe thunderstorm',
+ geoTitle:'Know your location?',
  geoDesc:'We use your location to instantly show the weather in your city — accurate forecast, current temperature, wind, humidity and details for the next 5 days. Your coordinates are processed only on your device and are not stored anywhere. If you prefer, you can enter the city manually.',
  geoOk:'Ok',
  geoNo:'No, thanks',
@@ -863,6 +906,12 @@ const I18N = {
     moonN5:'Полнолуние', moonN6:'Убывающая луна', moonN7:'Последняя четверть', moonN8:'Убывающий серп',
     dirs:'С,ССВ,СВ,ВСВ,В,ВЮВ,ЮВ,ЮЮВ,Ю,ЮЮЗ,ЮЗ,ЗЮЗ,З,ЗСЗ,СЗ,ССЗ',
     install:'Установить приложение', installed:'Приложение установлено',
+    weatherLegend:'Погодные явления', weatherLegendSub:'Все погодные состояния, которые использует Yasno',
+    wx_clear:'Ясно', wx_ptcl:'Переменная облачность', wx_cloud:'Облачно', wx_over:'Пасмурно',
+    wx_fog:'Туман', wx_fog2:'Туман с изморозью', wx_drz:'Морось', wx_rain:'Дождь', wx_hrain:'Сильный дождь',
+    wx_frz:'Ледяной дождь', wx_ssn:'Дождь со снегом', wx_snow:'Снег', wx_hsnow:'Сильный снег',
+    wx_grn:'Снежная крупа', wx_showers:'Ливни', wx_hshow:'Сильные ливни', wx_sshow:'Снегопад',
+    wx_storm:'Гроза', wx_hstorm:'Сильная гроза',
     geoTitle:'Узнать ваше местоположение?',
     geoDesc:'Мы используем ваше местоположение, чтобы мгновенно показать погоду в вашем городе — точный прогноз, текущая температура, ветер, влажность и детали на 5 дней вперёд. Координаты обрабатываются только на вашем устройстве и никуда не сохраняются. Если хотите, можете ввести город вручную.',
     geoOk:'Ок', geoNo:'Нет, спасибо',
@@ -1080,10 +1129,8 @@ function weatherKey(code){
   return 'w_clouds';
 }
 function weatherDesc(code){
-  const key=weatherKey(code);
-  const wf=WEATHER_FIX[LANG];
-  if(wf&&wf[key]) return wf[key];
-  return WEATHER_FIX['en'][key]||'—';
+  const wk=WC[code]||'over';
+  return t('wx_'+wk);
 }
 
 async function fetchRetry(url,tries=3,signal){
@@ -1115,7 +1162,7 @@ const KIND = {
   cloud:{icon:'cloud',cls:'wx-3',amb:0,tint:'#a8c2d6'},
   over:{icon:'over',cls:'wx-3',amb:0,tint:'#8ea6b8'},
   fog:{icon:'fog',cls:'wx-45',amb:0,tint:'#a8bcc4'},
-  fog2:{icon:'fog',cls:'wx-48',amb:0,tint:'#c3d4dc'},
+  fog2:{icon:'fog2',cls:'wx-48',amb:0,tint:'#c3d4dc'},
   drz:{icon:'drz',cls:'wx-rain',amb:1,rain:.25,tint:'#6fc3e8'},
   rain:{icon:'rain',cls:'wx-rain',amb:1,rain:.6,tint:'#4cc9f0'},
   hrain:{icon:'hrain',cls:'wx-rain',amb:1,rain:1,tint:'#38b6f0'},
@@ -1123,12 +1170,12 @@ const KIND = {
   ssn:{icon:'ssn',cls:'wx-frz',amb:1,rain:.4,snow:.4,tint:'#8fd0e8'},
   snow:{icon:'snow',cls:'wx-snow',amb:1,snow:.7,tint:'#bfe0ff'},
   hsnow:{icon:'hsnow',cls:'wx-snow',amb:1,snow:1,tint:'#cfe8ff'},
-  grn:{icon:'snow',cls:'wx-snow',amb:1,snow:.4,tint:'#cfe8ff'},
+  grn:{icon:'grn',cls:'wx-snow',amb:1,snow:.4,tint:'#cfe8ff'},
   showers:{icon:'showers',cls:'wx-rain',amb:1,rain:.75,tint:'#45c1f0'},
-  hshow:{icon:'hrain',cls:'wx-rain',amb:1,rain:1,tint:'#38b6f0'},
-  sshow:{icon:'snow',cls:'wx-snow',amb:1,snow:.8,tint:'#c4e2ff'},
+  hshow:{icon:'hshow',cls:'wx-rain',amb:1,rain:1,tint:'#38b6f0'},
+  sshow:{icon:'sshow',cls:'wx-snow',amb:1,snow:.8,tint:'#c4e2ff'},
   storm:{icon:'storm',cls:'wx-storm',amb:1,rain:.85,storm:1,tint:'#b28dff'},
-  hstorm:{icon:'storm',cls:'wx-storm',amb:1,rain:1,storm:1,tint:'#a57bff'},
+  hstorm:{icon:'hstorm',cls:'wx-storm',amb:1,rain:1,storm:1,tint:'#a57bff'},
 };
 const WC = {0:'clear',1:'ptcl',2:'ptcl',3:'cloud',45:'fog',48:'fog2',51:'drz',53:'drz',55:'drz',56:'frz',57:'frz',
   61:'rain',63:'rain',65:'hrain',66:'frz',67:'frz',71:'snow',73:'snow',75:'hsnow',77:'grn',
@@ -1265,19 +1312,24 @@ const SUN_S = '<g class="rays" stroke="#ffc61a" stroke-width="2.6" stroke-lineca
 const ICON = {
   sun:`<svg viewBox="0 0 64 64"><g class="rays" stroke="#ffc61a" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4.3 4.3M44.7 44.7 49 49M49 15l-4.3 4.3M19.3 44.7 15 49"/></g><circle cx="32" cy="32" r="11.5" fill="url(#gSun)"/></svg>`,
   moon:`<svg viewBox="0 0 64 64"><path fill="url(#gMoon)" d="M41 12a20 20 0 1 0 11 27A16.5 16.5 0 0 1 41 12z"/><circle cx="14" cy="14" r="1.4" fill="#fdf6d8"/><circle cx="52" cy="44" r="1.1" fill="#fdf6d8" opacity=".8"/></svg>`,
-  ptcl:`<svg viewBox="0 0 64 64"><g>${SUN_S}</g><path fill="url(#gCloud)" d="M24 48a8 8 0 0 1 1.2-15.9A11 11 0 0 1 46.5 34 8 8 0 0 1 45 50H24z"/></svg>`,
+  ptcl:`<svg viewBox="0 0 64 64"><g transform="translate(5 3) scale(.72)"><g class="rays" stroke="#ffc61a" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4.3 4.3M44.7 44.7 49 49M49 15l-4.3 4.3M19.3 44.7 15 49"/></g><circle cx="32" cy="32" r="11.5" fill="url(#gSun)"/></g><path fill="url(#gCloud)" d="M24 48a8 8 0 0 1 1.2-15.9A11 11 0 0 1 46.5 34 8 8 0 0 1 45 50H24z"/></svg>`,
   cloud:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" opacity=".75" d="M30 30a6.5 6.5 0 0 1 1-12.9A9 9 0 0 1 48 18.5 6.5 6.5 0 0 1 47 31z"/><path fill="url(#gCloud)" d="M21 47a8.5 8.5 0 0 1 1.3-16.9A12 12 0 0 1 45.5 32 8.5 8.5 0 0 1 44 49H21z"/></svg>`,
-  over:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" opacity=".6" d="M28 27a6.5 6.5 0 0 1 1-12.9A9 9 0 0 1 46 15.5 6.5 6.5 0 0 1 45 28z"/><path fill="url(#gCloudDark)" d="M20 51a8.5 8.5 0 0 1 1.3-16.9A12 12 0 0 1 44.5 36 8.5 8.5 0 0 1 43 53H20z"/></svg>`,
-  fog:`<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round"><path fill="url(#gCloud)" stroke="none" d="M22 32a7 7 0 0 1 1-13.9A9.5 9.5 0 0 1 41.5 20 7 7 0 0 1 41 34H22z"/><g stroke="#b9cfdc" stroke-width="3"><path d="M14 41h30M10 48h36M16 55h26" opacity=".85"/></g></svg>`,
-  drz:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 38a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 24 8 8 0 0 1 42 40H21z"/><g stroke="url(#gDrop)" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M23 45v5M31 47v6M39 45v5"/></g></svg>`,
+  over:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" opacity=".7" d="M25 29a7 7 0 0 1 1-13.9A10 10 0 0 1 47 18 7 7 0 0 1 46 31z"/><path fill="url(#gCloudDark)" d="M18 49a9 9 0 0 1 1.4-17.8A13 13 0 0 1 46 34a9 9 0 0 1-1.5 17H18z"/></svg>`,
+  fog:`<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round"><path fill="url(#gCloud)" stroke="none" d="M22 32a7 7 0 0 1 1-13.9A9.5 9.5 0 0 1 41.5 20 7 7 0 0 1 41 34H22z"/><g stroke="#b9cfdc" stroke-width="3"><path d="M17 41h30"/><path d="M13 48h36"/><path d="M19 55h26"/></g></svg>`,
+  fog2:`<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round"><path fill="url(#gCloudDark)" stroke="none" d="M22 32a7 7 0 0 1 1-13.9A9.5 9.5 0 0 1 41.5 20 7 7 0 0 1 41 34H22z"/><g stroke="#cfe8ff" stroke-width="2.4"><path d="M12 42h40"/><path d="M9 49h46"/><path d="M14 56h36"/></g><g fill="#eaf6ff"><circle cx="18" cy="38" r="1.3"/><circle cx="47" cy="38" r="1.3"/><circle cx="22" cy="59" r="1.2"/><circle cx="43" cy="59" r="1.2"/></g></svg>`,
+  drz:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="url(#gDrop)" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M23 45v5M31 47v6M39 45v5"/></g></svg>`,
   rain:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="url(#gDrop)" stroke-width="2.8" stroke-linecap="round" fill="none"><path d="M22 44l-2.5 8M32 46l-2.5 8M42 44l-2.5 8"/></g></svg>`,
   hrain:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.8" stroke-linecap="round" fill="none"><path d="M19 42l-3 9M28 44l-3 9M37 44l-3 9M46 42l-3 9"/></g></svg>`,
-  frz:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="#aee6ec" stroke-width="2.6" stroke-linecap="round" fill="none"><path d="M24 44l-2 7M38 44l-2 7"/></g><circle cx="20.5" cy="55" r="1.8" fill="#d8f4f7"/><circle cx="34.5" cy="55" r="1.8" fill="#d8f4f7"/></svg>`,
-  ssn:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><path stroke="url(#gDrop)" stroke-width="2.6" stroke-linecap="round" d="M24 44l-2 8"/><circle cx="39" cy="50" r="2.5" fill="#eaf6ff"/></svg>`,
+  frz:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="#aee6ec" stroke-width="2.6" stroke-linecap="round" fill="none"><path d="M24 44l-2 7M38 44l-2 7"/></g><g fill="#eafcff"><circle cx="27" cy="50" r="1.35"/><circle cx="33" cy="53" r="1.15"/><circle cx="43" cy="49" r="1.25"/><circle cx="18" cy="54" r="1.05"/></g></svg>`,
+  ssn:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="url(#gDrop)" stroke-width="2.8" stroke-linecap="round" fill="none"><path d="M20 44l-2.5 8M31 46l-2.5 8M42 44l-2.5 8"/></g><g fill="#eaf6ff"><circle cx="24" cy="48" r="1.35"/><circle cx="35" cy="51" r="1.15"/><circle cx="46" cy="49" r="1.25"/><circle cx="14" cy="51" r="1.05"/></g></svg>`,
   snow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g fill="#eaf6ff"><circle cx="22" cy="46" r="2.2"/><circle cx="32" cy="52" r="2.2"/><circle cx="42" cy="46" r="2.2"/><circle cx="27" cy="57" r="1.7" fill="#cfe8ff"/><circle cx="37" cy="58" r="1.7" fill="#cfe8ff"/></g></svg>`,
   hsnow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g fill="#eaf6ff"><circle cx="19" cy="44" r="2.2"/><circle cx="29" cy="49" r="2.2"/><circle cx="39" cy="44" r="2.2"/><circle cx="49" cy="49" r="2" fill="#cfe8ff"/><circle cx="24" cy="56" r="1.9" fill="#cfe8ff"/><circle cx="34" cy="59" r="1.9" fill="#cfe8ff"/><circle cx="44" cy="56" r="1.9" fill="#cfe8ff"/></g></svg>`,
-  showers:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="url(#gDrop)" stroke-width="2.7" stroke-linecap="round" fill="none"><path d="M20 44l-2.5 8M28 46l-2.5 8M36 46l-2.5 8M44 44l-2.5 8"/></g></svg>`,
+  grn:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g fill="#dff2ff"><circle cx="20" cy="46" r="3"/><circle cx="29" cy="51" r="2.5"/><circle cx="38" cy="46" r="3"/><circle cx="47" cy="52" r="2.5"/><circle cx="25" cy="58" r="2.2"/><circle cx="40" cy="59" r="2.2"/></g></svg>`,
+  showers:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="url(#gDrop)" stroke-width="2.7" stroke-linecap="round" fill="none"><path d="M20 44l-2.5 8M28 46l-2.5 8M36 46l-2.5 8M44 44l-2.5 8"/></g><path d="M14 58h36" stroke="#76c8f2" stroke-width="1.4" stroke-linecap="round" opacity=".55"/></svg>`,
+  hshow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.8" stroke-linecap="round" fill="none"><path d="M16 41l-3 9M24 43l-3 9M32 44l-3 9M40 43l-3 9M48 41l-3 9"/></g><path d="M12 57h40" stroke="#9ed7ff" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg>`,
+  sshow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="#eaf6ff" stroke-width="1.7" stroke-linecap="round"><path d="M20 44v8M16 48h8M17.2 45.2l5.6 5.6M22.8 45.2l-5.6 5.6"/><path d="M38 46v9M33.5 50.5h9M34.8 47.3l6.4 6.4M41.2 47.3l-6.4 6.4"/><path d="M49 43v6M46 46h6M47 44l4 4M51 44l-4 4"/></g></svg>`,
   storm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".9"><path d="M21 42l-2 6M43 42l-2 6"/></g><path class="bolt" fill="#ffd166" d="M33 38l-7.5 11h5.5l-3.5 10 11-13.5h-6l4.5-7.5z"/></svg>`,
+  hstorm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M20 33a8 8 0 0 1 1.2-15.9A11 11 0 0 1 44 19 8 8 0 0 1 43 35H20z"/><g stroke="url(#gDrop)" stroke-width="2.4" stroke-linecap="round"><path d="M16 41l-2 6M48 41l-2 6"/><path d="M22 47l-2 5M42 47l-2 5"/></g><path fill="#ffd166" d="M33 35l-8 12h5.8l-3.5 9.5L39 42h-6l4.5-7z"/><path fill="#ffe08a" d="M19 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/><path fill="#ffe08a" d="M46 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/></svg>`,
 };
 
 const $ = s => document.querySelector(s);
@@ -1641,6 +1693,8 @@ function applyLang(){
   const geoSel=$('#geoLangSel'); if(geoSel) geoSel.value=LANG;
   $('#unit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.u===state.unit));
   $('#installBtn').title=t('install');
+  const wlBtn=$('#weatherLegendBtn'); if(wlBtn) wlBtn.title=t('weatherLegend');
+  if($('#weatherLegendModal')?.classList.contains('show')) renderWeatherLegend();
   const da=dirsArr();
   $('#cN').textContent=da[0]; $('#cE').textContent=da[4]; $('#cS').textContent=da[8]; $('#cW').textContent=da[12];
   const privfSel=$('#privfLangSel'); if(privfSel) privfSel.value=LANG;
@@ -2279,6 +2333,29 @@ $('#privfDecline').addEventListener('click', () => {
   $('#privfWarn').classList.add('show');
   if(navigator.vibrate) navigator.vibrate(40);
 });
+
+const WEATHER_STATES=[
+  ['01','wx_clear','clear'],['02','wx_ptcl','ptcl'],['03','wx_cloud','cloud'],['04','wx_over','over'],
+  ['05','wx_fog','fog'],['06','wx_fog2','fog2'],['07','wx_drz','drz'],['08','wx_rain','rain'],
+  ['09','wx_hrain','hrain'],['10','wx_frz','frz'],['11','wx_ssn','ssn'],['12','wx_snow','snow'],
+  ['13','wx_hsnow','hsnow'],['14','wx_grn','grn'],['15','wx_showers','showers'],['16','wx_hshow','hshow'],
+  ['17','wx_sshow','sshow'],['18','wx_storm','storm'],['19','wx_hstorm','hstorm']
+];
+function renderWeatherLegend(){
+  const list=$('#weatherLegendList');
+  if(!list) return;
+  list.innerHTML=WEATHER_STATES.map(([n,key,icon])=>`<div class="weather-legend-item"><span class="weather-legend-num">${n}</span>${ICON[icon]||ICON.cloud}<span class="weather-legend-name">${t(key)}</span></div>`).join('');
+}
+function setWeatherLegend(open){
+  const modal=$('#weatherLegendModal');
+  if(!modal) return;
+  modal.classList.toggle('show',open);
+  modal.setAttribute('aria-hidden',open?'false':'true');
+  if(open) renderWeatherLegend();
+}
+$('#weatherLegendBtn').addEventListener('click',()=>setWeatherLegend(true));
+$('#weatherLegendClose').addEventListener('click',()=>setWeatherLegend(false));
+document.querySelector('#weatherLegendModal .weather-legend-back').addEventListener('click',()=>setWeatherLegend(false));
 </script>
 </body>
 </html>
