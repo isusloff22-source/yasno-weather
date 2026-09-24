@@ -1329,7 +1329,7 @@ const ICON = {
   hshow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.8" stroke-linecap="round" fill="none"><path d="M16 41l-3 9M24 43l-3 9M32 44l-3 9M40 43l-3 9M48 41l-3 9"/></g><path d="M12 57h40" stroke="#9ed7ff" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg>`,
   sshow:`<svg viewBox="0 0 64 64"><path fill="url(#gCloud)" d="M21 36a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 22 8 8 0 0 1 42 38H21z"/><g stroke="#eaf6ff" stroke-width="1.7" stroke-linecap="round"><path d="M20 44v8M16 48h8M17.2 45.2l5.6 5.6M22.8 45.2l-5.6 5.6"/><path d="M38 46v9M33.5 50.5h9M34.8 47.3l6.4 6.4M41.2 47.3l-6.4 6.4"/><path d="M49 43v6M46 46h6M47 44l4 4M51 44l-4 4"/></g></svg>`,
   storm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M21 34a8 8 0 0 1 1.2-15.9A11 11 0 0 1 43.5 20 8 8 0 0 1 42 36H21z"/><g stroke="url(#gDrop)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".9"><path d="M21 42l-2 6M43 42l-2 6"/></g><path class="bolt" fill="#ffd166" d="M33 38l-7.5 11h5.5l-3.5 10 11-13.5h-6l4.5-7.5z"/></svg>`,
-  hstorm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M20 33a8 8 0 0 1 1.2-15.9A11 11 0 0 1 44 19 8 8 0 0 1 43 35H20z"/><g stroke="url(#gDrop)" stroke-width="2.4" stroke-linecap="round"><path d="M16 41l-2 6M48 41l-2 6"/><path d="M22 47l-2 5M42 47l-2 5"/></g><path fill="#ffd166" d="M33 35l-8 12h5.8l-3.5 9.5L39 42h-6l4.5-7z"/><path fill="#ffe08a" d="M19 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/><path fill="#ffe08a" d="M46 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/></svg>`,
+  hstorm:`<svg viewBox="0 0 64 64"><path fill="url(#gCloudDark)" d="M20 33a8 8 0 0 1 1.2-15.9A11 11 0 0 1 44 19 8 8 0 0 1 43 35H20z"/><g stroke="url(#gDrop)" stroke-width="2.4" stroke-linecap="round"><path d="M16 41l-2 6M48 41l-2 6"/><path d="M22 47l-2 5M42 47l-2 5"/></g><path class="bolt" fill="#ffd166" d="M33 35l-8 12h5.8l-3.5 9.5L39 42h-6l4.5-7z"/><path class="bolt" fill="#ffe08a" d="M19 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/><path class="bolt" fill="#ffe08a" d="M46 34l-4.5 6.5h3.1l-1.8 5 6.2-7.1h-3.1z" opacity=".9"/></svg>`,
 };
 
 const $ = s => document.querySelector(s);
@@ -2335,7 +2335,7 @@ $('#privfDecline').addEventListener('click', () => {
 });
 
 const WEATHER_STATES=[
-  ['01','wx_clear','clear'],['02','wx_ptcl','ptcl'],['03','wx_cloud','cloud'],['04','wx_over','over'],
+  ['01','wx_clear','sun'],['02','wx_ptcl','ptcl'],['03','wx_cloud','cloud'],['04','wx_over','over'],
   ['05','wx_fog','fog'],['06','wx_fog2','fog2'],['07','wx_drz','drz'],['08','wx_rain','rain'],
   ['09','wx_hrain','hrain'],['10','wx_frz','frz'],['11','wx_ssn','ssn'],['12','wx_snow','snow'],
   ['13','wx_hsnow','hsnow'],['14','wx_grn','grn'],['15','wx_showers','showers'],['16','wx_hshow','hshow'],
