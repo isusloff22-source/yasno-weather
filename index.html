@@ -381,10 +381,14 @@ body.night #stars{opacity:1}
 #offlineRetry{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04;border-color:transparent;box-shadow:0 6px 18px rgba(255,183,3,.3)}
 #offlineRetry:hover{box-shadow:0 10px 24px rgba(255,183,3,.42)}
 @media(max-width:480px){
-  #offlineModal .offline-box{padding:24px 18px 22px}
+  #offlineModal .offline-box,#weatherErrModal .offline-box{padding:24px 18px 22px}
   .offline-box h2{font-size:18px}
   .offline-box p{font-size:13.5px}
 }
+#weatherErrModal{position:fixed;inset:0;z-index:100003;display:none;align-items:center;justify-content:center;padding:16px;background:#041e30;}
+#weatherErrModal.show{display:flex}
+#weatherErrModal .offline-back{position:absolute;inset:0;background:#041e30;}
+#weatherErrModal .offline-box{position:relative;z-index:1;max-width:480px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:24px;padding:30px 26px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45);}
 #privacyModal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:16px}
 #privacyModal .priv-back{position:absolute;inset:0;background:rgba(3,11,23,.82);backdrop-filter:blur(10px)}
 #privacyModal .priv-box{position:relative;z-index:1;max-width:480px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:24px;padding:28px 26px 24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
@@ -590,6 +594,18 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
     <p data-i18n="offlineText">Connect to the internet and press Retry to continue using Yasno.</p>
     <div class="offline-actions">
       <button id="offlineRetry" data-i18n="retry">Retry</button>
+    </div>
+  </div>
+</div>
+
+<div id="weatherErrModal" aria-live="polite">
+  <div class="offline-back"></div>
+  <div class="offline-box">
+    <div class="offline-icon">🌦️</div>
+    <h2 data-i18n="weatherErrorTitle">Weather data unavailable</h2>
+    <p data-i18n="weatherErr">Weather data could not be loaded. The weather service did not respond. Press Retry to try again.</p>
+    <div class="offline-actions">
+      <button id="weatherErrRetry" data-i18n="retry">Retry</button>
     </div>
   </div>
 </div>
@@ -2285,7 +2301,8 @@ function translateDict(code){
   if(I18N[code]) return {...I18N[code]};
   return {...STR_EN, __fallback:1};
 }
-function t(key){ return STR[key] || STR_EN[key] || key; }
+const WEATHER_ERROR_TITLES={en:'Weather data unavailable',ru:'Данные о погоде недоступны',es:'Datos meteorológicos no disponibles',pt:'Dados meteorológicos indisponíveis',de:'Wetterdaten nicht verfügbar',fr:'Données météo indisponibles',it:'Dati meteorologici non disponibili',ja:'気象データを取得できません',ko:'날씨 데이터를 불러올 수 없습니다',hi:'मौसम का डेटा उपलब्ध नहीं है',id:'Data cuaca tidak tersedia',ar:'بيانات الطقس غير متاحة',tr:'Hava durumu verileri kullanılamıyor'};
+function t(key){ return key==='weatherErrorTitle' ? (WEATHER_ERROR_TITLES[LANG]||WEATHER_ERROR_TITLES.en) : (STR[key] || STR_EN[key] || key); }
 function dirsArr(){ return (STR.dirs || STR_EN.dirs || 'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW').split(','); }
 
 function weatherDesc(code){
@@ -2872,13 +2889,6 @@ async function loadWeather(place){
     +'&timezone=auto&forecast_days=7';
 
   let r, astro=null;
-  let weatherTimedOut=false;
-  const weatherTimer=setTimeout(()=>{
-    if(state.ctrl===ctrl){
-      weatherTimedOut=true;
-      try{ ctrl.abort(); }catch(e){}
-    }
-  },10000);
   try{
     [r,astro]=await Promise.all([
       fetchRetry(url,3,ctrl.signal),
@@ -2888,26 +2898,24 @@ async function loadWeather(place){
         }catch(e){ return null; } })()
     ]);
   }catch(e){
-    clearTimeout(weatherTimer);
-    if(e&&e.name==='AbortError' && !weatherTimedOut) { document.getElementById('splash-screen').classList.add('hidden'); return; }
-    // If the weather request failed, distinguish a real loss of internet
-    // from an Open-Meteo/API outage. The two states use different UI.
+    if(e&&e.name==='AbortError') {
+      document.getElementById('splash-screen').classList.add('hidden');
+      return;
+    }
     if(!(await hasInternetConnection())) showOfflineScreen();
-    else showErr(t('weatherErr'));
-    document.getElementById('splash-screen').classList.add('hidden');
+    else showWeatherErrorScreen();
     return;
   }
-  clearTimeout(weatherTimer);
 
   let data;
   try{ data=await r.json(); }catch(e){ data=null; }
   if(!data||!data.current){
-    showErr(t('weatherErr'));
-    document.getElementById('splash-screen').classList.add('hidden');
+    if(!(await hasInternetConnection())) showOfflineScreen();
+    else showWeatherErrorScreen();
     return;
   }
 
-  hideErr(); hidePickBar();
+  hideErr(); hidePickBar(); hideWeatherErrorScreen();
   state.data=data; state.place=place; state.astro=astro; place.tz=data.timezone||place.tz;
   try{ localStorage.setItem('atmos-place',JSON.stringify(place)); }catch(e){}
   try{ renderAll(data,place); }catch(err){ console.warn(err); }
@@ -3217,8 +3225,20 @@ function hideOfflineScreen(){
   $('#offlineModal').classList.remove('show');
 }
 
+function showWeatherErrorScreen(){
+  applyLang();
+  document.getElementById('splash-screen').classList.add('hidden');
+  $('#offlineModal').classList.remove('show');
+  $('#weatherErrModal').classList.add('show');
+}
+
+function hideWeatherErrorScreen(){
+  $('#weatherErrModal').classList.remove('show');
+}
+
 $('#offlineRetry').addEventListener('click',async()=>{
   const btn=$('#offlineRetry');
+  if(btn.disabled) return;
   btn.disabled=true;
   try{
     if(await hasInternetConnection()){
@@ -3230,6 +3250,20 @@ $('#offlineRetry').addEventListener('click',async()=>{
       }
       continueInit();
     }
+  }finally{
+    btn.disabled=false;
+  }
+ });
+
+$('#weatherErrRetry').addEventListener('click',async()=>{
+  const btn=$('#weatherErrRetry');
+  if(btn.disabled) return;
+  btn.disabled=true;
+  hideWeatherErrorScreen();
+  document.getElementById('splash-screen').classList.remove('hidden');
+  try{
+    if(state.lastPlace) await loadWeather(state.lastPlace);
+    else await submitSearch();
   }finally{
     btn.disabled=false;
   }
