@@ -2578,7 +2578,12 @@ function setScene(k,isDay){
 
 function cityClock(){
   if(!state.place) return;
-  try{ $('#cityTime').textContent=new Date().toLocaleTimeString(LANG,{timeZone:state.place.tz,hour:'2-digit',minute:'2-digit',second:'2-digit'}); }catch(e){}
+  const tz=(state.data&&state.data.timezone)||state.place.tz;
+  try{
+    if(tz && tz!=='auto'){
+      $('#cityTime').textContent=new Date().toLocaleTimeString(LANG,{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+  }catch(e){}
 }
 setInterval(cityClock,1000);
 let _lastRenderedHour = '';
@@ -2916,7 +2921,13 @@ async function loadWeather(place){
   }
 
   hideErr(); hidePickBar(); hideWeatherErrorScreen();
-  state.data=data; state.place=place; state.astro=astro; place.tz=data.timezone||place.tz;
+  state.data=data; state.place=place;
+  // Always take the timezone returned by the fresh weather response.
+  // Manual city searches may initially have tz='auto'; after the forecast loads,
+  // the exact IANA timezone is available and must drive the live city clock.
+  if(data.timezone && data.timezone!=='auto') place.tz=data.timezone;
+  if(Number.isFinite(data.utc_offset_seconds)) place.utcOffsetSeconds=data.utc_offset_seconds;
+  state.astro=astro;
   try{ localStorage.setItem('atmos-place',JSON.stringify(place)); }catch(e){}
   try{ renderAll(data,place); }catch(err){ console.warn(err); }
   document.getElementById('splash-screen').classList.add('hidden');
@@ -3034,14 +3045,25 @@ function renderAll(data,place){
 }
 function flag(cc){ try{ return cc.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt(0))); }catch(e){ return ''; } }
 
+function cityHourKey(tz){
+  try{
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+    const v={}; parts.forEach(x=>{ if(x.type!=='literal') v[x.type]=x.value; });
+    if(v.year&&v.month&&v.day&&v.hour) return `${v.year}-${v.month}-${v.day}T${v.hour}:00`;
+  }catch(e){}
+  return '';
+}
 function renderHours(data){
   const h=data.hourly, box=$('#hourStrip');
-  const currentHourStr = data.current.time.slice(0, 13) + ":00";
-  let idx = h.time.indexOf(currentHourStr);
-  if (idx < 0) {
-    idx = h.time.findIndex(tt => tt >= data.current.time);
-    if (idx < 0) idx = h.time.length - 1;
-    else if (h.time[idx] > currentHourStr) idx = Math.max(0, idx - 1);
+  const tz=data.timezone||state.place?.tz||'UTC';
+  const currentHourStr=cityHourKey(tz);
+  let idx=currentHourStr ? h.time.indexOf(currentHourStr) : -1;
+  if(idx<0){
+    // Fallback only if the exact current city hour is unavailable in the response.
+    const currentIso=data.current&&data.current.time;
+    idx=currentIso ? h.time.findIndex(tt=>tt>=currentIso) : -1;
+    if(idx<0) idx=0;
+    else if(currentIso && h.time[idx]>currentIso) idx=Math.max(0,idx-1);
   }
   let html='';
   for(let i=idx; i<Math.min(idx+24, h.time.length); i++){
@@ -3169,7 +3191,9 @@ function renderDetails(data){
   $('#humVal').innerHTML=fmt(hum)+'<i>%</i>';
   $('#humArc').style.strokeDashoffset=(132*(1-hum/100)).toFixed(0);
   $('#humNeedle').style.transform=`rotate(${hum*1.8-90}deg)`;
-  const jNow=h.time.findIndex(tt=>tt>=data.current.time);
+  const tz=data.timezone||state.place?.tz||'UTC';
+  const nowKey=cityHourKey(tz);
+  const jNow=nowKey?h.time.findIndex(tt=>tt===nowKey):-1;
   const dew=jNow>=0?h.dew_point_2m[jNow]:null;
   $('#dewVal').textContent=dew!=null?dispT(dew)+'°':'';
 
