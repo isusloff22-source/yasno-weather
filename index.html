@@ -2590,15 +2590,10 @@ let _lastRenderedHour = '';
 setInterval(() => {
   if (!state.data || !state.place) return;
   try {
-    const dtf = new Intl.DateTimeFormat('en-US', { 
-      timeZone: state.place.tz, 
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', hour12: false 
-    });
-    const currentDT = dtf.format(new Date());
-    if (currentDT !== _lastRenderedHour) {
-      _lastRenderedHour = currentDT;
-      safe(() => renderHours(state.data));
+    const currentHour = cityHourKey((state.data && state.data.timezone) || state.place.tz);
+    if (currentHour && currentHour !== _lastRenderedHour) {
+      _lastRenderedHour = currentHour;
+      safe(() => loadWeather(state.place));
     }
   } catch (e) {}
 }, 30000);
@@ -3042,6 +3037,7 @@ function renderAll(data,place){
     setTimeout(freezeReveals, 1500);
   }
   renderAll._seen=true;
+  _lastRenderedHour = cityHourKey(data.timezone || place.tz);
 }
 function flag(cc){ try{ return cc.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt(0))); }catch(e){ return ''; } }
 
