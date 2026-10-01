@@ -2586,17 +2586,17 @@ function cityClock(){
   }catch(e){}
 }
 setInterval(cityClock,1000);
-let _lastRenderedHour = '';
-setInterval(() => {
-  if (!state.data || !state.place) return;
+let _autoRefreshBusy = false;
+setInterval(async () => {
+  if (!state.data || !state.place || _autoRefreshBusy) return;
+  _autoRefreshBusy = true;
   try {
-    const currentHour = cityHourKey((state.data && state.data.timezone) || state.place.tz);
-    if (currentHour && currentHour !== _lastRenderedHour) {
-      _lastRenderedHour = currentHour;
-      safe(() => loadWeather(state.place));
-    }
+    await loadWeather(state.place);
   } catch (e) {}
-}, 30000);
+  finally {
+    _autoRefreshBusy = false;
+  }
+}, 900000);
 
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
