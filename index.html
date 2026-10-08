@@ -2310,7 +2310,16 @@ function weatherDesc(code){
   const wk=WC[code]||'over';
   return t('wx_'+wk);
 }
-
+function kindForHour(h,i){
+  let wk=WC[h.weather_code[i]]||'over';
+  if(h.rain && h.rain[i]>0 && h.snowfall && h.snowfall[i]>0) wk='ssn';
+  return wk;
+}
+function kindForDay(d,i){
+  let wk=WC[d.weather_code[i]]||'over';
+  if(d.rain_sum && d.rain_sum[i]>0 && d.snowfall_sum && d.snowfall_sum[i]>0) wk='ssn';
+  return wk;
+}
 async function fetchRetry(url,tries=3,signal){
   let lastErr;
   for(let i=0;i<tries;i++){
@@ -2905,7 +2914,7 @@ async function loadWeather(place){
     +`?latitude=${place.lat}&longitude=${place.lon}`
     +'&current=temperature_2m,apparent_temperature,is_day,precipitation,weather_code,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,surface_pressure,cloud_cover,visibility'
     +'&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,rain,snowfall,weather_code,is_day,visibility,uv_index,dew_point_2m,sunshine_duration,relative_humidity_2m'
-    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,snowfall_sum,pressure_msl_max,pressure_msl_min'
+    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_sum,rain_sum,precipitation_probability_max,wind_speed_10m_max,snowfall_sum,pressure_msl_max,pressure_msl_min'
     +'&timezone=auto&forecast_days=7&_='+Date.now();
 
   let r, astro=null;
@@ -3086,9 +3095,10 @@ function renderHours(data){
   let html='';
   for(let i=idx; i<Math.min(idx+24, h.time.length); i++){
     const prob=h.precipitation_probability[i];
-    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${(weatherDesc(h.weather_code[i])||'').replace(/"/g,'&quot;')}">
+    const hk=kindForHour(h,i);
+    html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${t('wx_'+hk).replace(/"/g,'&quot;')}">
       <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
-      ${ICON[ICON_BY_WC(h.weather_code[i])]||ICON.cloud}
+      ${ICON[KIND[hk].icon]||ICON.cloud}
       <span class="htv">${dispT(h.temperature_2m[i])}°</span>
       <span class="hp">${prob>=15?prob+'%':''}</span>
     </div>`;
@@ -3108,13 +3118,13 @@ function renderDays5(data){
   h.time.forEach((tt,i)=>{ const day=tt.slice(0,10); (byDay[day]=byDay[day]||[]).push(i); });
   let html='';
   for(let i=0;i<5&&i<d.time.length;i++){
-    const wk=WC[d.weather_code[i]]||'over';
+    const wk=kindForDay(d,i);
     const kk=KIND[wk];
     const hums=(byDay[d.time[i]]||[]).map(j=>h.relative_humidity_2m[j]).filter(v=>v!=null);
     const hum=hums.length?Math.round(hums.reduce((a,b)=>a+b,0)/hums.length):null;
     const pmm=Math.round((d.pressure_msl_min[i]+d.pressure_msl_max[i])/2*0.750062);
     const prob=d.precipitation_probability_max[i];
-    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${(weatherDesc(d.weather_code[i])||'').replace(/"/g,'&quot;')}">
+    html+=`<div class="dcard${i===0?' today':''}" style="--tint:${kk.tint||'#ffd166'};--d:${(i*0.07).toFixed(2)}s" title="${t('wx_'+wk).replace(/"/g,'&quot;')}">
       <div class="dhead"><b>${dayName(d.time[i],i)}</b><span>${dateShort(d.time[i])}</span></div>
       <div class="dico">${ICON[kk.icon]||ICON.cloud}</div>
       <div class="dtemps"><b>${dispT(d.temperature_2m_max[i])}°</b><span>${t('night')} ${dispT(d.temperature_2m_min[i])}°</span></div>
