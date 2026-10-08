@@ -4043,12 +4043,12 @@ $('#privfDecline').addEventListener('click', () => {
 });
 
 const WEATHER_STATES=[
-  ['01','wx_hstorm','hstorm'],['02','wx_storm','storm'],['03','wx_hshow','hshow'],
-  ['04','wx_sshow','sshow'],['05','wx_showers','showers'],['06','wx_hsnow','hsnow'],
-  ['07','wx_frz','frz'],['08','wx_ssn','ssn'],['09','wx_snow','snow'],
-  ['10','wx_hrain','hrain'],['11','wx_rain','rain'],['12','wx_grn','grn'],
-  ['13','wx_drz','drz'],['14','wx_fog2','fog2'],['15','wx_fog','fog'],
-  ['16','wx_over','cloud'],['17','wx_ptcl','ptcl'],['18','wx_clear','sun']
+  ['01','wx_clear','sun'],['02','wx_ptcl','ptcl'],['03','wx_over','cloud'],
+  ['04','wx_fog','fog'],['05','wx_fog2','fog2'],['06','wx_drz','drz'],
+  ['07','wx_grn','grn'],['08','wx_rain','rain'],['09','wx_hrain','hrain'],
+  ['10','wx_snow','snow'],['11','wx_ssn','ssn'],['12','wx_frz','frz'],
+  ['13','wx_hsnow','hsnow'],['14','wx_showers','showers'],['15','wx_hshow','hshow'],
+  ['16','wx_sshow','sshow'],['17','wx_storm','storm'],['18','wx_hstorm','hstorm']
 ];
 function renderWeatherLegend(){
   const list=$('#weatherLegendList');
