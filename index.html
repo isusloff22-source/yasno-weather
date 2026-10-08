@@ -2374,7 +2374,7 @@ const PRIORITY = {
   rain:8,    grn:7,    drz:6,    fog2:5,   fog:4,
   over:3,    ptcl:2,   clear:1
 };
-function pickHigher(a,b){ return (PRIORITY[a]0) >= (PRIORITY[b]0) ? a : b; }
+function pickHigher(a,b){ return (PRIORITY[a]||0) >= (PRIORITY[b]||0) ? a : b; }
 
 const COUNTRY_NAMES = new Set((
 "россия,российская федерация,сша,америка,великобритания,англия,британия,украина,беларусь,казахстан,узбекистан,туркменистан,киргизия,кыргызстан,таджикистан,молдова,молдавия,грузия,армения,азербайджан,эстония,латвия,литва,польша,чехия,словакия,венгрия,румыния,болгария,сербия,хорватия,словения,босния,черногория,албания,македония,косово,греция,турция,кипр,мальта,испания,португалия,франция,монако,андорра,италия,ватикан,сан-марино,швейцария,австрия,германия,нидерланды,голландия,бельгия,люксембург,лихтенштейн,дания,швеция,норвегия,финляндия,исландия,ирландия,канада,мексика,куба,ямайка,гаити,панама,коста-рика,гватемала,гондурас,сальвадор,никарагуа,багамы,барбадос,тринидад,бразилия,аргентина,чили,перу,боливия,парагвай,уругвай,эквадор,колумбия,венесуэла,гайана,суринам,китай,япония,монголия,северная корея,южная корея,корея,вьетнам,таиланд,лаос,камбоджа,мьянма,бангладеш,индия,шри-ланка,непал,бутан,пакистан,афганистан,иран,ирак,сирия,ливан,израиль,иордания,саудовская аравия,оаэ,катар,кувейт,бахрейн,оман,йемен,египет,ливия,тунис,алжир,марокко,мавритания,мали,нигер,нигерия,гана,сенегал,гамбия,гвинея,кения,эфиопия,сомали,судан,южный судан,уганда,танзания,руанда,бурунди,конго,ангола,замбия,зимбабве,ботсвана,намибия,юар,мозамбик,мадагаскар,маврикий,сейшелы,коморы,эритрея,джибути,габон,камерун,чад,либерия,того,бенин,лесото,эсватини,кабо-верде,австралия,новая зеландия,фиджи,вануату,самоа,тонга,кирибати,палау,науру,тувалу,индонезия,малайзия,сингапур,филиппины,бруней,тимор,"+
@@ -2919,7 +2919,7 @@ async function loadWeather(place){
   state.lastPlace=place;
   const url='https://api.open-meteo.com/v1/forecast'
     +`?latitude=${place.lat}&longitude=${place.lon}`
-    +'&current=temperature_2m,apparent_temperature,is_day,precipitation,weather_code,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,surface_pressure,cloud_cover,visibility'
+    +'&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,snowfall,weather_code,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,surface_pressure,cloud_cover,visibility'
     +'&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,rain,snowfall,weather_code,is_day,visibility,uv_index,dew_point_2m,sunshine_duration,relative_humidity_2m'
     +'&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_sum,rain_sum,precipitation_probability_max,wind_speed_10m_max,snowfall_sum,pressure_msl_max,pressure_msl_min'
     +'&timezone=auto&forecast_days=7&_='+Date.now();
