@@ -2312,12 +2312,12 @@ function weatherDesc(code){
 }
 function kindForHour(h,i){
   let wk=WC[h.weather_code[i]]||'over';
-  if(h.rain && h.rain[i]>0 && h.snowfall && h.snowfall[i]>0) wk='ssn';
+  if(h.rain && h.rain[i]>0 && h.snowfall && h.snowfall[i]>0) wk=pickHigher(wk,'ssn');
   return wk;
 }
 function kindForDay(d,i){
   let wk=WC[d.weather_code[i]]||'over';
-  if(d.rain_sum && d.rain_sum[i]>0 && d.snowfall_sum && d.snowfall_sum[i]>0) wk='ssn';
+  if(d.rain_sum && d.rain_sum[i]>0 && d.snowfall_sum && d.snowfall_sum[i]>0) wk=pickHigher(wk,'ssn');
   return wk;
 }
 async function fetchRetry(url,tries=3,signal){
@@ -2368,6 +2368,13 @@ const WC = {0:'clear',1:'ptcl',2:'ptcl',3:'over',45:'fog',48:'fog2',51:'drz',53:
   61:'rain',63:'rain',65:'hrain',66:'frz',67:'frz',71:'snow',73:'snow',75:'hsnow',77:'grn',
   80:'showers',81:'showers',82:'hshow',85:'sshow',86:'sshow',95:'storm',96:'hstorm',99:'hstorm'};
 const UV = [[0,0],[3,1],[6,2],[8,3],[11,4]];
+const PRIORITY = {
+  hstorm:18, storm:17, hshow:16, sshow:15, showers:14,
+  hsnow:13,  frz:12,   ssn:11,   snow:10,  hrain:9,
+  rain:8,    grn:7,    drz:6,    fog2:5,   fog:4,
+  over:3,    ptcl:2,   clear:1
+};
+function pickHigher(a,b){ return (PRIORITY[a]0) >= (PRIORITY[b]0) ? a : b; }
 
 const COUNTRY_NAMES = new Set((
 "россия,российская федерация,сша,америка,великобритания,англия,британия,украина,беларусь,казахстан,узбекистан,туркменистан,киргизия,кыргызстан,таджикистан,молдова,молдавия,грузия,армения,азербайджан,эстония,латвия,литва,польша,чехия,словакия,венгрия,румыния,болгария,сербия,хорватия,словения,босния,черногория,албания,македония,косово,греция,турция,кипр,мальта,испания,португалия,франция,монако,андорра,италия,ватикан,сан-марино,швейцария,австрия,германия,нидерланды,голландия,бельгия,люксембург,лихтенштейн,дания,швеция,норвегия,финляндия,исландия,ирландия,канада,мексика,куба,ямайка,гаити,панама,коста-рика,гватемала,гондурас,сальвадор,никарагуа,багамы,барбадос,тринидад,бразилия,аргентина,чили,перу,боливия,парагвай,уругвай,эквадор,колумбия,венесуэла,гайана,суринам,китай,япония,монголия,северная корея,южная корея,корея,вьетнам,таиланд,лаос,камбоджа,мьянма,бангладеш,индия,шри-ланка,непал,бутан,пакистан,афганистан,иран,ирак,сирия,ливан,израиль,иордания,саудовская аравия,оаэ,катар,кувейт,бахрейн,оман,йемен,египет,ливия,тунис,алжир,марокко,мавритания,мали,нигер,нигерия,гана,сенегал,гамбия,гвинея,кения,эфиопия,сомали,судан,южный судан,уганда,танзания,руанда,бурунди,конго,ангола,замбия,зимбабве,ботсвана,намибия,юар,мозамбик,мадагаскар,маврикий,сейшелы,коморы,эритрея,джибути,габон,камерун,чад,либерия,того,бенин,лесото,эсватини,кабо-верде,австралия,новая зеландия,фиджи,вануату,самоа,тонга,кирибати,палау,науру,тувалу,индонезия,малайзия,сингапур,филиппины,бруней,тимор,"+
@@ -3007,7 +3014,7 @@ function freezeReveals(){
 function renderAll(data,place){
   const c=data.current, d=data.daily, h=data.hourly;
   let wk=WC[c.weather_code]||'over';
-  if(c.rain>0 && c.snowfall>0) wk='ssn';
+  if(c.rain>0 && c.snowfall>0) wk=pickHigher(wk,'ssn');
   const k=KIND[wk];
   const isDay=!!c.is_day;
   safe(()=>setScene(k,isDay));
@@ -4036,11 +4043,12 @@ $('#privfDecline').addEventListener('click', () => {
 });
 
 const WEATHER_STATES=[
-  ['01','wx_clear','sun'],['02','wx_ptcl','ptcl'],['03','wx_over','cloud'],
-  ['04','wx_fog','fog'],['05','wx_fog2','fog2'],['06','wx_drz','drz'],['07','wx_rain','rain'],
-  ['08','wx_hrain','hrain'],['09','wx_frz','frz'],['10','wx_ssn','ssn'],['11','wx_snow','snow'],
-  ['12','wx_hsnow','hsnow'],['13','wx_grn','grn'],['14','wx_showers','showers'],['15','wx_hshow','hshow'],
-  ['16','wx_sshow','sshow'],['17','wx_storm','storm'],['18','wx_hstorm','hstorm']
+  ['01','wx_hstorm','hstorm'],['02','wx_storm','storm'],['03','wx_hshow','hshow'],
+  ['04','wx_sshow','sshow'],['05','wx_showers','showers'],['06','wx_hsnow','hsnow'],
+  ['07','wx_frz','frz'],['08','wx_ssn','ssn'],['09','wx_snow','snow'],
+  ['10','wx_hrain','hrain'],['11','wx_rain','rain'],['12','wx_grn','grn'],
+  ['13','wx_drz','drz'],['14','wx_fog2','fog2'],['15','wx_fog','fog'],
+  ['16','wx_over','cloud'],['17','wx_ptcl','ptcl'],['18','wx_clear','sun']
 ];
 function renderWeatherLegend(){
   const list=$('#weatherLegendList');
