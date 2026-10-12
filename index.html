@@ -536,7 +536,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
     </div>
     <div class="privf-body">
       <div class="privf-translating" id="privfTranslating"><div class="spin"></div><span id="privfTranslatingTxt">Translating…</span></div>
-      <div class="privf-updated" id="privfUpdated">Last updated: 5 October 2026</div>
+      <div class="privf-updated" id="privfUpdated">Last updated: 11 October 2026</div>
       <div class="privf-tldr" id="privfTldr"></div>
       <div id="privfContent"></div>
       <div id="privfWarn" data-i18n="privacyWarn">⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.</div>
@@ -688,12 +688,12 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
           <defs>
             <linearGradient id="arcG" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ff8f3f"/></linearGradient>
-            <radialGradient id="sunDot"><stop offset="0" stop-color="#fff3c4"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="rgba(255,209,102,0)"/></radialGradient>
+            <radialGradient id="sunGlow"><stop offset="0" stop-color="#fff3c4"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="rgba(255,209,102,0)"/></radialGradient>
           </defs>
           <line x1="4" y1="110" x2="216" y2="110" stroke="rgba(160,215,255,.18)" stroke-width="1"/>
           <path d="M18,110 A92,92 0 0,1 202,110" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="3" stroke-linecap="round"/>
           <path id="sunArc" d="M18,110 A92,92 0 0,1 202,110" fill="none" stroke="url(#arcG)" stroke-width="3.5" stroke-linecap="round" stroke-dashoffset="264"/>
-          <circle id="sunDot" r="9" fill="url(#sunDot)" cx="18" cy="110"/>
+          <circle id="sunDot" r="9" fill="url(#sunGlow)" cx="18" cy="110"/>
           <circle id="sunCore" r="3.6" fill="#ffe29a" cx="18" cy="110"/>
         </svg>
         <div class="sunrow">
@@ -807,12 +807,14 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 
   <footer class="foot reveal" style="--d:.55s">
     <span data-i18n="foot">Search across two world databases: Open-Meteo + OpenStreetMap</span><br>
+    <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:inherit">© OpenStreetMap contributors</a><br>
     <b id="updAt"></b>
   </footer>
 </div>
 
 <div id="toast" role="status"></div>
 
+<script src="moon-times.js"></script>
 <script>
 'use strict';
 if ('serviceWorker' in navigator) {
@@ -874,13 +876,13 @@ const STR_EN={
  wx_grn:'Snow grains', wx_showers:'Rain showers', wx_hshow:'Heavy rain showers', wx_sshow:'Snow showers',
  wx_storm:'Thunderstorm', wx_hstorm:'Severe thunderstorm',
  geoTitle:'Know your location?',
- geoDesc:'We use your location to instantly show the weather in your city — accurate forecast, current temperature, wind, humidity and details for the next 5 days. Your coordinates are processed only on your device and are not stored anywhere. If you prefer, you can enter the city manually.',
+ geoDesc:"We use location to find your place and load weather. If allowed, device coordinates go directly to Open-Meteo for the forecast and to Nominatim for reverse geocoding. Yasno stores only the last selected place, including its coordinates, locally; it does not keep a location history. City names typed in search go to Nominatim. You can enter a city manually.",
  geoOk:'Ok',
  geoNo:'No, thanks',
 
 iosHint:'On iPhone/iPad: Share → "Add to Home Screen"',
 privacyTitle:'Privacy Policy',
-privacyText:'To use Yasno, you must agree to our Privacy Policy. Yasno is developed and operated by Ivan Suslov. We do not collect personal data — your location and search queries are processed only on your device.',
+privacyText:"To use Yasno, you must agree to this Privacy Policy. Yasno is developed and operated by Ivan Suslov. The app has no ads and does not run analytics. Your last selected place and one last forecast are stored locally; coordinates and city searches go to Open-Meteo and Nominatim. Font files are requested from Google Fonts.",
 privacyAccept:'Accept',
 privacyDecline:'Decline',
 privacyRead:'Read the full policy',
@@ -995,12 +997,12 @@ const I18N = {
     "wx_storm": "Гроза",
     "wx_hstorm": "Сильная гроза",
     "geoTitle": "Узнать ваше местоположение?",
-    "geoDesc": "Мы используем ваше местоположение, чтобы мгновенно показать погоду в вашем городе — точный прогноз, текущая температура, ветер, влажность и детали на 5 дней вперёд. Координаты обрабатываются только на вашем устройстве и никуда не сохраняются. Если хотите, можете ввести город вручную.",
+    "geoDesc": "Местоположение используется для определения места и загрузки погоды. Если вы разрешите геолокацию, координаты устройства напрямую передаются в Open-Meteo для прогноза и в Nominatim для обратного геокодирования. Yasno локально хранит только последнее выбранное место, включая координаты, а не историю местоположений. Названия городов, введённые в поиск, передаются в Nominatim. Город можно ввести вручную.",
     "geoOk": "Ок",
     "geoNo": "Нет, спасибо",
     "iosHint": "На iPhone/iPad: Поделиться → «На экран Домой»",
     "privacyTitle": "Политика конфиденциальности",
-    "privacyText": "Для использования Yasno необходимо согласие с Политикой конфиденциальности. Мы не собираем персональные данные — ваше местоположение и поисковые запросы обрабатываются только на вашем устройстве.",
+    "privacyText": "Для использования Yasno нужно принять Политику конфиденциальности. Yasno разработал и поддерживает Иван Суслов. В приложении нет рекламы и аналитики. Последнее выбранное место и один последний прогноз хранятся локально; координаты и названия городов передаются в Open-Meteo и Nominatim. Файлы шрифтов запрашиваются у Google Fonts.",
     "privacyAccept": "Принять",
     "privacyDecline": "Отклонить",
     "privacyRead": "Ознакомиться с полным текстом",
@@ -1112,12 +1114,12 @@ const I18N = {
     "wx_storm": "Tormenta",
     "wx_hstorm": "Tormenta eléctrica intensa",
     "geoTitle": "¿Quieres permitir conocer tu ubicación?",
-    "geoDesc": "Usamos tu ubicación para mostrar al instante el tiempo en tu ciudad: pronóstico preciso, temperatura actual, viento, humedad y detalles para los próximos 5 días. Tus coordenadas se procesan solo en tu dispositivo y no se almacenan en ningún lugar. Si lo prefieres, puedes introducir la ciudad manualmente.",
+    "geoDesc": "Usamos la ubicación para identificar el lugar y cargar el tiempo. Si la permites, las coordenadas del dispositivo se envían directamente a Open-Meteo para el pronóstico y a Nominatim para la geocodificación inversa. Yasno guarda localmente solo el último lugar seleccionado, incluidas sus coordenadas; no conserva un historial de ubicaciones. Los nombres escritos en la búsqueda se envían a Nominatim. También puedes escribir una ciudad manualmente.",
     "geoOk": "Aceptar",
     "geoNo": "No, gracias",
     "iosHint": "En iPhone/iPad: Compartir → «Añadir a pantalla de inicio»",
     "privacyTitle": "Política de privacidad",
-    "privacyText": "Para usar Yasno debes aceptar nuestra Política de privacidad. No recopilamos datos personales: tu ubicación y tus búsquedas se procesan solo en tu dispositivo.",
+    "privacyText": "Para usar Yasno, debes aceptar esta Política de privacidad. Yasno fue desarrollado y es gestionado por Ivan Suslov. La aplicación no muestra anuncios ni realiza análisis. El último lugar seleccionado y el último pronóstico se guardan localmente; las coordenadas y los nombres de ciudades se envían a Open-Meteo y Nominatim. Los archivos de fuentes se solicitan a Google Fonts.",
     "privacyAccept": "Aceptar",
     "privacyDecline": "Rechazar",
     "privacyRead": "Leer la política completa",
@@ -1229,12 +1231,12 @@ const I18N = {
     "wx_storm": "Trovoada",
     "wx_hstorm": "Trovoada forte",
     "geoTitle": "Permitir localização?",
-    "geoDesc": "Usamos sua localização para mostrar instantaneamente o tempo na sua cidade — previsão precisa, temperatura atual, vento, umidade e detalhes dos próximos 5 dias. Suas coordenadas são processadas apenas no seu dispositivo e não são armazenadas em nenhum lugar. Se preferir, você pode digitar a cidade manualmente.",
+    "geoDesc": "Usamos a localização para identificar o local e carregar a previsão. Se você permitir, as coordenadas do dispositivo são enviadas diretamente ao Open-Meteo para a previsão e ao Nominatim para a geocodificação reversa. O Yasno guarda localmente apenas o último local selecionado, incluindo as coordenadas; não mantém histórico de localização. Os nomes digitados na busca são enviados ao Nominatim. Você também pode digitar uma cidade manualmente.",
     "geoOk": "OK",
     "geoNo": "Não, obrigado",
     "iosHint": "No iPhone/iPad: Compartilhar → “Adicionar à Tela de Início”",
     "privacyTitle": "Política de Privacidade",
-    "privacyText": "Para usar o Yasno, você precisa concordar com nossa Política de Privacidade. Não coletamos dados pessoais — sua localização e suas buscas são processadas apenas no seu dispositivo.",
+    "privacyText": "Para usar o Yasno, você precisa aceitar esta Política de Privacidade. O Yasno foi desenvolvido e é operado por Ivan Suslov. O aplicativo não exibe anúncios nem faz análise de uso. O último local selecionado e a previsão mais recente ficam armazenados localmente; coordenadas e nomes de cidades são enviados ao Open-Meteo e ao Nominatim. Os arquivos de fontes são solicitados ao Google Fonts.",
     "privacyAccept": "Aceitar",
     "privacyDecline": "Recusar",
     "privacyRead": "Ler a política completa",
@@ -1346,12 +1348,12 @@ const I18N = {
     "wx_storm": "Gewitter",
     "wx_hstorm": "Schweres Gewitter",
     "geoTitle": "Standort kennen?",
-    "geoDesc": "Wir verwenden deinen Standort, um sofort das Wetter in deiner Stadt anzuzeigen — genaue Vorhersage, aktuelle Temperatur, Wind, Luftfeuchtigkeit und Details für die nächsten 5 Tage. Deine Koordinaten werden nur auf deinem Gerät verarbeitet und nirgendwo gespeichert. Wenn du möchtest, kannst du die Stadt manuell eingeben.",
+    "geoDesc": "Wir verwenden den Standort, um den Ort zu bestimmen und das Wetter zu laden. Wenn du zustimmst, werden die Koordinaten deines Geräts direkt an Open-Meteo für die Vorhersage und an Nominatim für die umgekehrte Geokodierung gesendet. Yasno speichert lokal nur den zuletzt ausgewählten Ort einschließlich seiner Koordinaten und führt keinen Standortverlauf. In die Suche eingegebene Ortsnamen werden an Nominatim gesendet. Du kannst einen Ort auch manuell eingeben.",
     "geoOk": "OK",
     "geoNo": "Nein, danke",
     "iosHint": "Auf iPhone/iPad: Teilen → „Zum Home-Bildschirm“",
     "privacyTitle": "Datenschutzerklärung",
-    "privacyText": "Um Yasno zu nutzen, musst du unserer Datenschutzerklärung zustimmen. Wir erfassen keine personenbezogenen Daten — dein Standort und deine Suchanfragen werden nur auf deinem Gerät verarbeitet.",
+    "privacyText": "Um Yasno zu nutzen, musst du dieser Datenschutzerklärung zustimmen. Yasno wurde von Ivan Suslov entwickelt und wird von ihm betrieben. Die App enthält keine Werbung und führt keine Analyse durch. Der zuletzt ausgewählte Ort und die letzte Vorhersage werden lokal gespeichert; Koordinaten und Stadtnamen werden an Open-Meteo und Nominatim gesendet. Schriftdateien werden bei Google Fonts angefragt.",
     "privacyAccept": "Akzeptieren",
     "privacyDecline": "Ablehnen",
     "privacyRead": "Vollständige Richtlinie lesen",
@@ -1463,12 +1465,12 @@ const I18N = {
     "wx_storm": "Orage",
     "wx_hstorm": "Violent orage",
     "geoTitle": "Connaître votre position ?",
-    "geoDesc": "Nous utilisons votre position pour afficher instantanément la météo de votre ville — prévisions précises, température actuelle, vent, humidité et détails pour les 5 prochains jours. Vos coordonnées sont traitées uniquement sur votre appareil et ne sont stockées nulle part. Si vous préférez, vous pouvez saisir la ville manuellement.",
+    "geoDesc": "Nous utilisons la position pour déterminer le lieu et charger la météo. Si vous l’autorisez, les coordonnées de l’appareil sont envoyées directement à Open-Meteo pour les prévisions et à Nominatim pour le géocodage inverse. Yasno stocke localement uniquement le dernier lieu choisi, coordonnées comprises, sans historique de localisation. Les noms saisis dans la recherche sont envoyés à Nominatim. Vous pouvez aussi saisir une ville manuellement.",
     "geoOk": "OK",
     "geoNo": "Non, merci",
     "iosHint": "Sur iPhone/iPad : Partager → « Ajouter à l’écran d’accueil »",
     "privacyTitle": "Politique de confidentialité",
-    "privacyText": "Pour utiliser Yasno, vous devez accepter notre Politique de confidentialité. Nous ne collectons aucune donnée personnelle — votre position et vos recherches sont traitées uniquement sur votre appareil.",
+    "privacyText": "Pour utiliser Yasno, vous devez accepter cette Politique de confidentialité. Yasno est développé et exploité par Ivan Suslov. L’application ne contient pas de publicité et ne réalise pas d’analyse. Le dernier lieu choisi et la dernière prévision sont stockés localement ; les coordonnées et les noms de villes sont envoyés à Open-Meteo et Nominatim. Les fichiers de polices sont demandés à Google Fonts.",
     "privacyAccept": "Accepter",
     "privacyDecline": "Refuser",
     "privacyRead": "Lire la politique complète",
@@ -1580,12 +1582,12 @@ const I18N = {
     "wx_storm": "Temporale",
     "wx_hstorm": "Temporale forte",
     "geoTitle": "Conoscere la tua posizione?",
-    "geoDesc": "Usiamo la tua posizione per mostrare subito il meteo della tua città — previsioni accurate, temperatura attuale, vento, umidità e dettagli per i prossimi 5 giorni. Le tue coordinate vengono elaborate solo sul dispositivo e non vengono memorizzate. Se preferisci, puoi inserire manualmente la città.",
+    "geoDesc": "Usiamo la posizione per identificare il luogo e caricare il meteo. Se autorizzi la geolocalizzazione, le coordinate del dispositivo vengono inviate direttamente a Open-Meteo per le previsioni e a Nominatim per la geocodifica inversa. Yasno salva localmente solo l’ultimo luogo selezionato, comprese le coordinate, senza conservare una cronologia delle posizioni. I nomi digitati nella ricerca vengono inviati a Nominatim. Puoi anche inserire una città manualmente.",
     "geoOk": "OK",
     "geoNo": "No, grazie",
     "iosHint": "Su iPhone/iPad: Condividi → «Aggiungi alla schermata Home»",
     "privacyTitle": "Informativa sulla privacy",
-    "privacyText": "Per usare Yasno devi accettare la nostra Informativa sulla privacy. Non raccogliamo dati personali — la tua posizione e le tue ricerche vengono elaborate solo sul dispositivo.",
+    "privacyText": "Per usare Yasno devi accettare questa Informativa sulla privacy. Yasno è sviluppata e gestita da Ivan Suslov. L’app non mostra pubblicità e non svolge analisi. L’ultimo luogo selezionato e l’ultima previsione sono salvati localmente; coordinate e nomi delle città vengono inviati a Open-Meteo e Nominatim. I file dei caratteri sono richiesti a Google Fonts.",
     "privacyAccept": "Accetta",
     "privacyDecline": "Rifiuta",
     "privacyRead": "Leggi l’informativa completa",
@@ -1697,12 +1699,12 @@ const I18N = {
     "wx_storm": "雷雨",
     "wx_hstorm": "激しい雷雨",
     "geoTitle": "位置情報を確認しますか？",
-    "geoDesc": "位置情報を使って、現在地の天気をすぐに表示します。正確な予報、現在の気温、風、湿度、今後5日間の詳細を確認できます。座標は端末上でのみ処理され、どこにも保存されません。必要なら都市を手動で入力できます。",
+    "geoDesc": "場所の特定と天気の取得に位置情報を使います。許可すると、端末の座標は予報取得のためOpen-Meteoへ、逆ジオコーディングのためNominatimへ直接送信されます。Yasnoが端末内に保存する場所は、座標を含む最後に選択した1か所だけで、位置履歴は保存しません。検索に入力した都市名はNominatimへ送信されます。都市は手動でも入力できます。",
     "geoOk": "OK",
     "geoNo": "いいえ",
     "iosHint": "iPhone/iPad: 共有 → 「ホーム画面に追加」",
     "privacyTitle": "プライバシーポリシー",
-    "privacyText": "Yasnoを使用するにはプライバシーポリシーに同意する必要があります。個人データは収集しません。位置情報と検索内容は端末上でのみ処理されます。",
+    "privacyText": "Yasnoの利用には、このプライバシーポリシーへの同意が必要です。YasnoはIvan Suslovが開発・運営しています。広告はなく、利用状況の分析も行いません。最後に選択した場所と最新の予報を端末内に保存します。座標と都市検索語はOpen-MeteoとNominatimに送信され、フォントはGoogle Fontsから取得します。",
     "privacyAccept": "同意する",
     "privacyDecline": "拒否",
     "privacyRead": "ポリシー全文を読む",
@@ -1814,12 +1816,12 @@ const I18N = {
     "wx_storm": "뇌우",
     "wx_hstorm": "강한 뇌우",
     "geoTitle": "위치를 확인할까요?",
-    "geoDesc": "위치를 사용해 현재 도시의 날씨를 즉시 보여드립니다 — 정확한 예보, 현재 기온, 바람, 습도와 향후 5일 정보를 확인할 수 있습니다. 좌표는 기기에서만 처리되며 어디에도 저장되지 않습니다. 원한다면 도시를 직접 입력할 수 있습니다.",
+    "geoDesc": "장소를 확인하고 날씨를 불러오기 위해 위치를 사용합니다. 허용하면 기기 좌표가 예보를 위해 Open-Meteo로, 역지오코딩을 위해 Nominatim으로 직접 전송됩니다. Yasno는 좌표를 포함한 마지막 선택 장소 하나만 기기에 저장하며 위치 기록은 보관하지 않습니다. 검색창에 입력한 도시 이름은 Nominatim으로 전송됩니다. 도시를 직접 입력할 수도 있습니다.",
     "geoOk": "확인",
     "geoNo": "괜찮아요",
     "iosHint": "iPhone/iPad: 공유 → “홈 화면에 추가”",
     "privacyTitle": "개인정보 보호정책",
-    "privacyText": "Yasno를 사용하려면 개인정보 보호정책에 동의해야 합니다. 개인정보를 수집하지 않으며 위치와 검색어는 기기에서만 처리됩니다.",
+    "privacyText": "Yasno를 사용하려면 이 개인정보 보호정책에 동의해야 합니다. Yasno는 Ivan Suslov이 개발하고 운영합니다. 광고가 없으며 사용 분석도 하지 않습니다. 마지막으로 선택한 장소와 최신 예보 하나를 기기에 저장합니다. 좌표와 도시 검색어는 Open-Meteo와 Nominatim으로 전송되며, 글꼴 파일은 Google Fonts에서 요청합니다.",
     "privacyAccept": "동의",
     "privacyDecline": "거부",
     "privacyRead": "전체 정책 읽기",
@@ -1931,12 +1933,12 @@ const I18N = {
     "wx_storm": "आंधी-तूफान",
     "wx_hstorm": "तेज़ आंधी-तूफान",
     "geoTitle": "क्या स्थान जानना है?",
-    "geoDesc": "हम आपके स्थान का उपयोग आपके शहर का मौसम तुरंत दिखाने के लिए करते हैं — सटीक पूर्वानुमान, वर्तमान तापमान, हवा, नमी और अगले 5 दिनों का विवरण। आपके निर्देशांक केवल आपके डिवाइस पर संसाधित होते हैं और कहीं भी संग्रहीत नहीं होते। चाहें तो शहर मैन्युअल रूप से दर्ज कर सकते हैं।",
+    "geoDesc": "स्थान पहचानने और मौसम लोड करने के लिए हम लोकेशन का उपयोग करते हैं। अनुमति मिलने पर डिवाइस के निर्देशांक पूर्वानुमान के लिए सीधे Open-Meteo और रिवर्स जियोकोडिंग के लिए Nominatim को भेजे जाते हैं। Yasno निर्देशांकों सहित केवल आख़िरी चुना हुआ स्थान डिवाइस पर रखता है; स्थानों का इतिहास नहीं रखता। खोज में टाइप किए गए शहर के नाम Nominatim को भेजे जाते हैं। आप शहर मैन्युअल रूप से भी दर्ज कर सकते हैं।",
     "geoOk": "ठीक है",
     "geoNo": "नहीं, धन्यवाद",
     "iosHint": "iPhone/iPad: शेयर → “होम स्क्रीन पर जोड़ें”",
     "privacyTitle": "गोपनीयता नीति",
-    "privacyText": "Yasno का उपयोग करने के लिए आपको हमारी गोपनीयता नीति से सहमत होना होगा। हम व्यक्तिगत डेटा एकत्र नहीं करते — आपका स्थान और खोजें केवल आपके डिवाइस पर संसाधित होती हैं।",
+    "privacyText": "Yasno का उपयोग करने के लिए आपको इस गोपनीयता नीति से सहमत होना होगा। Yasno को Ivan Suslov ने विकसित और संचालित किया है। इसमें विज्ञापन नहीं हैं और उपयोग विश्लेषिकी नहीं की जाती। चुना गया आख़िरी स्थान और एक नवीनतम पूर्वानुमान डिवाइस पर सहेजा जाता है; निर्देशांक और शहर के खोज नाम Open-Meteo तथा Nominatim को भेजे जाते हैं। फ़ॉन्ट फ़ाइलें Google Fonts से माँगी जाती हैं।",
     "privacyAccept": "स्वीकार करें",
     "privacyDecline": "अस्वीकार करें",
     "privacyRead": "पूरी नीति पढ़ें",
@@ -2048,12 +2050,12 @@ const I18N = {
     "wx_storm": "Badai petir",
     "wx_hstorm": "Badai petir hebat",
     "geoTitle": "Izinkan lokasi?",
-    "geoDesc": "Kami menggunakan lokasi Anda untuk langsung menampilkan cuaca di kota Anda — prakiraan akurat, suhu saat ini, angin, kelembapan, dan detail 5 hari ke depan. Koordinat Anda hanya diproses di perangkat dan tidak disimpan di mana pun. Jika mau, Anda dapat memasukkan kota secara manual.",
+    "geoDesc": "Lokasi digunakan untuk mengenali tempat dan memuat cuaca. Jika diizinkan, koordinat perangkat dikirim langsung ke Open-Meteo untuk prakiraan dan ke Nominatim untuk geocoding terbalik. Yasno hanya menyimpan tempat terakhir yang dipilih, termasuk koordinatnya, secara lokal; riwayat lokasi tidak disimpan. Nama kota yang diketik dalam pencarian dikirim ke Nominatim. Anda juga dapat memasukkan kota secara manual.",
     "geoOk": "Oke",
     "geoNo": "Tidak, terima kasih",
     "iosHint": "Di iPhone/iPad: Bagikan → “Tambahkan ke Layar Utama”",
     "privacyTitle": "Kebijakan Privasi",
-    "privacyText": "Untuk menggunakan Yasno, Anda harus menyetujui Kebijakan Privasi kami. Kami tidak mengumpulkan data pribadi — lokasi dan pencarian Anda hanya diproses di perangkat.",
+    "privacyText": "Untuk menggunakan Yasno, Anda harus menyetujui Kebijakan Privasi ini. Yasno dikembangkan dan dioperasikan oleh Ivan Suslov. Aplikasi ini tidak menampilkan iklan dan tidak menjalankan analitik. Tempat terakhir yang dipilih dan satu prakiraan terbaru disimpan secara lokal; koordinat dan nama kota yang dicari dikirim ke Open-Meteo dan Nominatim. Berkas font diminta dari Google Fonts.",
     "privacyAccept": "Setuju",
     "privacyDecline": "Tolak",
     "privacyRead": "Baca kebijakan lengkap",
@@ -2165,12 +2167,12 @@ const I18N = {
     "wx_storm": "عاصفة رعدية",
     "wx_hstorm": "عاصفة رعدية شديدة",
     "geoTitle": "هل تريد معرفة موقعك؟",
-    "geoDesc": "نستخدم موقعك لعرض الطقس في مدينتك فورًا — توقعات دقيقة ودرجة الحرارة الحالية والرياح والرطوبة وتفاصيل الأيام الخمسة القادمة. تتم معالجة إحداثياتك على جهازك فقط ولا يتم تخزينها في أي مكان. يمكنك إدخال المدينة يدويًا إذا أردت.",
+    "geoDesc": "نستخدم الموقع لتحديد المكان وتحميل الطقس. عند السماح بذلك، تُرسل إحداثيات الجهاز مباشرةً إلى Open-Meteo للتوقعات وإلى Nominatim للترميز الجغرافي العكسي. يحتفظ Yasno محليًا بآخر مكان محدد فقط، مع إحداثياته، ولا يحتفظ بسجل للمواقع. تُرسل أسماء المدن المكتوبة في البحث إلى Nominatim. ويمكنك إدخال المدينة يدويًا أيضًا.",
     "geoOk": "موافق",
     "geoNo": "لا، شكرًا",
     "iosHint": "على iPhone/iPad: مشاركة → «إضافة إلى الشاشة الرئيسية»",
     "privacyTitle": "سياسة الخصوصية",
-    "privacyText": "لاستخدام Yasno، يجب أن توافق على سياسة الخصوصية. لا نجمع بيانات شخصية — تتم معالجة موقعك وعمليات البحث على جهازك فقط.",
+    "privacyText": "لاستخدام Yasno، يجب الموافقة على سياسة الخصوصية هذه. طوّر Ivan Suslov تطبيق Yasno ويديره. لا يحتوي التطبيق على إعلانات ولا يجري تحليلات استخدام. يُحفظ آخر مكان محدد وآخر توقع واحد محليًا؛ وتُرسل الإحداثيات وأسماء المدن التي تبحث عنها إلى Open-Meteo وNominatim. وتُطلب ملفات الخطوط من Google Fonts.",
     "privacyAccept": "موافقة",
     "privacyDecline": "رفض",
     "privacyRead": "قراءة السياسة كاملة",
@@ -2282,12 +2284,12 @@ const I18N = {
     "wx_storm": "Gök gürültülü fırtına",
     "wx_hstorm": "Şiddetli gök gürültülü fırtına",
     "geoTitle": "Konumunuz bilinsin mi?",
-    "geoDesc": "Konumunuzu kullanarak şehrinizin hava durumunu anında gösteriyoruz — doğru tahmin, mevcut sıcaklık, rüzgar, nem ve önümüzdeki 5 günün ayrıntıları. Koordinatlarınız yalnızca cihazınızda işlenir ve hiçbir yerde saklanmaz. İsterseniz şehri elle girebilirsiniz.",
+    "geoDesc": "Yeri belirlemek ve hava durumunu yüklemek için konumu kullanıyoruz. İzin verirseniz cihaz koordinatları tahmin için doğrudan Open-Meteo’ya, ters geocoding için Nominatim’e gönderilir. Yasno koordinatlarıyla birlikte yalnızca son seçilen yeri yerel olarak saklar; konum geçmişi tutmaz. Aramaya yazılan şehir adları Nominatim’e gönderilir. Şehri elle de girebilirsiniz.",
     "geoOk": "Tamam",
     "geoNo": "Hayır, teşekkürler",
     "iosHint": "iPhone/iPad: Paylaş → “Ana Ekrana Ekle”",
     "privacyTitle": "Gizlilik Politikası",
-    "privacyText": "Yasno’yu kullanmak için Gizlilik Politikamızı kabul etmelisiniz. Kişisel veri toplamıyoruz — konumunuz ve aramalarınız yalnızca cihazınızda işlenir.",
+    "privacyText": "Yasno’yu kullanmak için bu Gizlilik Politikasını kabul etmelisiniz. Yasno, Ivan Suslov tarafından geliştirilmiş ve işletilmektedir. Uygulamada reklam yoktur ve kullanım analizi yapılmaz. Son seçilen yer ve en son tahmin yerel olarak saklanır; koordinatlar ve aranan şehir adları Open-Meteo ile Nominatim’e gönderilir. Yazı tipi dosyaları Google Fonts’tan istenir.",
     "privacyAccept": "Kabul et",
     "privacyDecline": "Reddet",
     "privacyRead": "Politikanın tamamını oku",
@@ -2528,7 +2530,53 @@ const ICON = {
 };
 
 const $ = s => document.querySelector(s);
-const state = { unit:'c', data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0 };
+let savedUnit='c';
+try{ if(localStorage.getItem('yasno-unit')==='f') savedUnit='f'; }catch(e){}
+const state = { unit:savedUnit, data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0, cached:false };
+let locationIntent=0, geoRequestId=0;
+let geoShortcutPending=new URLSearchParams(location.search).get('action')==='geo';
+const WEATHER_CACHE_KEY='yasno-last-weather';
+
+function validPlace(place){
+  return !!place && Number.isFinite(place.lat) && Number.isFinite(place.lon)
+    && Math.abs(place.lat)<=90 && Math.abs(place.lon)<=180;
+}
+function readSavedPlace(){
+  try{ const place=JSON.parse(localStorage.getItem('atmos-place')); return validPlace(place)?place:null; }catch(e){ return null; }
+}
+function validWeather(data){
+  return !!data && !!data.current && Number.isFinite(data.current.temperature_2m)
+    && Array.isArray(data.hourly?.time) && data.hourly.time.length>0
+    && Array.isArray(data.daily?.time) && data.daily.time.length>0;
+}
+function saveWeatherCache(){
+  try{ localStorage.setItem(WEATHER_CACHE_KEY,JSON.stringify({version:1,place:state.place,data:state.data,astro:state.astro,savedAt:state.lastWeatherAt})); }catch(e){}
+}
+function restoreWeatherCache(place){
+  let cache;
+  try{ cache=JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY)); }catch(e){ return false; }
+  if(!cache || cache.version!==1 || !validPlace(cache.place) || !validWeather(cache.data)
+    || !Number.isFinite(cache.savedAt) || cache.savedAt<=0) return false;
+  if(place && (Math.abs(place.lat-cache.place.lat)>0.000001 || Math.abs(place.lon-cache.place.lon)>0.000001)) return false;
+  state.place=cache.place; state.lastPlace=cache.place; state.data=cache.data;
+  state.astro=cache.astro; state.lastWeatherAt=cache.savedAt; state.cached=true;
+  hideErr(); hidePickBar(); hideOfflineScreen(); hideWeatherErrorScreen();
+  renderAll(state.data,state.place);
+  document.getElementById('splash-screen').classList.add('hidden');
+  return true;
+}
+let nominatimQueue=Promise.resolve(), nominatimLastRequest=0;
+function nominatimFetch(url){
+  const run=async()=>{
+    const delay=1100-(Date.now()-nominatimLastRequest);
+    if(delay>0) await new Promise(resolve=>setTimeout(resolve,delay));
+    nominatimLastRequest=Date.now();
+    return fetchRetry(url,1);
+  };
+  const result=nominatimQueue.then(run);
+  nominatimQueue=result.then(()=>{},()=>{});
+  return result;
+}
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const fmt = n => Math.round(n).toString().replace('-','−');
@@ -2624,7 +2672,7 @@ async function refreshCurrentWeatherIfStale(){
   if(age<300000) return;
   _autoRefreshBusy=true;
   try{
-    if(state.place.geo===true) requestGeo(true);
+    if(state.place.geo===true) await requestGeo(true);
     else await loadWeather(state.place);
   }catch(e){}
   finally{ _autoRefreshBusy=false; }
@@ -2694,7 +2742,7 @@ async function omSearch(variant,langCode){
 }
 async function nmSearch(qq){
   try{
-    const r=await fetchRetry(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&namedetails=1&limit=10&accept-language=${LANG}&q=${encodeURIComponent(qq)}`,2);
+    const r=await nominatimFetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&namedetails=1&limit=10&accept-language=${LANG}&q=${encodeURIComponent(qq)}`);
     const j=await r.json(); return (j&&j.length)?j:[];
   }catch(e){ return null; }
 }
@@ -2782,10 +2830,13 @@ async function geocode(name){
 async function submitSearch(){
   const name=q.value.trim();
   if(!name){ q.focus(); return; }
+  const intent=++locationIntent;
+  if(state.ctrl) state.ctrl.abort();
   hideErr(); hidePickBar();
   goBtn.disabled=true; goBtn.textContent=t('searching');
   let res=null;
   try{ res=await geocode(name); }catch(e){}
+  if(intent!==locationIntent) return;
   goBtn.disabled=false; goBtn.textContent=t('find');
 
   if(res&&res.country){ showCountryNotice(); return; }
@@ -2803,28 +2854,49 @@ async function submitSearch(){
   toast(t('notFound').replace('__X__',name));
 }
 
-function requestGeo(silent=false){
-  if(!navigator.geolocation){
-    if(!silent){ toast('Geolocation not supported'); q.focus(); }
-    return;
+async function requestGeo(silent=false){
+  const intent=silent?locationIntent:++locationIntent;
+  const requestId=++geoRequestId, btn=$('#geo'), saved=readSavedPlace();
+  if(!silent){
+    if(state.ctrl) state.ctrl.abort();
+    hidePickBar(); goBtn.disabled=false; goBtn.textContent=t('find');
   }
-  const btn=$('#geo'); btn.classList.add('spin');
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const {latitude:la,longitude:lo}=pos.coords;
-    try{
-      const r=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${la}&longitude=${lo}&language=${LANG}&format=json`);
-      const j=await r.json(); const p=j.results&&j.results[0];
-      btn.classList.remove('spin');
-      if(p) loadWeather({name:'loc',nameEn:'Your location',geo:true,geoCity:p.name,admin:p.admin1||'',country:p.country||'',cc:p.country_code||'',lat:p.latitude,lon:p.longitude,tz:p.timezone||'auto'});
-      else loadWeather({name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'});
-    }catch(e){
-      btn.classList.remove('spin');
-      loadWeather({name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'});
-    }
-  },()=>{
-    btn.classList.remove('spin');
-    if(!silent){ toast('Location unavailable'); q.focus(); }
-  },{timeout:9000});
+  const finish=()=>{ if(requestId===geoRequestId) btn.classList.remove('spin'); };
+  const unavailable=async()=>{
+    if(intent!==locationIntent){ finish(); return; }
+    finish();
+    document.getElementById('splash-screen').classList.add('hidden');
+    if(silent && saved){ await loadWeather(saved,intent); }
+    else { if(!silent) toast('Location unavailable'); q.focus(); }
+  };
+  if(!navigator.geolocation){ await unavailable(); return; }
+  btn.classList.add('spin');
+  await new Promise(resolve=>{
+    const fail=()=>{ unavailable().then(resolve,resolve); };
+    const success=async pos=>{
+      try{
+        if(intent!==locationIntent) return;
+        const {latitude:la,longitude:lo}=pos.coords;
+        const place={name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'};
+        if(!validPlace(place)){ await unavailable(); return; }
+        if(silent && saved?.geo && Math.abs(saved.lat-la)<0.02 && Math.abs(saved.lon-lo)<0.02){
+          Object.assign(place,saved,{lat:la,lon:lo});
+        } else if(!silent){
+          try{
+            const r=await nominatimFetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${la}&lon=${lo}&zoom=10&addressdetails=1&accept-language=${LANG}`);
+            const j=await r.json(), a=j.address;
+            if(a && !j.error){
+              place.geoCity=a.city||a.town||a.village||a.municipality||j.name||'';
+              place.admin=a.state||a.region||a.county||'';
+              place.country=a.country||''; place.cc=(a.country_code||'').toUpperCase();
+            }
+          }catch(e){ /* The weather still works when no city name is available. */ }
+        }
+        if(intent===locationIntent) await loadWeather(place,intent);
+      } finally { finish(); resolve(); }
+    };
+    try{ navigator.geolocation.getCurrentPosition(success,fail,{timeout:9000}); }catch(e){ fail(); }
+  });
 }
 $('#geo').addEventListener('click',()=>requestGeo(false));
 
@@ -2863,6 +2935,7 @@ $('#privDecline').addEventListener('click',()=>{
 $('#unit').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||b.classList.contains('on')) return;
   state.unit=b.dataset.u;
+  try{ localStorage.setItem('yasno-unit',state.unit); }catch(e){}
   $('#unit').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
   if(state.data) renderAll(state.data,state.place);
 });
@@ -2912,7 +2985,8 @@ function applyLang(){
   if(state.data&&state.place) renderAll(state.data,state.place);
 }
 
-async function loadWeather(place){
+async function loadWeather(place,intent=locationIntent){
+  if(intent!==locationIntent || !validPlace(place)) return;
   if(state.ctrl) state.ctrl.abort();
   const ctrl=new AbortController();
   state.ctrl=ctrl;
@@ -2921,46 +2995,37 @@ async function loadWeather(place){
     +`?latitude=${place.lat}&longitude=${place.lon}`
     +'&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,snowfall,weather_code,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,surface_pressure,cloud_cover,visibility'
     +'&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,rain,snowfall,weather_code,is_day,visibility,uv_index,dew_point_2m,sunshine_duration,relative_humidity_2m'
-    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_sum,rain_sum,precipitation_probability_max,wind_speed_10m_max,snowfall_sum,pressure_msl_max,pressure_msl_min'
-    +'&timezone=auto&forecast_days=7&_='+Date.now();
+    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,precipitation_sum,rain_sum,precipitation_probability_max,wind_speed_10m_max,snowfall_sum,pressure_msl_max,pressure_msl_min'
+    +'&timezone=auto&forecast_days=7';
 
-  let r, astro=null;
+  let r;
   try{
-    [r,astro]=await Promise.all([
-      fetchRetry(url,3,ctrl.signal),
-      (async()=>{ try{
-          const ar=await fetchRetry(`https://api.open-meteo.com/v1/astronomy?latitude=${place.lat}&longitude=${place.lon}&daily=moonrise,moonset&timezone=auto&forecast_days=1&_=${Date.now()}`,2);
-          const aj=await ar.json(); return aj.daily||null;
-        }catch(e){ return null; } })()
-    ]);
+    r=await fetchRetry(url,3,ctrl.signal);
   }catch(e){
-    if(e&&e.name==='AbortError') {
-      document.getElementById('splash-screen').classList.add('hidden');
-      return;
-    }
-    if(!(await hasInternetConnection())) showOfflineScreen();
+    if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
+    const online=await hasInternetConnection();
+    if(intent!==locationIntent || state.ctrl!==ctrl) return;
+    if(!online){ if(!restoreWeatherCache(place)) showOfflineScreen(); }
     else showWeatherErrorScreen();
     return;
   }
-
+  if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
   let data;
   try{ data=await r.json(); }catch(e){ data=null; }
-  if(!data||!data.current){
-    if(!(await hasInternetConnection())) showOfflineScreen();
-    else showWeatherErrorScreen();
-    return;
-  }
+  if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
+  if(!validWeather(data)){ showWeatherErrorScreen(); return; }
 
-  hideErr(); hidePickBar(); hideWeatherErrorScreen();
-  state.data=data; state.place=place;
+  hideErr(); hidePickBar(); hideOfflineScreen(); hideWeatherErrorScreen();
+  state.data=data; state.place=place; state.cached=false;
   state.lastWeatherAt=Date.now();
   // Always take the timezone returned by the fresh weather response.
   // Manual city searches may initially have tz='auto'; after the forecast loads,
   // the exact IANA timezone is available and must drive the live city clock.
   if(data.timezone && data.timezone!=='auto') place.tz=data.timezone;
   if(Number.isFinite(data.utc_offset_seconds)) place.utcOffsetSeconds=data.utc_offset_seconds;
-  state.astro=astro;
+  state.astro=moonTimesForPlace(data,place);
   try{ localStorage.setItem('atmos-place',JSON.stringify(place)); }catch(e){}
+  saveWeatherCache();
   try{ renderAll(data,place); }catch(err){ console.warn(err); }
   document.getElementById('splash-screen').classList.add('hidden');
 }
@@ -2974,6 +3039,36 @@ function animNum(el,to,fmtFn){
   (function step(tt){ const p=Math.min(1,(tt-t0)/D), e=1-Math.pow(1-p,3);
     el.textContent=fmtFn(start+(to-start)*e); if(p<1) requestAnimationFrame(step); })(t0);
 }
+
+function cityWallTimeMs(iso,tz){
+  const values=iso.match(/\d+/g).map(Number);
+  const wall=Date.UTC(values[0],values[1]-1,values[2],values[3]||0,values[4]||0,values[5]||0);
+  let guess=wall;
+  const format=new Intl.DateTimeFormat('en-US',{timeZone:tz||'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+  for(let i=0;i<3;i++){
+    const p={}; format.formatToParts(new Date(guess)).forEach(x=>{if(x.type!=='literal')p[x.type]=Number(x.value);});
+    const rendered=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second);
+    const delta=wall-rendered; guess+=delta; if(!delta) break;
+  }
+  return guess;
+}
+function moonTimesForPlace(data,place){
+  const tz=data.timezone||place.tz||'UTC';
+  const day=data.daily.time[0], midnight=Date.parse(day+'T00:00:00Z');
+  const formatter=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+  const result={moonrise:[null],moonset:[null]};
+  for(let offset=-1;offset<=1;offset++){
+    const events=YasnoMoonTimes.getMoonTimes(new Date(midnight+offset*86400000),place.lat,place.lon);
+    for(const [name,key] of [['rise','moonrise'],['set','moonset']]){
+      if(!events[name]) continue;
+      const p={}; formatter.formatToParts(events[name]).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value;});
+      const localDay=p.year+'-'+p.month+'-'+p.day;
+      if(localDay===day) result[key][0]=localDay+'T'+p.hour+':'+p.minute;
+    }
+  }
+  return result;
+}
+
 function cityTimeStr(iso){
   const hm = String(iso).slice(11,16);
   if(!hm || hm.length<5) return hm||'';
@@ -3049,7 +3144,7 @@ function renderAll(data,place){
   });
 
   safe(()=>{
-    const riseT=new Date(d.sunrise[0]).getTime(), setT=new Date(d.sunset[0]).getTime(), now=Date.now();
+    const riseT=cityWallTimeMs(d.sunrise[0],data.timezone), setT=cityWallTimeMs(d.sunset[0],data.timezone), now=Date.now();
     $('#sunrise').textContent=cityTimeStr(d.sunrise[0]);
     $('#sunset').textContent=cityTimeStr(d.sunset[0]);
     const dl=d.daylight_duration[0]||0, hh=Math.floor(dl/3600), mm=Math.round(dl%3600/60);
@@ -3067,7 +3162,11 @@ function renderAll(data,place){
   safe(()=>renderChart(data));
   safe(()=>renderMoon());
   safe(()=>renderDetails(data));
-  safe(()=>{ $('#updAt').textContent=t('updated')+' '+new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'}); });
+  safe(()=>{
+    const received=new Date(state.lastWeatherAt||Date.now());
+    const stamp=state.cached?received.toLocaleString(LANG,{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):received.toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'});
+    $('#updAt').textContent=t('updated')+' '+stamp+(state.cached?' · '+t('offlineTitle'):'');
+  });
 
   if(renderAll._seen){
     freezeReveals();
@@ -3075,7 +3174,6 @@ function renderAll(data,place){
     setTimeout(freezeReveals, 1500);
   }
   renderAll._seen=true;
-  _lastRenderedHour = cityHourKey(data.timezone || place.tz);
 }
 function flag(cc){ try{ return cc.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt(0))); }catch(e){ return ''; } }
 
@@ -3090,7 +3188,7 @@ function cityHourKey(tz){
 function renderHours(data){
   const h=data.hourly, box=$('#hourStrip');
   const tz=data.timezone||state.place?.tz||'UTC';
-  const currentHourStr=cityHourKey(tz);
+  const currentHourStr=state.cached?data.current.time.slice(0,13)+':00':cityHourKey(tz);
   let idx=currentHourStr ? h.time.indexOf(currentHourStr) : -1;
   if(idx<0){
     // Fallback only if the exact current city hour is unavailable in the response.
@@ -3104,7 +3202,7 @@ function renderHours(data){
     const prob=h.precipitation_probability[i];
     const hk=kindForHour(h,i);
     html+=`<div class="hitem${i===idx?' now':''}" style="animation:popS .5s ${((i-idx)*0.028).toFixed(2)}s both" title="${t('wx_'+hk).replace(/"/g,'&quot;')}">
-      <span class="ht">${i===idx?t('now'):cityTimeStr(h.time[i])}</span>
+      <span class="ht">${i===idx&&!state.cached?t('now'):cityTimeStr(h.time[i])}</span>
       ${ICON[KIND[hk].icon]||ICON.cloud}
       <span class="htv">${dispT(h.temperature_2m[i])}°</span>
       <span class="hp">${prob>=15?prob+'%':''}</span>
@@ -3156,9 +3254,9 @@ function renderMoon(){
   const note=$('#moonNote');
   if(note){ note.style.display=south?'':'none'; note.textContent=south?'🌗 '+t('moonSouthNote'):''; }
   const a=state.astro;
-  if(a&&a.moonrise&&a.moonrise[0]){
+  if(a&&(a.moonrise?.[0]||a.moonset?.[0])){
     $('#moonTimes').style.display='';
-    $('#moonTimes').textContent=`${t('moonrise')} ${cityTimeStr(a.moonrise[0])} · ${t('moonset')} ${a.moonset&&a.moonset[0]?cityTimeStr(a.moonset[0]):'—'}`;
+    $('#moonTimes').textContent=`${t('moonrise')} ${a.moonrise[0]?cityTimeStr(a.moonrise[0]):'—'} · ${t('moonset')} ${a.moonset&&a.moonset[0]?cityTimeStr(a.moonset[0]):'—'}`;
   } else $('#moonTimes').style.display='none';
   let h='';
   for(let i=0;i<7;i++){
@@ -3252,7 +3350,7 @@ function renderDetails(data){
     $('#visVal').textContent=vis>=1000?(vis/1000).toFixed(vis>=10000?0:1).replace('.',',')+' '+t('km'):fmt(vis)+' '+t('m');
     $('#visLbl').textContent=vis>=10000?t('visL1'):vis>=4000?t('visL2'):vis>=1000?t('visL3'):t('visL4');
   }
-  const sunPct=Math.min(100, d.sunshine_duration[0]/Math.max(d.daylight_duration[0],1)*100);
+  const sunPct=Math.max(0,Math.min(100, d.sunshine_duration[0]/Math.max(d.daylight_duration[0],1)*100));
   $('#sunPct').textContent=fmt(sunPct)+'%';
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
 }
@@ -3352,11 +3450,6 @@ $('#weatherErrRetry').addEventListener('click',async()=>{
     // Language is fully loaded before any startup modal is shown.
     applyLang();
 
-    if(!(await hasInternetConnection())){
-        showOfflineScreen();
-        return;
-    }
-
     const privacyAccepted = (()=>{ try{ return localStorage.getItem('privacy-accepted')==='true'; }catch(e){ return false; } })();
     if(!privacyAccepted){
         document.getElementById('splash-screen').classList.add('hidden');
@@ -3368,44 +3461,33 @@ $('#weatherErrRetry').addEventListener('click',async()=>{
 })();
 
 function continueInit(){
-    let saved = null;
-    try { saved = JSON.parse(localStorage.getItem('atmos-place')); } catch(e) {}
-
-    const geoAsked = (()=>{ try{ return localStorage.getItem('yasno-geo-asked')==='1'; }catch(e){ return false; } })();
-
-    if (!geoAsked) {
-        showGeoModal();
-    } else if (saved && saved.lat != null) {
-        /*
-         * If the last selected place was "My location", refresh the device
-         * coordinates on every app start. This keeps the saved "Your location"
-         * card from becoming stuck on the old city after travelling.
-         *
-         * If the last selected place was a manually searched city, do NOT
-         * replace it with geolocation: its timezone and live clock should
-         * continue to follow that searched city.
-         */
-        if (saved.geo === true) {
-            requestGeo(true);
-        } else {
-            loadWeather(saved);
-        }
-    } else {
-        document.getElementById('splash-screen').classList.add('hidden');
-        q.focus();
-    }
+  const saved=readSavedPlace();
+  if(!navigator.onLine){
+    if(!restoreWeatherCache()) showOfflineScreen();
+    return;
+  }
+  const geoAsked=(()=>{ try{return localStorage.getItem('yasno-geo-asked')==='1';}catch(e){return false;} })();
+  if(geoShortcutPending){
+    geoShortcutPending=false;
+    if(!geoAsked) showGeoModal(); else requestGeo();
+  } else if(!geoAsked){ showGeoModal(); }
+  else if(saved){
+    if(saved.geo===true) requestGeo(true); else loadWeather(saved);
+  } else {
+    document.getElementById('splash-screen').classList.add('hidden'); q.focus();
+  }
 }
 
 // ===== ПОЛНАЯ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ (встроена в приложение) =====
 const PRIVACY_EN = {
   pTitle: "Privacy Policy",
-  pUpdated: "Last updated: 5 October 2026",
-  pTldr: "Yasno does not collect, store or share your personal data. Everything works on your device.",
+  pUpdated: "Last updated: 11 October 2026",
+  pTldr: "Yasno has no own backend or analytics. Preferences, consent, one last selected place and one last forecast are stored locally. Coordinates and city searches go directly to external services.",
   p1t: "1. Introduction",
   p1a: "Yasno is a free weather application developed and operated by Ivan Suslov. This Privacy Policy explains what data the app processes and how.",
   p1b: "By using Yasno you agree to the terms described below. If you do not agree — please do not use the app.",
-  p2t: "2. We do not collect personal data",
-  p2a: "Yasno is built with privacy as the top priority. We do not collect, do not store on any server and do not share with anyone:",
+  p2t: "2. Data Yasno does not keep",
+  p2a: "Yasno does not keep personal profiles or histories of your activity. It has no own backend or analytics. Requests sent directly to external providers are described in section 4.",
   p2l1: "Your name, email, phone number or any identity",
   p2l2: "Your location history",
   p2l3: "Your search queries for cities",
@@ -3413,25 +3495,25 @@ const PRIVACY_EN = {
   p2l5: "Usage statistics or analytics",
   p2b: "The app contains no advertising, no trackers and no third-party analytics SDKs.",
   p3t: "3. Location data",
-  p3a: "If you allow geolocation, your device coordinates are used only to fetch the weather for your current city.",
+  p3a: "If you allow geolocation, coordinates are sent directly from your device to Open-Meteo for a forecast and to Nominatim for reverse geocoding.",
   p3l1: "Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.",
-  p3l2: "We do not save your location anywhere — not on a server, not in analytics.",
+  p3l2: "Yasno does not keep a location history; it stores only the last selected place locally, as described in section 5.",
   p3l3: "You can always disable location in your device settings or type the city manually.",
   p4t: "4. Weather data",
-  p4a: "Forecast is loaded from the free open service Open-Meteo. Geocoding (city search) uses OpenStreetMap Nominatim.",
-  p4b: "These services see only the coordinates or the city name you are searching for. They do not receive any identifier tied to you personally.",
+  p4a: "Forecasts are requested from Open-Meteo. City search and reverse geocoding use OpenStreetMap Nominatim. Font files are requested from Google Fonts.",
+  p4b: "Open-Meteo receives coordinates for forecasts; Nominatim receives coordinates for reverse geocoding and the place names you search. Google receives font requests. These providers may also receive your IP address and standard connection data. Yasno has no own backend or analytics.",
   p5t: "5. Local storage",
-  p5a: "Yasno stores data only locally on your device:",
+  p5a: "Yasno stores these items locally on your device:",
   p5l1: "Selected language",
   p5l2: "Temperature unit (°C / °F)",
-  p5l3: "Last searched city — to open it again next time",
-  p5l4: "Your consent to this Privacy Policy",
-  p5b: "This data never leaves your device. You can delete it at any time by clearing the app data in your device settings.",
+  p5l3: "The last selected place, including its coordinates, and one last forecast with its original receive time, for reuse and offline viewing",
+  p5l4: "Your consent to this policy and whether the location prompt has been shown",
+  p5b: "These items are stored locally on your device. Requests described in section 4 go directly to the named providers. The service worker does not cache API responses. Offline, Yasno shows only the last forecast it received, with its original receive time in the Updated field. Clear app data to delete the local items.",
   p6t: "6. Language translations",
   p6a: "Yasno includes hand-written interface translations for 13 languages: English, Russian, Spanish, Brazilian Portuguese, German, French, Italian, Japanese, Korean, Hindi, Indonesian, Arabic and Turkish.",
   p6b: "Yasno does not use Google Translate or any other automatic translation service for the app interface or this policy. Only the translations bundled with the app are used.",
   p7t: "7. Children",
-  p7a: "Yasno does not knowingly collect any data from anyone, including children under the age specified by applicable local regulations. Age rating may vary by region.",
+  p7a: "Yasno does not ask for your age. The data practices described above apply to all users. Age ratings may vary by region.",
   p8t: "8. Changes to this policy",
   p8a: "If this policy changes, we will update the “Last updated” date above. Continued use of the app means you accept the new version.",
   p9t: "9. Contact",
@@ -3443,13 +3525,13 @@ const PRIVACY_EN = {
 
 const PRIVACY_RU = {
   pTitle: "Политика конфиденциальности",
-  pUpdated: "Обновлено: 5 октября 2026",
-  pTldr: "Yasno не собирает, не хранит и не передаёт ваши личные данные. Всё работает на вашем устройстве.",
+  pUpdated: "Обновлено: 11 октября 2026",
+  pTldr: "У Yasno нет собственного сервера и аналитики. Настройки, согласие, последнее выбранное место и один последний прогноз хранятся локально. Координаты и поисковые запросы напрямую передаются внешним сервисам.",
   p1t: "1. Введение",
   p1a: "Yasno — бесплатное погодное приложение, разработанное и поддерживаемое Иваном Сусловым. Эта Политика конфиденциальности объясняет, какие данные обрабатывает приложение и как.",
   p1b: "Используя Yasno, вы соглашаетесь с описанными ниже условиями. Если вы не согласны — пожалуйста, не используйте приложение.",
-  p2t: "2. Мы не собираем личные данные",
-  p2a: "Yasno создан с приоритетом на конфиденциальность. Мы не собираем, не храним на серверах и не передаём никому:",
+  p2t: "2. Что Yasno не хранит",
+  p2a: "Yasno не ведёт личные профили и историю ваших действий. У приложения нет собственного сервера и аналитики. Запросы, напрямую отправляемые внешним сервисам, описаны в разделе 4.",
   p2l1: "Ваше имя, email, номер телефона или любые личные данные",
   p2l2: "Историю ваших перемещений",
   p2l3: "Ваши поисковые запросы городов",
@@ -3457,25 +3539,25 @@ const PRIVACY_RU = {
   p2l5: "Статистику использования или аналитику",
   p2b: "В приложении нет рекламы, трекеров и сторонних аналитических SDK.",
   p3t: "3. Данные о местоположении",
-  p3a: "Если вы разрешаете геолокацию, координаты вашего устройства используются только для получения погоды в вашем текущем городе.",
+  p3a: "Если вы разрешите геолокацию, координаты устройства напрямую передаются в Open-Meteo для прогноза и в Nominatim для обратного геокодирования.",
   p3l1: "Координаты отправляются напрямую с вашего устройства в погодный API (Open-Meteo) — они никогда не проходят через наши серверы.",
-  p3l2: "Мы нигде не сохраняем ваше местоположение — ни на сервере, ни в аналитике.",
+  p3l2: "Yasno не ведёт историю местоположений; последнее выбранное место хранится локально, как описано в разделе 5.",
   p3l3: "Вы всегда можете отключить геолокацию в настройках устройства или ввести город вручную.",
   p4t: "4. Погодные данные",
-  p4a: "Прогноз загружается из бесплатного открытого сервиса Open-Meteo. Геокодирование (поиск городов) использует OpenStreetMap Nominatim.",
-  p4b: "Эти сервисы видят только координаты или название города, который вы ищете. Они не получают никаких идентификаторов, связанных с вами лично.",
+  p4a: "Прогнозы запрашиваются у Open-Meteo. Поиск городов и обратное геокодирование выполняются через OpenStreetMap Nominatim. Файлы шрифтов запрашиваются у Google Fonts.",
+  p4b: "Open-Meteo получает координаты для прогноза; Nominatim — координаты для обратного геокодирования и названия мест, которые вы ищете. Google получает запросы шрифтов. Эти сервисы также могут получать ваш IP-адрес и стандартные данные соединения. У Yasno нет собственного сервера и аналитики.",
   p5t: "5. Локальное хранилище",
-  p5a: "Yasno хранит данные только локально на вашем устройстве:",
+  p5a: "Yasno хранит на вашем устройстве локально следующие данные:",
   p5l1: "Выбранный язык",
   p5l2: "Единицу температуры (°C / °F)",
-  p5l3: "Последний найденный город — чтобы открыть его в следующий раз",
-  p5l4: "Ваше согласие с этой Политикой конфиденциальности",
-  p5b: "Эти данные никогда не покидают ваше устройство. Вы можете удалить их в любой момент, очистив данные приложения в настройках устройства.",
+  p5l3: "Последнее выбранное место, включая координаты, и один последний прогноз с исходным временем получения — для повторного открытия и просмотра без сети",
+  p5l4: "Ваше согласие с этой Политикой конфиденциальности и отметку о том, что запрос разрешения геолокации уже показывался",
+  p5b: "Эти данные хранятся локально на устройстве. Запросы из раздела 4 напрямую отправляются указанным сервисам. Service worker не кеширует ответы API. Без сети Yasno показывает только последний полученный прогноз, сохраняя исходное время получения в поле «Обновлено». Чтобы удалить локальные данные, очистите данные приложения.",
   p6t: "6. Переводы языков",
   p6a: "Yasno использует ручные переводы интерфейса для 13 языков: английского, русского, испанского, бразильского португальского, немецкого, французского, итальянского, японского, корейского, хинди, индонезийского, арабского и турецкого.",
   p6b: "Google Translate и другие сервисы автоматического перевода не используются для интерфейса приложения или этой политики. Применяются только переводы, встроенные в приложение.",
   p7t: "7. Дети",
-  p7a: "Yasno сознательно не собирает никаких данных ни от кого, включая детей младше возраста, установленного применимым местным законодательством. Возрастной рейтинг может отличаться в зависимости от региона.",
+  p7a: "Yasno не запрашивает возраст пользователя. Описанные выше правила обработки данных одинаковы для всех пользователей. Возрастной рейтинг может различаться в зависимости от региона.",
   p8t: "8. Изменения этой политики",
   p8a: "Если политика изменится, мы обновим дату «Обновлено» выше. Продолжение использования приложения означает принятие новой версии.",
   p9t: "9. Контакты",
@@ -3488,13 +3570,13 @@ const PRIVACY_RU = {
 const PRIVACY_I18N = {
   "es": {
     "pTitle": "Política de privacidad",
-    "pUpdated": "Última actualización: 5 de octubre de 2026",
-    "pTldr": "Yasno no recopila, almacena ni comparte tus datos personales. Todo funciona en tu dispositivo.",
+    "pUpdated": "Última actualización: 11 de octubre de 2026",
+    "pTldr": "Yasno no tiene backend ni analítica propios. Las preferencias, el consentimiento, el último lugar elegido y el último pronóstico se guardan localmente. Las coordenadas y las búsquedas se envían directamente a servicios externos.",
     "p1t": "1. Introducción",
     "p1a": "Yasno es una aplicación meteorológica gratuita desarrollada y operada por Ivan Suslov. Esta Política de privacidad explica qué datos procesa la aplicación y cómo.",
     "p1b": "Al usar Yasno aceptas las condiciones descritas a continuación. Si no estás de acuerdo, no uses la aplicación.",
-    "p2t": "2. No recopilamos datos personales",
-    "p2a": "Yasno da prioridad a la privacidad. No recopilamos, no almacenamos en ningún servidor ni compartimos con nadie:",
+    "p2t": "2. Datos que Yasno no conserva",
+    "p2a": "Yasno no guarda perfiles personales ni un historial de tu actividad. No tiene backend ni analítica propios. Las solicitudes enviadas directamente a servicios externos se describen en la sección 4.",
     "p2l1": "Tu nombre, correo electrónico, teléfono o cualquier dato de identidad",
     "p2l2": "Tu historial de ubicación",
     "p2l3": "Tus búsquedas de ciudades",
@@ -3502,25 +3584,25 @@ const PRIVACY_I18N = {
     "p2l5": "Estadísticas de uso o analítica",
     "p2b": "La aplicación no contiene publicidad, rastreadores ni SDK de analítica de terceros.",
     "p3t": "3. Datos de ubicación",
-    "p3a": "Si permites la geolocalización, las coordenadas de tu dispositivo solo se utilizan para obtener el tiempo de tu ciudad actual.",
+    "p3a": "Si permites la geolocalización, las coordenadas se envían directamente desde tu dispositivo a Open-Meteo para el pronóstico y a Nominatim para la geocodificación inversa.",
     "p3l1": "Las coordenadas se envían directamente desde tu dispositivo a la API meteorológica (Open-Meteo) y nunca pasan por nuestros servidores.",
-    "p3l2": "No guardamos tu ubicación en ningún lugar, ni en un servidor ni en analítica.",
+    "p3l2": "Yasno no conserva un historial de ubicaciones; solo guarda localmente el último lugar elegido, como se explica en la sección 5.",
     "p3l3": "Puedes desactivar la ubicación en los ajustes de tu dispositivo o escribir la ciudad manualmente.",
     "p4t": "4. Datos meteorológicos",
-    "p4a": "El pronóstico se carga desde el servicio abierto y gratuito Open-Meteo. La geocodificación (búsqueda de ciudades) utiliza OpenStreetMap Nominatim.",
-    "p4b": "Estos servicios solo ven las coordenadas o el nombre de la ciudad que buscas. No reciben ningún identificador vinculado personalmente contigo.",
+    "p4a": "Los pronósticos se solicitan a Open-Meteo. La búsqueda de ciudades y la geocodificación inversa usan OpenStreetMap Nominatim. Los archivos de fuentes se solicitan a Google Fonts.",
+    "p4b": "Open-Meteo recibe coordenadas para los pronósticos; Nominatim recibe coordenadas para la geocodificación inversa y los nombres de lugares que buscas. Google recibe solicitudes de fuentes. Estos servicios también pueden recibir tu dirección IP y datos de conexión estándar. Yasno no tiene backend ni analítica propios.",
     "p5t": "5. Almacenamiento local",
-    "p5a": "Yasno guarda datos solo localmente en tu dispositivo:",
+    "p5a": "Yasno guarda estos elementos localmente en tu dispositivo:",
     "p5l1": "Idioma seleccionado",
     "p5l2": "Unidad de temperatura (°C / °F)",
-    "p5l3": "Última ciudad buscada, para abrirla de nuevo la próxima vez",
-    "p5l4": "Tu consentimiento a esta Política de privacidad",
-    "p5b": "Estos datos nunca salen de tu dispositivo. Puedes eliminarlos en cualquier momento borrando los datos de la aplicación en los ajustes del dispositivo.",
+    "p5l3": "El último lugar elegido, incluidas sus coordenadas, y el último pronóstico con su hora original de recepción, para volver a abrirlo y consultarlo sin conexión",
+    "p5l4": "Tu consentimiento a esta política y si ya se mostró la solicitud de permiso de ubicación",
+    "p5b": "Estos elementos se guardan localmente en tu dispositivo. Las solicitudes descritas en la sección 4 se envían directamente a los servicios indicados. El service worker no almacena en caché respuestas de la API. Sin conexión, Yasno muestra solo el último pronóstico recibido y su hora original en el campo «Actualizado». Borra los datos de la aplicación para eliminar los elementos locales.",
     "p6t": "6. Traducciones de idiomas",
     "p6a": "Yasno incluye traducciones escritas manualmente para 13 idiomas: inglés, ruso, español, portugués de Brasil, alemán, francés, italiano, japonés, coreano, hindi, indonesio, árabe y turco.",
     "p6b": "No se utiliza Google Translate ni ningún otro servicio de traducción automática para la interfaz de la aplicación ni para esta política. Solo se usan las traducciones incluidas en la aplicación.",
     "p7t": "7. Niños",
-    "p7a": "Yasno no recopila conscientemente datos de nadie, incluidos los menores de la edad establecida por la normativa local aplicable. La clasificación por edad puede variar según la región.",
+    "p7a": "Yasno no pregunta la edad del usuario. Las prácticas de datos descritas arriba se aplican a todos. La clasificación por edades puede variar según la región.",
     "p8t": "8. Cambios en esta política",
     "p8a": "Si esta política cambia, actualizaremos la fecha de “Última actualización” indicada arriba. Seguir utilizando la aplicación significa que aceptas la nueva versión.",
     "p9t": "9. Contacto",
@@ -3531,13 +3613,13 @@ const PRIVACY_I18N = {
   },
   "pt": {
     "pTitle": "Política de Privacidade",
-    "pUpdated": "Última atualização: 5 de outubro de 2026",
-    "pTldr": "O Yasno não coleta, armazena nem compartilha seus dados pessoais. Tudo funciona no seu dispositivo.",
+    "pUpdated": "Última atualização: 11 de outubro de 2026",
+    "pTldr": "O Yasno não tem servidor próprio nem análise de uso. Preferências, consentimento, o último local selecionado e a última previsão ficam armazenados localmente. Coordenadas e buscas são enviadas diretamente a serviços externos.",
     "p1t": "1. Introdução",
     "p1a": "O Yasno é um aplicativo gratuito de clima desenvolvido e operado por Ivan Suslov. Esta Política de Privacidade explica quais dados o aplicativo processa e como.",
     "p1b": "Ao usar o Yasno, você concorda com os termos descritos abaixo. Se não concordar, não use o aplicativo.",
-    "p2t": "2. Não coletamos dados pessoais",
-    "p2a": "O Yasno tem a privacidade como prioridade. Não coletamos, não armazenamos em nenhum servidor e não compartilhamos com ninguém:",
+    "p2t": "2. Dados que o Yasno não mantém",
+    "p2a": "O Yasno não mantém perfis pessoais nem histórico da sua atividade. O aplicativo não tem servidor próprio nem análise de uso. As solicitações enviadas diretamente a serviços externos são descritas na seção 4.",
     "p2l1": "Seu nome, e-mail, telefone ou qualquer identidade",
     "p2l2": "Seu histórico de localização",
     "p2l3": "Suas pesquisas de cidades",
@@ -3545,25 +3627,25 @@ const PRIVACY_I18N = {
     "p2l5": "Estatísticas de uso ou análises",
     "p2b": "O aplicativo não contém anúncios, rastreadores nem SDKs de análise de terceiros.",
     "p3t": "3. Dados de localização",
-    "p3a": "Se você permitir a geolocalização, as coordenadas do seu dispositivo são usadas apenas para obter o clima da sua cidade atual.",
+    "p3a": "Se você permitir a geolocalização, as coordenadas são enviadas diretamente do seu dispositivo ao Open-Meteo para a previsão e ao Nominatim para a geocodificação reversa.",
     "p3l1": "As coordenadas são enviadas diretamente do seu dispositivo para a API de clima (Open-Meteo) e nunca passam pelos nossos servidores.",
-    "p3l2": "Não salvamos sua localização em nenhum lugar, nem em servidor nem em análises.",
+    "p3l2": "O Yasno não mantém histórico de localização; guarda localmente apenas o último local selecionado, como descrito na seção 5.",
     "p3l3": "Você pode desativar a localização nas configurações do dispositivo ou digitar a cidade manualmente.",
     "p4t": "4. Dados meteorológicos",
-    "p4a": "A previsão é carregada do serviço aberto e gratuito Open-Meteo. A geocodificação (busca de cidades) usa o OpenStreetMap Nominatim.",
-    "p4b": "Esses serviços veem apenas as coordenadas ou o nome da cidade que você pesquisa. Eles não recebem nenhum identificador ligado pessoalmente a você.",
+    "p4a": "As previsões são solicitadas ao Open-Meteo. A busca de cidades e a geocodificação reversa usam o OpenStreetMap Nominatim. Os arquivos de fontes são solicitados ao Google Fonts.",
+    "p4b": "O Open-Meteo recebe coordenadas para as previsões; o Nominatim recebe coordenadas para a geocodificação reversa e os nomes de lugares pesquisados. O Google recebe solicitações de fontes. Esses serviços também podem receber seu endereço IP e dados comuns de conexão. O Yasno não tem servidor próprio nem análise de uso.",
     "p5t": "5. Armazenamento local",
-    "p5a": "O Yasno armazena dados apenas localmente no seu dispositivo:",
+    "p5a": "O Yasno armazena estes itens localmente no seu dispositivo:",
     "p5l1": "Idioma selecionado",
     "p5l2": "Unidade de temperatura (°C / °F)",
-    "p5l3": "Última cidade pesquisada — para abri-la novamente na próxima vez",
-    "p5l4": "Seu consentimento com esta Política de Privacidade",
-    "p5b": "Esses dados nunca saem do seu dispositivo. Você pode apagá-los a qualquer momento limpando os dados do aplicativo nas configurações do dispositivo.",
+    "p5l3": "O último local selecionado, incluindo as coordenadas, e a última previsão com o horário original de recebimento, para reabrir e consultar sem conexão",
+    "p5l4": "Seu consentimento com esta política e se a solicitação de permissão de localização já foi exibida",
+    "p5b": "Estes itens ficam armazenados localmente no seu dispositivo. As solicitações descritas na seção 4 são enviadas diretamente aos serviços indicados. O service worker não armazena respostas da API em cache. Sem conexão, o Yasno mostra apenas a última previsão recebida, com o horário original no campo “Atualizado”. Apague os dados do aplicativo para remover os itens locais.",
     "p6t": "6. Traduções de idiomas",
     "p6a": "O Yasno inclui traduções escritas manualmente para 13 idiomas: inglês, russo, espanhol, português do Brasil, alemão, francês, italiano, japonês, coreano, hindi, indonésio, árabe e turco.",
     "p6b": "O Google Translate ou qualquer outro serviço de tradução automática não é usado para a interface do aplicativo ou para esta política. Apenas as traduções incluídas no aplicativo são usadas.",
     "p7t": "7. Crianças",
-    "p7a": "O Yasno não coleta conscientemente dados de ninguém, incluindo crianças abaixo da idade definida pela legislação local aplicável. A classificação etária pode variar por região.",
+    "p7a": "O Yasno não pergunta a idade do usuário. As práticas de dados descritas acima valem para todos. A classificação etária pode variar por região.",
     "p8t": "8. Alterações desta política",
     "p8a": "Se esta política mudar, atualizaremos a data de “Última atualização” acima. Continuar usando o aplicativo significa aceitar a nova versão.",
     "p9t": "9. Contato",
@@ -3574,13 +3656,13 @@ const PRIVACY_I18N = {
   },
   "de": {
     "pTitle": "Datenschutzerklärung",
-    "pUpdated": "Zuletzt aktualisiert: 5. Oktober 2026",
-    "pTldr": "Yasno sammelt, speichert oder teilt keine personenbezogenen Daten. Alles funktioniert auf deinem Gerät.",
+    "pUpdated": "Zuletzt aktualisiert: 11. Oktober 2026",
+    "pTldr": "Yasno hat kein eigenes Backend und keine eigene Analyse. Einstellungen, Einwilligung, der zuletzt ausgewählte Ort und die letzte Vorhersage werden lokal gespeichert. Koordinaten und Suchanfragen gehen direkt an externe Dienste.",
     "p1t": "1. Einführung",
     "p1a": "Yasno ist eine kostenlose Wetter-App, die von Ivan Suslov entwickelt und betrieben wird. Diese Datenschutzerklärung erklärt, welche Daten die App verarbeitet und wie.",
     "p1b": "Durch die Nutzung von Yasno stimmst du den unten beschriebenen Bedingungen zu. Wenn du nicht zustimmst, nutze die App bitte nicht.",
-    "p2t": "2. Wir sammeln keine personenbezogenen Daten",
-    "p2a": "Yasno stellt Datenschutz an erste Stelle. Wir sammeln nicht, speichern nichts auf Servern und teilen mit niemandem:",
+    "p2t": "2. Daten, die Yasno nicht speichert",
+    "p2a": "Yasno führt keine persönlichen Profile oder Aktivitätsverläufe. Die App hat kein eigenes Backend und keine eigene Analyse. Direkt an externe Dienste gesendete Anfragen werden in Abschnitt 4 beschrieben.",
     "p2l1": "Deinen Namen, deine E-Mail-Adresse, Telefonnummer oder andere Identitätsdaten",
     "p2l2": "Deinen Standortverlauf",
     "p2l3": "Deine Stadtsuchen",
@@ -3588,25 +3670,25 @@ const PRIVACY_I18N = {
     "p2l5": "Nutzungsstatistiken oder Analysen",
     "p2b": "Die App enthält keine Werbung, Tracker oder Analyse-SDKs von Drittanbietern.",
     "p3t": "3. Standortdaten",
-    "p3a": "Wenn du die Geolokalisierung erlaubst, werden die Koordinaten deines Geräts nur verwendet, um das Wetter für deine aktuelle Stadt abzurufen.",
+    "p3a": "Wenn du die Standortbestimmung erlaubst, werden die Koordinaten deines Geräts direkt an Open-Meteo für die Vorhersage und an Nominatim für die umgekehrte Geokodierung gesendet.",
     "p3l1": "Die Koordinaten werden direkt von deinem Gerät an die Wetter-API (Open-Meteo) gesendet und passieren niemals unsere Server.",
-    "p3l2": "Wir speichern deinen Standort nirgendwo — weder auf einem Server noch in Analysen.",
+    "p3l2": "Yasno führt keinen Standortverlauf; lokal wird nur der zuletzt ausgewählte Ort gespeichert, wie in Abschnitt 5 beschrieben.",
     "p3l3": "Du kannst den Standort jederzeit in den Geräteeinstellungen deaktivieren oder die Stadt manuell eingeben.",
     "p4t": "4. Wetterdaten",
-    "p4a": "Die Vorhersage wird vom kostenlosen offenen Dienst Open-Meteo geladen. Für die Geokodierung (Stadtsuche) wird OpenStreetMap Nominatim verwendet.",
-    "p4b": "Diese Dienste sehen nur die Koordinaten oder den Namen der gesuchten Stadt. Sie erhalten keine persönlich mit dir verknüpfte Kennung.",
+    "p4a": "Vorhersagen werden bei Open-Meteo abgerufen. Stadtsuche und umgekehrte Geokodierung verwenden OpenStreetMap Nominatim. Schriftdateien werden bei Google Fonts angefragt.",
+    "p4b": "Open-Meteo erhält Koordinaten für Vorhersagen; Nominatim erhält Koordinaten für die umgekehrte Geokodierung und die von dir gesuchten Ortsnamen. Google erhält Anfragen für Schriftdateien. Diese Anbieter können auch deine IP-Adresse und übliche Verbindungsdaten erhalten. Yasno hat kein eigenes Backend und keine eigene Analyse.",
     "p5t": "5. Lokaler Speicher",
-    "p5a": "Yasno speichert Daten nur lokal auf deinem Gerät:",
+    "p5a": "Yasno speichert diese Daten lokal auf deinem Gerät:",
     "p5l1": "Ausgewählte Sprache",
     "p5l2": "Temperatureinheit (°C / °F)",
-    "p5l3": "Zuletzt gesuchte Stadt — um sie beim nächsten Mal wieder zu öffnen",
-    "p5l4": "Deine Zustimmung zu dieser Datenschutzerklärung",
-    "p5b": "Diese Daten verlassen dein Gerät nie. Du kannst sie jederzeit löschen, indem du die App-Daten in den Geräteeinstellungen löschst.",
+    "p5l3": "Den zuletzt ausgewählten Ort einschließlich Koordinaten und die letzte Vorhersage mit ihrem ursprünglichen Empfangszeitpunkt, zur erneuten Anzeige und Offline-Nutzung",
+    "p5l4": "Deine Zustimmung zu dieser Erklärung und ob die Standortabfrage bereits angezeigt wurde",
+    "p5b": "Diese Daten werden lokal auf deinem Gerät gespeichert. Die in Abschnitt 4 beschriebenen Anfragen gehen direkt an die genannten Anbieter. Der Service Worker speichert keine API-Antworten im Cache. Offline zeigt Yasno nur die zuletzt empfangene Vorhersage mit ihrem ursprünglichen Empfangszeitpunkt im Feld „Aktualisiert“. Lösche die App-Daten, um die lokalen Daten zu entfernen.",
     "p6t": "6. Sprachübersetzungen",
     "p6a": "Yasno enthält manuell erstellte Oberflächenübersetzungen für 13 Sprachen: Englisch, Russisch, Spanisch, brasilianisches Portugiesisch, Deutsch, Französisch, Italienisch, Japanisch, Koreanisch, Hindi, Indonesisch, Arabisch und Türkisch.",
     "p6b": "Google Translate oder andere automatische Übersetzungsdienste werden nicht für die App-Oberfläche oder diese Richtlinie verwendet. Es werden nur die in die App integrierten Übersetzungen genutzt.",
     "p7t": "7. Kinder",
-    "p7a": "Yasno sammelt wissentlich keine Daten von irgendjemandem, auch nicht von Kindern unter dem in den geltenden lokalen Vorschriften festgelegten Alter. Die Altersfreigabe kann je nach Region variieren.",
+    "p7a": "Yasno fragt nicht nach dem Alter. Die oben beschriebenen Datenpraktiken gelten für alle Nutzer. Die Altersfreigabe kann je nach Region abweichen.",
     "p8t": "8. Änderungen dieser Richtlinie",
     "p8a": "Wenn sich diese Richtlinie ändert, aktualisieren wir das oben angegebene Datum „Zuletzt aktualisiert“. Die weitere Nutzung der App bedeutet, dass du die neue Version akzeptierst.",
     "p9t": "9. Kontakt",
@@ -3617,13 +3699,13 @@ const PRIVACY_I18N = {
   },
   "fr": {
     "pTitle": "Politique de confidentialité",
-    "pUpdated": "Dernière mise à jour : 5 octobre 2026",
-    "pTldr": "Yasno ne collecte, ne stocke ni ne partage vos données personnelles. Tout fonctionne sur votre appareil.",
+    "pUpdated": "Dernière mise à jour : 11 octobre 2026",
+    "pTldr": "Yasno n’a ni serveur propre ni outil d’analyse. Les préférences, le consentement, le dernier lieu choisi et la dernière prévision sont stockés localement. Les coordonnées et recherches sont envoyées directement à des services externes.",
     "p1t": "1. Introduction",
     "p1a": "Yasno est une application météo gratuite développée et exploitée par Ivan Suslov. Cette Politique de confidentialité explique quelles données l’application traite et comment.",
     "p1b": "En utilisant Yasno, vous acceptez les conditions décrites ci-dessous. Si vous n’êtes pas d’accord, veuillez ne pas utiliser l’application.",
-    "p2t": "2. Nous ne collectons pas de données personnelles",
-    "p2a": "Yasno donne la priorité à la confidentialité. Nous ne collectons pas, ne stockons sur aucun serveur et ne partageons avec personne :",
+    "p2t": "2. Données que Yasno ne conserve pas",
+    "p2a": "Yasno ne crée pas de profils personnels ni d’historique de votre activité. L’application n’a ni serveur propre ni outil d’analyse. Les requêtes envoyées directement à des services externes sont décrites à la section 4.",
     "p2l1": "Votre nom, e-mail, numéro de téléphone ou toute identité",
     "p2l2": "Votre historique de localisation",
     "p2l3": "Vos recherches de villes",
@@ -3631,25 +3713,25 @@ const PRIVACY_I18N = {
     "p2l5": "Statistiques d’utilisation ou analyses",
     "p2b": "L’application ne contient ni publicité, ni traceurs, ni SDK d’analyse tiers.",
     "p3t": "3. Données de localisation",
-    "p3a": "Si vous autorisez la géolocalisation, les coordonnées de votre appareil servent uniquement à récupérer la météo de votre ville actuelle.",
+    "p3a": "Si vous autorisez la géolocalisation, les coordonnées de votre appareil sont envoyées directement à Open-Meteo pour les prévisions et à Nominatim pour le géocodage inverse.",
     "p3l1": "Les coordonnées sont envoyées directement de votre appareil à l’API météo (Open-Meteo) et ne passent jamais par nos serveurs.",
-    "p3l2": "Nous n’enregistrons votre position nulle part, ni sur un serveur ni dans des analyses.",
+    "p3l2": "Yasno ne conserve pas d’historique de localisation ; seul le dernier lieu choisi est stocké localement, comme indiqué à la section 5.",
     "p3l3": "Vous pouvez désactiver la localisation dans les réglages de votre appareil ou saisir la ville manuellement.",
     "p4t": "4. Données météo",
-    "p4a": "Les prévisions sont chargées depuis le service ouvert et gratuit Open-Meteo. Le géocodage (recherche de villes) utilise OpenStreetMap Nominatim.",
-    "p4b": "Ces services ne voient que les coordonnées ou le nom de la ville recherchée. Ils ne reçoivent aucun identifiant qui vous soit personnellement associé.",
+    "p4a": "Les prévisions sont demandées à Open-Meteo. La recherche de villes et le géocodage inverse utilisent OpenStreetMap Nominatim. Les fichiers de polices sont demandés à Google Fonts.",
+    "p4b": "Open-Meteo reçoit les coordonnées nécessaires aux prévisions ; Nominatim reçoit les coordonnées pour le géocodage inverse et les noms de lieux recherchés. Google reçoit les requêtes de polices. Ces services peuvent aussi recevoir votre adresse IP et des données de connexion standard. Yasno n’a ni serveur propre ni outil d’analyse.",
     "p5t": "5. Stockage local",
-    "p5a": "Yasno stocke les données uniquement sur votre appareil :",
+    "p5a": "Yasno stocke localement sur votre appareil les éléments suivants :",
     "p5l1": "Langue sélectionnée",
     "p5l2": "Unité de température (°C / °F)",
-    "p5l3": "Dernière ville recherchée — pour la rouvrir la prochaine fois",
-    "p5l4": "Votre consentement à cette Politique de confidentialité",
-    "p5b": "Ces données ne quittent jamais votre appareil. Vous pouvez les supprimer à tout moment en effaçant les données de l’application dans les réglages de l’appareil.",
+    "p5l3": "Le dernier lieu choisi, coordonnées comprises, et la dernière prévision avec son heure de réception d’origine, pour la rouvrir et la consulter hors connexion",
+    "p5l4": "Votre consentement à cette politique et le fait que la demande d’autorisation de localisation ait été affichée",
+    "p5b": "Ces éléments sont stockés localement sur votre appareil. Les requêtes décrites à la section 4 sont envoyées directement aux services indiqués. Le service worker ne met pas en cache les réponses de l’API. Hors connexion, Yasno affiche uniquement la dernière prévision reçue, avec son heure d’origine dans le champ « Mis à jour ». Effacez les données de l’application pour supprimer les éléments locaux.",
     "p6t": "6. Traductions linguistiques",
     "p6a": "Yasno inclut des traductions rédigées manuellement pour 13 langues : anglais, russe, espagnol, portugais brésilien, allemand, français, italien, japonais, coréen, hindi, indonésien, arabe et turc.",
     "p6b": "Google Traduction et tout autre service de traduction automatique ne sont pas utilisés pour l’interface de l’application ni pour cette politique. Seules les traductions intégrées à l’application sont utilisées.",
     "p7t": "7. Enfants",
-    "p7a": "Yasno ne collecte sciemment aucune donnée de qui que ce soit, y compris des enfants de moins de l’âge fixé par la réglementation locale applicable. La classification d’âge peut varier selon la région.",
+    "p7a": "Yasno ne demande pas l’âge de ses utilisateurs. Les pratiques décrites ci-dessus s’appliquent à tout le monde. La classification d’âge peut varier selon la région.",
     "p8t": "8. Modifications de cette politique",
     "p8a": "Si cette politique change, nous mettrons à jour la date « Dernière mise à jour » ci-dessus. Continuer à utiliser l’application signifie que vous acceptez la nouvelle version.",
     "p9t": "9. Contact",
@@ -3660,13 +3742,13 @@ const PRIVACY_I18N = {
   },
   "it": {
     "pTitle": "Informativa sulla privacy",
-    "pUpdated": "Ultimo aggiornamento: 5 ottobre 2026",
-    "pTldr": "Yasno non raccoglie, conserva né condivide i tuoi dati personali. Tutto funziona sul tuo dispositivo.",
+    "pUpdated": "Ultimo aggiornamento: 11 ottobre 2026",
+    "pTldr": "Yasno non ha un backend né analisi proprie. Preferenze, consenso, ultimo luogo selezionato e ultima previsione sono salvati localmente. Coordinate e ricerche vengono inviate direttamente a servizi esterni.",
     "p1t": "1. Introduzione",
     "p1a": "Yasno è un’app meteo gratuita sviluppata e gestita da Ivan Suslov. Questa Informativa sulla privacy spiega quali dati elabora l’app e come.",
     "p1b": "Usando Yasno accetti i termini descritti di seguito. Se non sei d’accordo, non usare l’app.",
-    "p2t": "2. Non raccogliamo dati personali",
-    "p2a": "Yasno mette la privacy al primo posto. Non raccogliamo, non memorizziamo su alcun server e non condividiamo con nessuno:",
+    "p2t": "2. Dati che Yasno non conserva",
+    "p2a": "Yasno non crea profili personali né conserva la cronologia delle attività. L’app non ha un backend né analisi proprie. Le richieste inviate direttamente ai servizi esterni sono descritte nella sezione 4.",
     "p2l1": "Il tuo nome, e-mail, numero di telefono o qualsiasi dato identificativo",
     "p2l2": "La cronologia della tua posizione",
     "p2l3": "Le tue ricerche di città",
@@ -3674,25 +3756,25 @@ const PRIVACY_I18N = {
     "p2l5": "Statistiche di utilizzo o analisi",
     "p2b": "L’app non contiene pubblicità, tracker o SDK di analisi di terze parti.",
     "p3t": "3. Dati sulla posizione",
-    "p3a": "Se consenti la geolocalizzazione, le coordinate del dispositivo vengono usate solo per ottenere il meteo della tua città attuale.",
+    "p3a": "Se autorizzi la geolocalizzazione, le coordinate del dispositivo vengono inviate direttamente a Open-Meteo per le previsioni e a Nominatim per la geocodifica inversa.",
     "p3l1": "Le coordinate vengono inviate direttamente dal dispositivo all’API meteo (Open-Meteo) e non passano mai dai nostri server.",
-    "p3l2": "Non salviamo la tua posizione da nessuna parte, né su un server né nelle analisi.",
+    "p3l2": "Yasno non conserva una cronologia delle posizioni; salva localmente solo l’ultimo luogo selezionato, come descritto nella sezione 5.",
     "p3l3": "Puoi disattivare la posizione nelle impostazioni del dispositivo o inserire manualmente la città.",
     "p4t": "4. Dati meteo",
-    "p4a": "Le previsioni vengono caricate dal servizio aperto e gratuito Open-Meteo. La geocodifica (ricerca delle città) usa OpenStreetMap Nominatim.",
-    "p4b": "Questi servizi vedono solo le coordinate o il nome della città cercata. Non ricevono identificatori collegati personalmente a te.",
+    "p4a": "Le previsioni sono richieste a Open-Meteo. La ricerca delle città e la geocodifica inversa usano OpenStreetMap Nominatim. I file dei caratteri sono richiesti a Google Fonts.",
+    "p4b": "Open-Meteo riceve le coordinate per le previsioni; Nominatim riceve le coordinate per la geocodifica inversa e i nomi dei luoghi cercati. Google riceve le richieste dei caratteri. Questi servizi possono ricevere anche il tuo indirizzo IP e i normali dati di connessione. Yasno non ha un backend né analisi proprie.",
     "p5t": "5. Archiviazione locale",
-    "p5a": "Yasno salva i dati solo localmente sul dispositivo:",
+    "p5a": "Yasno salva localmente sul dispositivo questi elementi:",
     "p5l1": "Lingua selezionata",
     "p5l2": "Unità di temperatura (°C / °F)",
-    "p5l3": "Ultima città cercata — per riaprirla la prossima volta",
-    "p5l4": "Il tuo consenso a questa Informativa sulla privacy",
-    "p5b": "Questi dati non lasciano mai il dispositivo. Puoi eliminarli in qualsiasi momento cancellando i dati dell’app nelle impostazioni del dispositivo.",
+    "p5l3": "L’ultimo luogo selezionato, comprese le coordinate, e l’ultima previsione con l’ora originale di ricezione, per riaprirla e consultarla offline",
+    "p5l4": "Il tuo consenso a questa informativa e l’indicazione che la richiesta di autorizzazione alla posizione è già stata mostrata",
+    "p5b": "Questi elementi sono salvati localmente sul dispositivo. Le richieste descritte nella sezione 4 vanno direttamente ai servizi indicati. Il service worker non memorizza nella cache le risposte API. Offline, Yasno mostra solo l’ultima previsione ricevuta, con l’ora originale nel campo “Aggiornato”. Cancella i dati dell’app per rimuovere gli elementi locali.",
     "p6t": "6. Traduzioni delle lingue",
     "p6a": "Yasno include traduzioni scritte manualmente per 13 lingue: inglese, russo, spagnolo, portoghese brasiliano, tedesco, francese, italiano, giapponese, coreano, hindi, indonesiano, arabo e turco.",
     "p6b": "Google Traduttore e altri servizi di traduzione automatica non vengono utilizzati per l’interfaccia dell’app né per la presente informativa. Vengono usate solo le traduzioni integrate nell’app.",
     "p7t": "7. Minori",
-    "p7a": "Yasno non raccoglie consapevolmente dati da nessuno, compresi i minori di età stabilita dalle normative locali applicabili. La classificazione per età può variare in base alla regione.",
+    "p7a": "Yasno non chiede l’età dell’utente. Le pratiche sui dati descritte sopra valgono per tutti. La classificazione per età può variare in base alla regione.",
     "p8t": "8. Modifiche a questa informativa",
     "p8a": "Se questa informativa cambia, aggiorneremo la data «Ultimo aggiornamento» sopra. Continuare a usare l’app significa accettare la nuova versione.",
     "p9t": "9. Contatti",
@@ -3703,13 +3785,13 @@ const PRIVACY_I18N = {
   },
   "ja": {
     "pTitle": "プライバシーポリシー",
-    "pUpdated": "最終更新日: 2026年10月5日",
-    "pTldr": "Yasnoは個人データを収集、保存、共有しません。すべて端末上で動作します。",
+    "pUpdated": "最終更新日: 2026年10月11日",
+    "pTldr": "Yasnoには独自のバックエンドや分析機能はありません。設定、同意、最後に選択した場所、最新の予報1件を端末内に保存します。座標と都市検索語は外部サービスへ直接送信されます。",
     "p1t": "1. はじめに",
     "p1a": "Yasnoは、Ivan Suslov（イワン・ススロフ）が開発・運営する無料の天気アプリです。このプライバシーポリシーでは、アプリがどのようなデータをどのように処理するかを説明します。",
     "p1b": "Yasnoを利用することで、以下の条件に同意したものとします。同意しない場合はアプリを使用しないでください。",
-    "p2t": "2. 個人データを収集しません",
-    "p2a": "Yasnoはプライバシーを最優先にしています。以下を収集、サーバーに保存、第三者と共有することはありません。",
+    "p2t": "2. Yasnoが保存しないデータ",
+    "p2a": "Yasnoは個人プロフィールや利用履歴を作成しません。独自のバックエンドや分析機能もありません。外部サービスへ直接送信されるリクエストについては第4項で説明します。",
     "p2l1": "氏名、メールアドレス、電話番号などの本人識別情報",
     "p2l2": "位置情報の履歴",
     "p2l3": "都市の検索履歴",
@@ -3717,25 +3799,25 @@ const PRIVACY_I18N = {
     "p2l5": "利用統計や分析データ",
     "p2b": "広告、トラッカー、第三者の分析SDKは使用していません。",
     "p3t": "3. 位置情報",
-    "p3a": "位置情報を許可した場合、端末の座標は現在の都市の天気を取得するためだけに使用されます。",
+    "p3a": "位置情報を許可すると、端末の座標は予報取得のためOpen-Meteoへ、逆ジオコーディングのためNominatimへ直接送信されます。",
     "p3l1": "座標は端末から天気API（Open-Meteo）へ直接送信され、私たちのサーバーを経由することはありません。",
-    "p3l2": "位置情報をサーバーや分析データに保存することはありません。",
+    "p3l2": "Yasnoは位置履歴を保存せず、第5項に記載のとおり最後に選択した場所だけを端末内に保存します。",
     "p3l3": "端末の設定で位置情報をいつでも無効にするか、都市を手動で入力できます。",
     "p4t": "4. 天気データ",
-    "p4a": "予報は無料の公開サービスOpen-Meteoから取得します。ジオコーディング（都市検索）にはOpenStreetMap Nominatimを使用します。",
-    "p4b": "これらのサービスが受け取るのは座標または検索した都市名だけです。個人に結び付く識別子は送信されません。",
+    "p4a": "予報はOpen-Meteoにリクエストします。都市検索と逆ジオコーディングにはOpenStreetMap Nominatimを使います。フォントファイルはGoogle Fontsから取得します。",
+    "p4b": "Open-Meteoには予報用の座標が送信されます。Nominatimには逆ジオコーディング用の座標と検索した場所の名前が送信されます。Googleにはフォントのリクエストが送信されます。各サービスはIPアドレスなど通常の接続情報も受け取る場合があります。Yasno独自のバックエンドや分析機能はありません。",
     "p5t": "5. ローカルストレージ",
-    "p5a": "Yasnoはデータを端末内にのみ保存します。",
+    "p5a": "Yasnoは次の項目を端末内に保存します。",
     "p5l1": "選択した言語",
     "p5l2": "温度単位（°C / °F）",
-    "p5l3": "最後に検索した都市 — 次回すぐ開くため",
-    "p5l4": "このプライバシーポリシーへの同意",
-    "p5b": "これらのデータが端末から外に出ることはありません。端末の設定からアプリデータを削除すれば、いつでも消去できます。",
+    "p5l3": "最後に選択した場所（座標を含む）と最新の予報1件（元の取得時刻付き）。再表示やオフライン閲覧に使います",
+    "p5l4": "このポリシーへの同意と、位置情報の許可を求める画面が表示済みかどうか",
+    "p5b": "これらの項目は端末内に保存されます。第4項のリクエストは記載したサービスへ直接送信されます。Service WorkerはAPI応答をキャッシュしません。オフラインでは最後に取得した予報だけを表示し、元の取得時刻を「更新」欄に表示します。ローカルデータはアプリデータを消去すると削除できます。",
     "p6t": "6. 言語翻訳",
     "p6a": "Yasnoには、英語、ロシア語、スペイン語、ブラジルポルトガル語、ドイツ語、フランス語、イタリア語、日本語、韓国語、ヒンディー語、インドネシア語、アラビア語、トルコ語の13言語の手動翻訳が含まれています。",
     "p6b": "Google翻訳などの自動翻訳サービスは、アプリのインターフェースや本ポリシーには使用していません。アプリに同梱された翻訳のみを使用します。",
     "p7t": "7. 子ども",
-    "p7a": "Yasnoは、適用される地域の法律で定められた年齢未満の子どもを含め、誰からも故意にデータを収集しません。年齢区分は地域によって異なる場合があります。",
+    "p7a": "Yasnoは年齢を尋ねません。上記のデータ取扱いはすべての利用者に適用されます。年齢区分は地域によって異なる場合があります。",
     "p8t": "8. ポリシーの変更",
     "p8a": "ポリシーを変更した場合は、上記の「最終更新日」を更新します。アプリの利用を続けることで、新しい版に同意したものとします。",
     "p9t": "9. お問い合わせ",
@@ -3746,13 +3828,13 @@ const PRIVACY_I18N = {
   },
   "ko": {
     "pTitle": "개인정보 보호정책",
-    "pUpdated": "최종 업데이트: 2026년 10월 5일",
-    "pTldr": "Yasno는 개인정보를 수집, 저장 또는 공유하지 않습니다. 모든 기능은 기기에서 작동합니다.",
+    "pUpdated": "최종 업데이트: 2026년 10월 11일",
+    "pTldr": "Yasno에는 자체 백엔드나 분석 기능이 없습니다. 설정, 동의, 마지막으로 선택한 장소와 최신 예보 하나를 기기에 저장합니다. 좌표와 도시 검색어는 외부 서비스로 직접 전송됩니다.",
     "p1t": "1. 소개",
     "p1a": "Yasno는 Ivan Suslov(이반 수슬로프)이 개발하고 운영하는 무료 날씨 앱입니다. 이 개인정보 보호정책은 앱이 어떤 데이터를 어떻게 처리하는지 설명합니다.",
     "p1b": "Yasno를 사용하면 아래 조건에 동의하는 것입니다. 동의하지 않는 경우 앱을 사용하지 마세요.",
-    "p2t": "2. 개인정보를 수집하지 않습니다",
-    "p2a": "Yasno는 개인정보 보호를 최우선으로 합니다. 다음 정보를 수집하거나 서버에 저장하거나 누구와도 공유하지 않습니다.",
+    "p2t": "2. Yasno가 보관하지 않는 데이터",
+    "p2a": "Yasno는 개인 프로필이나 활동 기록을 만들지 않습니다. 자체 백엔드나 분석 기능도 없습니다. 외부 서비스로 직접 전송되는 요청은 4절에 설명되어 있습니다.",
     "p2l1": "이름, 이메일, 전화번호 또는 신원 정보",
     "p2l2": "위치 기록",
     "p2l3": "도시 검색 기록",
@@ -3760,25 +3842,25 @@ const PRIVACY_I18N = {
     "p2l5": "사용 통계 또는 분석",
     "p2b": "앱에는 광고, 추적기 또는 제3자 분석 SDK가 없습니다.",
     "p3t": "3. 위치 데이터",
-    "p3a": "위치 정보를 허용하면 기기 좌표는 현재 도시의 날씨를 가져오는 데만 사용됩니다.",
+    "p3a": "위치 정보를 허용하면 기기 좌표가 예보를 위해 Open-Meteo로, 역지오코딩을 위해 Nominatim으로 직접 전송됩니다.",
     "p3l1": "좌표는 기기에서 날씨 API(Open-Meteo)로 직접 전송되며 당사 서버를 거치지 않습니다.",
-    "p3l2": "위치를 서버나 분석 데이터에 저장하지 않습니다.",
+    "p3l2": "Yasno는 위치 기록을 보관하지 않으며, 5절에 설명된 마지막 선택 장소만 기기에 저장합니다.",
     "p3l3": "기기 설정에서 언제든 위치 정보를 끄거나 도시를 직접 입력할 수 있습니다.",
     "p4t": "4. 날씨 데이터",
-    "p4a": "예보는 무료 공개 서비스 Open-Meteo에서 가져옵니다. 지오코딩(도시 검색)에는 OpenStreetMap Nominatim을 사용합니다.",
-    "p4b": "이 서비스에는 검색한 좌표 또는 도시 이름만 전달됩니다. 개인과 연결된 식별자는 전달되지 않습니다.",
+    "p4a": "예보는 Open-Meteo에 요청합니다. 도시 검색과 역지오코딩에는 OpenStreetMap Nominatim을 사용합니다. 글꼴 파일은 Google Fonts에 요청합니다.",
+    "p4b": "Open-Meteo에는 예보를 위한 좌표가 전달됩니다. Nominatim에는 역지오코딩용 좌표와 검색한 장소 이름이 전달됩니다. Google에는 글꼴 요청이 전달됩니다. 이 서비스들은 IP 주소와 일반적인 연결 정보도 받을 수 있습니다. Yasno에는 자체 백엔드나 분석 기능이 없습니다.",
     "p5t": "5. 로컬 저장소",
-    "p5a": "Yasno는 데이터를 기기에만 저장합니다.",
+    "p5a": "Yasno는 다음 항목을 기기에 로컬로 저장합니다:",
     "p5l1": "선택한 언어",
     "p5l2": "온도 단위(°C / °F)",
-    "p5l3": "마지막으로 검색한 도시 — 다음에 다시 열기 위해",
-    "p5l4": "이 개인정보 보호정책에 대한 동의",
-    "p5b": "이 데이터는 기기 밖으로 나가지 않습니다. 기기 설정에서 앱 데이터를 삭제하면 언제든 지울 수 있습니다.",
+    "p5l3": "좌표를 포함한 마지막 선택 장소와 원래 수신 시각이 기록된 최신 예보 하나. 다시 열거나 오프라인에서 보는 데 사용됩니다",
+    "p5l4": "이 정책에 대한 동의와 위치 권한 안내가 이미 표시되었는지 여부",
+    "p5b": "위 항목은 기기에 로컬로 저장됩니다. 4절에 설명된 요청은 해당 서비스로 직접 전송됩니다. 서비스 워커는 API 응답을 캐시하지 않습니다. 오프라인에서는 마지막으로 받은 예보만 표시하며 원래 수신 시각을 “업데이트” 항목에 표시합니다. 앱 데이터를 지우면 로컬 항목이 삭제됩니다.",
     "p6t": "6. 언어 번역",
     "p6a": "Yasno에는 영어, 러시아어, 스페인어, 브라질 포르투갈어, 독일어, 프랑스어, 이탈리아어, 일본어, 한국어, 힌디어, 인도네시아어, 아랍어, 터키어 등 13개 언어의 수동 번역이 포함되어 있습니다.",
     "p6b": "Google 번역 등 자동 번역 서비스는 앱 인터페이스나 본 정책에는 사용되지 않습니다. 앱에 포함된 번역만 사용합니다.",
     "p7t": "7. 어린이",
-    "p7a": "Yasno는 관련 지역 법률에서 정한 연령 미만의 어린이를 포함해 누구의 데이터도 고의로 수집하지 않습니다. 연령 등급은 지역에 따라 다를 수 있습니다.",
+    "p7a": "Yasno는 사용자의 나이를 묻지 않습니다. 위의 데이터 처리 방식은 모든 사용자에게 동일하게 적용됩니다. 연령 등급은 지역에 따라 다를 수 있습니다.",
     "p8t": "8. 정책 변경",
     "p8a": "정책이 변경되면 위의 “최종 업데이트” 날짜를 갱신합니다. 앱을 계속 사용하는 것은 새 버전에 동의하는 것을 의미합니다.",
     "p9t": "9. 문의",
@@ -3789,13 +3871,13 @@ const PRIVACY_I18N = {
   },
   "hi": {
     "pTitle": "गोपनीयता नीति",
-    "pUpdated": "अंतिम अपडेट: 5 अक्टूबर 2026",
-    "pTldr": "Yasno आपका व्यक्तिगत डेटा एकत्र, संग्रहीत या साझा नहीं करता। सब कुछ आपके डिवाइस पर काम करता है।",
+    "pUpdated": "अंतिम अपडेट: 11 अक्टूबर 2026",
+    "pTldr": "Yasno का अपना बैकएंड या विश्लेषिकी नहीं है। प्राथमिकताएँ, सहमति, आख़िरी चुना गया स्थान और एक नवीनतम पूर्वानुमान डिवाइस पर सहेजे जाते हैं। निर्देशांक और शहर की खोजें सीधे बाहरी सेवाओं को भेजी जाती हैं।",
     "p1t": "1. परिचय",
     "p1a": "Yasno एक मुफ़्त मौसम ऐप है जिसे Ivan Suslov (इवान सुस्लोव) ने विकसित और संचालित किया है। यह गोपनीयता नीति बताती है कि ऐप कौन-सा डेटा और कैसे संसाधित करता है।",
     "p1b": "Yasno का उपयोग करके आप नीचे दी गई शर्तों से सहमत होते हैं। यदि आप सहमत नहीं हैं, तो कृपया ऐप का उपयोग न करें।",
-    "p2t": "2. हम व्यक्तिगत डेटा एकत्र नहीं करते",
-    "p2a": "Yasno में गोपनीयता को सर्वोच्च प्राथमिकता दी गई है। हम निम्नलिखित एकत्र नहीं करते, किसी सर्वर पर संग्रहीत नहीं करते और किसी के साथ साझा नहीं करते:",
+    "p2t": "2. Yasno कौन-सा डेटा नहीं रखता",
+    "p2a": "Yasno व्यक्तिगत प्रोफ़ाइल या आपकी गतिविधि का इतिहास नहीं रखता। इसका अपना बैकएंड या विश्लेषिकी नहीं है। बाहरी सेवाओं को सीधे भेजे जाने वाले अनुरोधों का विवरण अनुभाग 4 में है।",
     "p2l1": "आपका नाम, ईमेल, फ़ोन नंबर या कोई पहचान संबंधी जानकारी",
     "p2l2": "आपका स्थान इतिहास",
     "p2l3": "शहरों की आपकी खोजें",
@@ -3803,25 +3885,25 @@ const PRIVACY_I18N = {
     "p2l5": "उपयोग आँकड़े या एनालिटिक्स",
     "p2b": "ऐप में विज्ञापन, ट्रैकर या तीसरे पक्ष के एनालिटिक्स SDK नहीं हैं।",
     "p3t": "3. स्थान डेटा",
-    "p3a": "यदि आप जियोलोकेशन की अनुमति देते हैं, तो आपके डिवाइस के निर्देशांक का उपयोग केवल आपके वर्तमान शहर का मौसम प्राप्त करने के लिए किया जाता है।",
+    "p3a": "यदि आप लोकेशन की अनुमति देते हैं, तो डिवाइस के निर्देशांक पूर्वानुमान के लिए सीधे Open-Meteo और रिवर्स जियोकोडिंग के लिए Nominatim को भेजे जाते हैं।",
     "p3l1": "निर्देशांक सीधे आपके डिवाइस से मौसम API (Open-Meteo) को भेजे जाते हैं और वे हमारे सर्वर से कभी नहीं गुजरते।",
-    "p3l2": "हम आपका स्थान कहीं भी सहेजते नहीं हैं — न सर्वर पर, न एनालिटिक्स में।",
+    "p3l2": "Yasno स्थानों का इतिहास नहीं रखता; अनुभाग 5 में बताए अनुसार केवल आख़िरी चुना गया स्थान डिवाइस पर सहेजता है।",
     "p3l3": "आप डिवाइस सेटिंग में स्थान को कभी भी बंद कर सकते हैं या शहर मैन्युअल रूप से लिख सकते हैं।",
     "p4t": "4. मौसम डेटा",
-    "p4a": "पूर्वानुमान मुफ़्त खुली सेवा Open-Meteo से लोड किया जाता है। जियोकोडिंग (शहर खोज) के लिए OpenStreetMap Nominatim का उपयोग किया जाता है।",
-    "p4b": "ये सेवाएँ केवल निर्देशांक या उस शहर का नाम देखती हैं जिसे आप खोज रहे हैं। उन्हें आपसे व्यक्तिगत रूप से जुड़ा कोई पहचानकर्ता नहीं मिलता।",
+    "p4a": "पूर्वानुमान Open-Meteo से माँगे जाते हैं। शहर की खोज और रिवर्स जियोकोडिंग के लिए OpenStreetMap Nominatim का उपयोग होता है। फ़ॉन्ट फ़ाइलें Google Fonts से माँगी जाती हैं।",
+    "p4b": "Open-Meteo को पूर्वानुमान के लिए निर्देशांक मिलते हैं; Nominatim को रिवर्स जियोकोडिंग के निर्देशांक और खोजे गए स्थानों के नाम मिलते हैं। Google को फ़ॉन्ट अनुरोध मिलते हैं। इन सेवाओं को आपका IP पता और सामान्य कनेक्शन डेटा भी मिल सकता है। Yasno का अपना बैकएंड या विश्लेषिकी नहीं है।",
     "p5t": "5. स्थानीय संग्रहण",
-    "p5a": "Yasno डेटा केवल आपके डिवाइस पर स्थानीय रूप से संग्रहीत करता है:",
+    "p5a": "Yasno निम्नलिखित चीज़ें आपके डिवाइस पर स्थानीय रूप से सहेजता है:",
     "p5l1": "चयनित भाषा",
     "p5l2": "तापमान इकाई (°C / °F)",
-    "p5l3": "अंतिम खोजा गया शहर — अगली बार फिर खोलने के लिए",
-    "p5l4": "इस गोपनीयता नीति के लिए आपकी सहमति",
-    "p5b": "यह डेटा कभी भी आपके डिवाइस से बाहर नहीं जाता। आप डिवाइस सेटिंग में ऐप डेटा साफ़ करके इसे कभी भी हटा सकते हैं।",
+    "p5l3": "आख़िरी चुना गया स्थान, निर्देशांकों सहित, और मूल प्राप्ति समय वाला एक नवीनतम पूर्वानुमान, ताकि उसे फिर खोल सकें और ऑफ़लाइन देख सकें",
+    "p5l4": "इस नीति के लिए आपकी सहमति और क्या लोकेशन अनुमति का अनुरोध दिखाया जा चुका है",
+    "p5b": "ये चीज़ें डिवाइस पर स्थानीय रूप से सहेजी जाती हैं। अनुभाग 4 में बताए अनुरोध सीधे संबंधित सेवाओं को भेजे जाते हैं। Service worker API जवाबों को कैश नहीं करता। ऑफ़लाइन होने पर Yasno केवल आख़िरी प्राप्त पूर्वानुमान दिखाता है और “अपडेट” में उसका मूल प्राप्ति समय दिखाता है। स्थानीय चीज़ें हटाने के लिए ऐप डेटा साफ़ करें।",
     "p6t": "6. भाषा अनुवाद",
     "p6a": "Yasno में 13 भाषाओं के लिए हस्तलिखित इंटरफ़ेस अनुवाद शामिल हैं: अंग्रेज़ी, रूसी, स्पेनिश, ब्राज़ीलियाई पुर्तगाली, जर्मन, फ़्रेंच, इतालवी, जापानी, कोरियाई, हिन्दी, इंडोनेशियाई, अरबी और तुर्की।",
     "p6b": "Google Translate या किसी अन्य स्वचालित अनुवाद सेवा का उपयोग ऐप इंटरफ़ेस या इस नीति के लिए नहीं किया जाता। केवल ऐप में शामिल अनुवादों का उपयोग किया जाता है।",
     "p7t": "7. बच्चे",
-    "p7a": "Yasno जानबूझकर किसी से भी डेटा एकत्र नहीं करता, जिसमें लागू स्थानीय नियमों में निर्धारित आयु से कम बच्चे भी शामिल हैं। आयु रेटिंग क्षेत्र के अनुसार भिन्न हो सकती है।",
+    "p7a": "Yasno उपयोगकर्ता की उम्र नहीं पूछता। ऊपर बताई गई डेटा प्रथाएँ सभी उपयोगकर्ताओं पर लागू होती हैं। आयु रेटिंग क्षेत्र के अनुसार अलग हो सकती है।",
     "p8t": "8. इस नीति में परिवर्तन",
     "p8a": "यदि यह नीति बदलती है, तो हम ऊपर दी गई “अंतिम अपडेट” तारीख़ बदल देंगे। ऐप का उपयोग जारी रखना नए संस्करण की स्वीकृति माना जाएगा।",
     "p9t": "9. संपर्क",
@@ -3832,13 +3914,13 @@ const PRIVACY_I18N = {
   },
   "id": {
     "pTitle": "Kebijakan Privasi",
-    "pUpdated": "Terakhir diperbarui: 5 Oktober 2026",
-    "pTldr": "Yasno tidak mengumpulkan, menyimpan, atau membagikan data pribadi Anda. Semuanya berjalan di perangkat Anda.",
+    "pUpdated": "Terakhir diperbarui: 11 Oktober 2026",
+    "pTldr": "Yasno tidak memiliki backend atau analitik sendiri. Preferensi, persetujuan, tempat terakhir yang dipilih, dan satu prakiraan terbaru disimpan secara lokal. Koordinat dan pencarian kota dikirim langsung ke layanan eksternal.",
     "p1t": "1. Pendahuluan",
     "p1a": "Yasno adalah aplikasi cuaca gratis yang dikembangkan dan dioperasikan oleh Ivan Suslov. Kebijakan Privasi ini menjelaskan data apa yang diproses aplikasi dan bagaimana.",
     "p1b": "Dengan menggunakan Yasno, Anda menyetujui ketentuan di bawah ini. Jika tidak setuju, jangan gunakan aplikasi.",
-    "p2t": "2. Kami tidak mengumpulkan data pribadi",
-    "p2a": "Yasno memprioritaskan privasi. Kami tidak mengumpulkan, menyimpan di server mana pun, atau membagikan kepada siapa pun:",
+    "p2t": "2. Data yang tidak disimpan Yasno",
+    "p2a": "Yasno tidak membuat profil pribadi atau menyimpan riwayat aktivitas Anda. Aplikasi ini tidak memiliki backend atau analitik sendiri. Permintaan yang dikirim langsung ke layanan eksternal dijelaskan di bagian 4.",
     "p2l1": "Nama, email, nomor telepon, atau identitas Anda",
     "p2l2": "Riwayat lokasi Anda",
     "p2l3": "Pencarian kota Anda",
@@ -3846,25 +3928,25 @@ const PRIVACY_I18N = {
     "p2l5": "Statistik penggunaan atau analitik",
     "p2b": "Aplikasi tidak memiliki iklan, pelacak, atau SDK analitik pihak ketiga.",
     "p3t": "3. Data lokasi",
-    "p3a": "Jika Anda mengizinkan geolokasi, koordinat perangkat hanya digunakan untuk mengambil cuaca kota Anda saat ini.",
+    "p3a": "Jika Anda mengizinkan geolokasi, koordinat perangkat dikirim langsung ke Open-Meteo untuk prakiraan dan ke Nominatim untuk geocoding terbalik.",
     "p3l1": "Koordinat dikirim langsung dari perangkat Anda ke API cuaca (Open-Meteo) dan tidak pernah melalui server kami.",
-    "p3l2": "Kami tidak menyimpan lokasi Anda di mana pun — baik di server maupun analitik.",
+    "p3l2": "Yasno tidak menyimpan riwayat lokasi; hanya tempat terakhir yang dipilih yang disimpan secara lokal seperti dijelaskan di bagian 5.",
     "p3l3": "Anda dapat menonaktifkan lokasi kapan saja di pengaturan perangkat atau mengetikkan kota secara manual.",
     "p4t": "4. Data cuaca",
-    "p4a": "Prakiraan dimuat dari layanan terbuka gratis Open-Meteo. Geocoding (pencarian kota) menggunakan OpenStreetMap Nominatim.",
-    "p4b": "Layanan ini hanya melihat koordinat atau nama kota yang Anda cari. Mereka tidak menerima pengenal yang terkait secara pribadi dengan Anda.",
+    "p4a": "Prakiraan diminta dari Open-Meteo. Pencarian kota dan geocoding terbalik menggunakan OpenStreetMap Nominatim. Berkas font diminta dari Google Fonts.",
+    "p4b": "Open-Meteo menerima koordinat untuk prakiraan; Nominatim menerima koordinat untuk geocoding terbalik dan nama tempat yang Anda cari. Google menerima permintaan font. Layanan ini juga dapat menerima alamat IP dan data koneksi standar Anda. Yasno tidak memiliki backend atau analitik sendiri.",
     "p5t": "5. Penyimpanan lokal",
-    "p5a": "Yasno hanya menyimpan data secara lokal di perangkat Anda:",
+    "p5a": "Yasno menyimpan item berikut secara lokal di perangkat Anda:",
     "p5l1": "Bahasa yang dipilih",
     "p5l2": "Satuan suhu (°C / °F)",
-    "p5l3": "Kota terakhir yang dicari — untuk membukanya lagi nanti",
-    "p5l4": "Persetujuan Anda terhadap Kebijakan Privasi ini",
-    "p5b": "Data ini tidak pernah meninggalkan perangkat. Anda dapat menghapusnya kapan saja dengan menghapus data aplikasi di pengaturan perangkat.",
+    "p5l3": "Tempat terakhir yang dipilih, termasuk koordinatnya, dan satu prakiraan terbaru dengan waktu penerimaan aslinya untuk dibuka kembali dan dilihat saat offline",
+    "p5l4": "Persetujuan Anda terhadap kebijakan ini dan apakah permintaan izin lokasi sudah pernah ditampilkan",
+    "p5b": "Item ini disimpan secara lokal di perangkat. Permintaan yang dijelaskan di bagian 4 dikirim langsung ke layanan terkait. Service worker tidak menyimpan respons API dalam cache. Saat offline, Yasno hanya menampilkan prakiraan terakhir yang diterima beserta waktu penerimaan aslinya di kolom “Diperbarui”. Hapus data aplikasi untuk menghapus item lokal.",
     "p6t": "6. Terjemahan bahasa",
     "p6a": "Yasno menyertakan terjemahan antarmuka yang ditulis manual untuk 13 bahasa: Inggris, Rusia, Spanyol, Portugis Brasil, Jerman, Prancis, Italia, Jepang, Korea, Hindi, Indonesia, Arab, dan Turki.",
     "p6b": "Google Translate atau layanan terjemahan otomatis lainnya tidak digunakan untuk antarmuka aplikasi atau kebijakan ini. Hanya terjemahan yang disertakan dalam aplikasi yang digunakan.",
     "p7t": "7. Anak-anak",
-    "p7a": "Yasno tidak dengan sengaja mengumpulkan data dari siapa pun, termasuk anak-anak di bawah usia yang ditetapkan oleh peraturan setempat. Peringkat usia dapat berbeda menurut wilayah.",
+    "p7a": "Yasno tidak menanyakan usia pengguna. Praktik data di atas berlaku bagi semua pengguna. Peringkat usia dapat berbeda menurut wilayah.",
     "p8t": "8. Perubahan kebijakan",
     "p8a": "Jika kebijakan ini berubah, kami akan memperbarui tanggal “Terakhir diperbarui” di atas. Melanjutkan penggunaan aplikasi berarti menerima versi baru.",
     "p9t": "9. Kontak",
@@ -3875,13 +3957,13 @@ const PRIVACY_I18N = {
   },
   "ar": {
     "pTitle": "سياسة الخصوصية",
-    "pUpdated": "آخر تحديث: 5 أكتوبر 2026",
-    "pTldr": "لا تجمع Yasno بياناتك الشخصية ولا تخزنها أو تشاركها. كل شيء يعمل على جهازك.",
+    "pUpdated": "آخر تحديث: 11 أكتوبر 2026",
+    "pTldr": "لا يملك Yasno خادمًا خلفيًا أو تحليلات خاصة به. تُحفظ الإعدادات والموافقة وآخر مكان محدد وتوقع واحد أخير محليًا. تُرسل الإحداثيات وعمليات بحث المدن مباشرةً إلى خدمات خارجية.",
     "p1t": "1. المقدمة",
     "p1a": "Yasno تطبيق طقس مجاني تم تطويره وتشغيله بواسطة Ivan Suslov (إيفان سوسلوف). توضح سياسة الخصوصية هذه البيانات التي يعالجها التطبيق وكيفية ذلك.",
     "p1b": "باستخدام Yasno فإنك توافق على الشروط الموضحة أدناه. إذا لم توافق، فالرجاء عدم استخدام التطبيق.",
-    "p2t": "2. لا نجمع البيانات الشخصية",
-    "p2a": "تضع Yasno الخصوصية في مقدمة أولوياتها. نحن لا نجمع ولا نخزن على أي خادم ولا نشارك مع أي شخص:",
+    "p2t": "2. البيانات التي لا يحتفظ بها Yasno",
+    "p2a": "لا ينشئ Yasno ملفات تعريف شخصية أو سجلًا لنشاطك. ولا يملك خادمًا خلفيًا أو تحليلات خاصة به. الطلبات المرسلة مباشرةً إلى خدمات خارجية موضحة في القسم 4.",
     "p2l1": "اسمك أو بريدك الإلكتروني أو رقم هاتفك أو أي معلومات تعريفية",
     "p2l2": "سجل موقعك",
     "p2l3": "عمليات البحث عن المدن",
@@ -3889,25 +3971,25 @@ const PRIVACY_I18N = {
     "p2l5": "إحصاءات الاستخدام أو التحليلات",
     "p2b": "لا يحتوي التطبيق على إعلانات أو أدوات تتبع أو حزم تحليل تابعة لجهات خارجية.",
     "p3t": "3. بيانات الموقع",
-    "p3a": "إذا سمحت بتحديد الموقع، تُستخدم إحداثيات جهازك فقط للحصول على الطقس لمدينتك الحالية.",
+    "p3a": "إذا سمحت بتحديد الموقع، تُرسل إحداثيات جهازك مباشرةً إلى Open-Meteo للتوقعات وإلى Nominatim للترميز الجغرافي العكسي.",
     "p3l1": "تُرسل الإحداثيات مباشرة من جهازك إلى واجهة الطقس (Open-Meteo) ولا تمر عبر خوادمنا مطلقًا.",
-    "p3l2": "لا نحفظ موقعك في أي مكان، لا على خادم ولا في التحليلات.",
+    "p3l2": "لا يحتفظ Yasno بسجل للمواقع؛ بل يحفظ محليًا آخر مكان محدد فقط، كما هو موضح في القسم 5.",
     "p3l3": "يمكنك تعطيل الموقع في إعدادات جهازك في أي وقت أو كتابة المدينة يدويًا.",
     "p4t": "4. بيانات الطقس",
-    "p4a": "يتم تحميل التوقعات من الخدمة المفتوحة المجانية Open-Meteo. ويستخدم البحث عن المدن OpenStreetMap Nominatim للترميز الجغرافي.",
-    "p4b": "لا ترى هذه الخدمات سوى الإحداثيات أو اسم المدينة التي تبحث عنها. ولا تتلقى أي معرّف مرتبط بك شخصيًا.",
+    "p4a": "تُطلب التوقعات من Open-Meteo. ويستخدم البحث عن المدن والترميز الجغرافي العكسي OpenStreetMap Nominatim. وتُطلب ملفات الخطوط من Google Fonts.",
+    "p4b": "يتلقى Open-Meteo الإحداثيات للتوقعات؛ ويتلقى Nominatim الإحداثيات للترميز الجغرافي العكسي وأسماء الأماكن التي تبحث عنها. وتتلقى Google طلبات الخطوط. وقد تتلقى هذه الخدمات أيضًا عنوان IP وبيانات الاتصال المعتادة. لا يملك Yasno خادمًا خلفيًا أو تحليلات خاصة به.",
     "p5t": "5. التخزين المحلي",
-    "p5a": "تخزن Yasno البيانات محليًا على جهازك فقط:",
+    "p5a": "يحفظ Yasno العناصر التالية محليًا على جهازك:",
     "p5l1": "اللغة المختارة",
     "p5l2": "وحدة الحرارة (°C / °F)",
-    "p5l3": "آخر مدينة تم البحث عنها — لفتحها مرة أخرى في المرة القادمة",
-    "p5l4": "موافقتك على سياسة الخصوصية هذه",
-    "p5b": "لا تغادر هذه البيانات جهازك أبدًا. يمكنك حذفها في أي وقت بمسح بيانات التطبيق من إعدادات الجهاز.",
+    "p5l3": "آخر مكان محدد، بما في ذلك إحداثياته، وتوقع واحد أخير مع وقت استلامه الأصلي، لإعادة فتحه ومشاهدته دون اتصال",
+    "p5l4": "موافقتك على هذه السياسة وما إذا كان طلب إذن الموقع قد ظهر من قبل",
+    "p5b": "تُحفظ هذه العناصر محليًا على جهازك. تُرسل الطلبات الموضحة في القسم 4 مباشرةً إلى الخدمات المذكورة. لا يخزن عامل الخدمة استجابات API مؤقتًا. دون اتصال، يعرض Yasno آخر توقع تلقاه فقط مع وقت استلامه الأصلي في خانة «تم التحديث». امسح بيانات التطبيق لحذف العناصر المحلية.",
     "p6t": "6. ترجمات اللغات",
     "p6a": "يتضمن Yasno ترجمات واجهة مكتوبة يدويًا لـ13 لغة: الإنجليزية والروسية والإسبانية والبرتغالية البرازيلية والألمانية والفرنسية والإيطالية واليابانية والكورية والهندية والإندونيسية والعربية والتركية.",
     "p6b": "لا يتم استخدام Google Translate أو أي خدمة ترجمة آلية أخرى لواجهة التطبيق أو لهذه السياسة. تُستخدم فقط الترجمات المضمنة في التطبيق.",
     "p7t": "7. الأطفال",
-    "p7a": "لا تجمع Yasno عن علم أي بيانات من أي شخص، بما في ذلك الأطفال دون السن المحدد في القوانين المحلية المعمول بها. قد يختلف التصنيف العمري حسب المنطقة.",
+    "p7a": "لا يطلب Yasno عمر المستخدم. وتنطبق ممارسات البيانات الموضحة أعلاه على الجميع. قد يختلف التصنيف العمري حسب المنطقة.",
     "p8t": "8. تغييرات هذه السياسة",
     "p8a": "إذا تغيرت هذه السياسة، سنحدّث تاريخ «آخر تحديث» أعلاه. ويعني الاستمرار في استخدام التطبيق قبول النسخة الجديدة.",
     "p9t": "9. الاتصال",
@@ -3918,13 +4000,13 @@ const PRIVACY_I18N = {
   },
   "tr": {
     "pTitle": "Gizlilik Politikası",
-    "pUpdated": "Son güncelleme: 5 Ekim 2026",
-    "pTldr": "Yasno kişisel verilerinizi toplamaz, saklamaz veya paylaşmaz. Her şey cihazınızda çalışır.",
+    "pUpdated": "Son güncelleme: 11 Ekim 2026",
+    "pTldr": "Yasno’nun kendi arka ucu veya analiz sistemi yoktur. Tercihler, onay, son seçilen yer ve en son tahmin yerel olarak saklanır. Koordinatlar ve şehir aramaları doğrudan harici hizmetlere gönderilir.",
     "p1t": "1. Giriş",
     "p1a": "Yasno, Ivan Suslov tarafından geliştirilen ve işletilen ücretsiz bir hava durumu uygulamasıdır. Bu Gizlilik Politikası, uygulamanın hangi verileri ve nasıl işlediğini açıklar.",
     "p1b": "Yasno’yu kullanarak aşağıdaki koşulları kabul etmiş olursunuz. Kabul etmiyorsanız uygulamayı kullanmayın.",
-    "p2t": "2. Kişisel veri toplamıyoruz",
-    "p2a": "Yasno gizliliğe öncelik verir. Şunları toplamıyor, herhangi bir sunucuda saklamıyor ve hiç kimseyle paylaşmıyoruz:",
+    "p2t": "2. Yasno’nun saklamadığı veriler",
+    "p2a": "Yasno kişisel profil veya etkinlik geçmişi oluşturmaz. Kendi arka ucu ya da analiz sistemi yoktur. Harici hizmetlere doğrudan gönderilen istekler 4. bölümde açıklanmıştır.",
     "p2l1": "Adınız, e-postanız, telefon numaranız veya kimlik bilgileriniz",
     "p2l2": "Konum geçmişiniz",
     "p2l3": "Şehir aramalarınız",
@@ -3932,25 +4014,25 @@ const PRIVACY_I18N = {
     "p2l5": "Kullanım istatistikleri veya analizler",
     "p2b": "Uygulamada reklam, izleyici veya üçüncü taraf analiz SDK’ları yoktur.",
     "p3t": "3. Konum verileri",
-    "p3a": "Konum iznini verirseniz cihazınızın koordinatları yalnızca mevcut şehrinizin hava durumunu almak için kullanılır.",
+    "p3a": "Konum iznini verirseniz cihaz koordinatları tahmin için doğrudan Open-Meteo’ya, ters geocoding için Nominatim’e gönderilir.",
     "p3l1": "Koordinatlar doğrudan cihazınızdan hava durumu API’sine (Open-Meteo) gönderilir ve sunucularımızdan geçmez.",
-    "p3l2": "Konumunuzu hiçbir yerde, sunucuda veya analizlerde saklamıyoruz.",
+    "p3l2": "Yasno konum geçmişi tutmaz; 5. bölümde açıklandığı gibi yalnızca son seçilen yeri yerel olarak saklar.",
     "p3l3": "Konumu cihaz ayarlarından istediğiniz zaman kapatabilir veya şehri manuel olarak yazabilirsiniz.",
     "p4t": "4. Hava durumu verileri",
-    "p4a": "Tahminler ücretsiz açık hizmet Open-Meteo’dan yüklenir. Geocoding (şehir arama) için OpenStreetMap Nominatim kullanılır.",
-    "p4b": "Bu hizmetler yalnızca koordinatları veya aradığınız şehrin adını görür. Size kişisel olarak bağlı bir tanımlayıcı almazlar.",
+    "p4a": "Tahminler Open-Meteo’dan istenir. Şehir arama ve ters geocoding için OpenStreetMap Nominatim kullanılır. Yazı tipi dosyaları Google Fonts’tan istenir.",
+    "p4b": "Open-Meteo tahminler için koordinatları alır; Nominatim ters geocoding için koordinatları ve aradığınız yer adlarını alır. Google yazı tipi isteklerini alır. Bu hizmetler IP adresinizi ve standart bağlantı bilgilerini de alabilir. Yasno’nun kendi arka ucu veya analiz sistemi yoktur.",
     "p5t": "5. Yerel depolama",
-    "p5a": "Yasno verileri yalnızca cihazınızda yerel olarak saklar:",
+    "p5a": "Yasno aşağıdaki öğeleri cihazınızda yerel olarak saklar:",
     "p5l1": "Seçilen dil",
     "p5l2": "Sıcaklık birimi (°C / °F)",
-    "p5l3": "Son aranan şehir — bir sonraki sefer tekrar açmak için",
-    "p5l4": "Bu Gizlilik Politikasına verdiğiniz onay",
-    "p5b": "Bu veriler cihazınızdan asla çıkmaz. Cihaz ayarlarından uygulama verilerini temizleyerek istediğiniz zaman silebilirsiniz.",
+    "p5l3": "Koordinatlarıyla birlikte son seçilen yer ve yeniden açıp çevrimdışı görüntülemek için özgün alınma zamanı korunan en son tahmin",
+    "p5l4": "Bu politikaya verdiğiniz onay ve konum izni isteğinin daha önce gösterilip gösterilmediği",
+    "p5b": "Bu öğeler cihazınızda yerel olarak saklanır. 4. bölümde açıklanan istekler doğrudan belirtilen hizmetlere gönderilir. Service worker API yanıtlarını önbelleğe almaz. Çevrimdışıyken Yasno yalnızca aldığı son tahmini gösterir ve özgün alınma zamanını “Güncellendi” alanında korur. Yerel öğeleri silmek için uygulama verilerini temizleyin.",
     "p6t": "6. Dil çevirileri",
     "p6a": "Yasno, 13 dil için elle yazılmış arayüz çevirileri içerir: İngilizce, Rusça, İspanyolca, Brezilya Portekizcesi, Almanca, Fransızca, İtalyanca, Japonca, Korece, Hintçe, Endonezce, Arapça ve Türkçe.",
     "p6b": "Google Translate veya başka bir otomatik çeviri hizmeti uygulama arayüzü veya bu politika için kullanılmaz. Yalnızca uygulamaya dahil edilen çeviriler kullanılır.",
     "p7t": "7. Çocuklar",
-    "p7a": "Yasno, geçerli yerel düzenlemelerde belirtilen yaşın altındaki çocuklar dahil hiç kimseden bilerek veri toplamaz. Yaş derecelendirmesi bölgeye göre değişebilir.",
+    "p7a": "Yasno kullanıcıların yaşını sormaz. Yukarıda açıklanan veri uygulamaları herkes için geçerlidir. Yaş derecelendirmesi bölgeye göre değişebilir.",
     "p8t": "8. Bu politikadaki değişiklikler",
     "p8a": "Bu politika değişirse yukarıdaki “Son güncelleme” tarihini güncelleriz. Uygulamayı kullanmaya devam etmek yeni sürümü kabul ettiğiniz anlamına gelir.",
     "p9t": "9. İletişim",
