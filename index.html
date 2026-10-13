@@ -141,6 +141,11 @@ body.night #stars{opacity:1}
   color:var(--ink);font:600 13px var(--mono);cursor:pointer;transition:.25s}
 #langSel:hover{border-color:rgba(255,209,102,.5)}
 #langSel option{background:#0a1a28;color:#eef7ff}
+.langTools{display:flex;flex-direction:column;align-items:stretch;gap:5px;flex:none}
+.langToolActions{display:flex;gap:5px;justify-content:center}
+.langToolBtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:25px;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:rgba(6,18,30,.55);color:var(--mut);font:500 10px var(--body);white-space:nowrap;cursor:pointer;transition:.2s}
+.langToolBtn svg{width:12px;height:12px;flex:none;color:var(--acc2)}
+.langToolBtn:hover{border-color:rgba(255,209,102,.5);color:var(--ink);background:rgba(255,255,255,.08)}
 
 #chipClock{margin-left:auto;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
   border:1px solid var(--line);background:rgba(6,18,30,.45);font:600 13px var(--mono);color:var(--mut)}
@@ -406,6 +411,8 @@ body.night #stars{opacity:1}
 #privWarn.show{display:block}
 .priv-link{display:inline-block;margin-bottom:18px;color:var(--acc2);font-size:13.5px;text-decoration:none;border-bottom:1px dashed rgba(143,216,255,.4);transition:.2s}
 .priv-link:hover{color:#fff;border-bottom-color:rgba(255,255,255,.5)}
+#privacyModal .priv-actions button.priv-link{background:none;border:0;border-bottom:1px dashed rgba(143,216,255,.4);border-radius:0;box-shadow:none;color:var(--acc2);padding:0 0 3px;margin:0;font:500 13.5px var(--body)}
+#privacyModal .priv-actions button.priv-link:hover{transform:none;color:#fff;border-bottom-color:rgba(255,255,255,.5)}
 button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,216,255,.4);cursor:pointer;font-family:inherit;padding:0}
 @media(max-width:480px){
   #privacyModal .priv-box{padding:22px 18px 20px}
@@ -443,6 +450,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 .privf-section h3{font:700 15px/1.3 var(--disp);color:var(--acc2);margin-bottom:10px}
 .privf-section p{font-size:14px;color:var(--mut);margin-bottom:10px}
 .privf-section p:last-child{margin-bottom:0}
+.privf-license{white-space:pre-wrap;overflow-wrap:anywhere;font:11.5px/1.6 var(--mono);color:var(--mut);margin:10px 0 0}
 .privf-section ul{margin:8px 0 12px 0;padding-left:0;list-style:none}
 .privf-section ul li{position:relative;padding-left:20px;margin-bottom:8px;font-size:14px;color:var(--mut)}
 .privf-section ul li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;
@@ -515,12 +523,11 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
     <div class="priv-icon">🛡️</div>
     <h2 data-i18n="privacyTitle">Privacy Policy</h2>
     <p data-i18n="privacyText">To use Yasno, you must agree to our Privacy Policy. Yasno is developed and operated by Ivan Suslov. We do not collect personal data — your location and search queries are processed only on your device.</p>
-    <button class="priv-link" id="openFullPrivacy" data-i18n="privacyRead">Read the full policy</button>
-    <div class="priv-actions">
-      <button id="privDecline" data-i18n="privacyDecline">Decline</button>
-      <button id="privAccept" data-i18n="privacyAccept">Accept</button>
+    <div class="priv-actions" style="flex-direction:column;align-items:center;gap:10px;margin-top:14px">
+      <button class="priv-link" id="openFullPrivacy" data-i18n="privacyRead">Read Privacy Policy</button>
+      <button class="priv-link" id="openSunCalcLicense" data-i18n="privacyLicense">Read SunCalc license</button>
+      <button id="privAccept" data-i18n="privacyAccept">Continue</button>
     </div>
-    <div id="privWarn" data-i18n="privacyWarn">⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.</div>
   </div>
 </div>
 
@@ -539,11 +546,30 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
       <div class="privf-updated" id="privfUpdated">Last updated: 11 October 2026</div>
       <div class="privf-tldr" id="privfTldr"></div>
       <div id="privfContent"></div>
-      <div id="privfWarn" data-i18n="privacyWarn">⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.</div>
-    </div>
-    <div class="privf-actions">
-      <button id="privfDecline" data-i18n="privacyDecline">Decline</button>
-      <button id="privfAccept" data-i18n="privacyAccept">Accept</button>
+      <div class="privf-section" id="privfLicenseSection">
+        <h3>SunCalc license (BSD-2-Clause)</h3>
+        <p>SunCalc is used for sun and moon calculations.</p>
+        <pre class="privf-license">Copyright (c) 2026, Volodymyr Agafonkin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+      </div>
     </div>
   </div>
 </div>
@@ -650,10 +676,25 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
     <button class="icoBtn" id="weatherLegendBtn" title="Weather phenomena" data-i18n-title="weatherLegend">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10"/><path d="M7 9h10"/><path d="M7 14h10"/><path d="M7 19h10"/><circle cx="4" cy="4" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="9" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="14" r=".8" fill="currentColor" stroke="none"/><circle cx="4" cy="19" r=".8" fill="currentColor" stroke="none"/></svg>
     </button>
+    <button class="icoBtn" id="legalBtn" title="Privacy Policy" data-i18n-title="privacyTitle" aria-label="Privacy Policy and SunCalc license">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h4M8 12h8M8 16h8"/></svg>
+    </button>
     <button class="icoBtn" id="installBtn" style="display:none" title="Install app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
     </button>
-    <select id="langSel" title="Language"></select>
+    <div class="langTools">
+      <select id="langSel" title="Language"></select>
+      <div class="langToolActions">
+        <button class="langToolBtn" id="refreshPageBtn" type="button" title="Refresh page" aria-label="Refresh page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5"/><path d="M4.9 9a7.5 7.5 0 0 1 12.4-2L20 12M4 17v-5h5"/><path d="M19.1 15a7.5 7.5 0 0 1-12.4 2L4 12"/></svg>
+          <span id="refreshPageLabel">Refresh</span>
+        </button>
+        <button class="langToolBtn" id="changeCityBtn" type="button" title="Change city" aria-label="Change city">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+          <span id="changeCityLabel">Change city</span>
+        </button>
+      </div>
+    </div>
     <div class="seg" id="unit"><button data-u="c">°C</button><button data-u="f">°F</button></div>
     <div id="chipClock">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
@@ -882,10 +923,13 @@ const STR_EN={
 
 iosHint:'On iPhone/iPad: Share → "Add to Home Screen"',
 privacyTitle:'Privacy Policy',
-privacyText:"To use Yasno, you must agree to this Privacy Policy. Yasno is developed and operated by Ivan Suslov. The app has no ads and does not run analytics. Your last selected place and one last forecast are stored locally; coordinates and city searches go to Open-Meteo and Nominatim. Font files are requested from Google Fonts.",
-privacyAccept:'Accept',
+privacyText:"Welcome to Yasno Weather. By tapping Continue, you acknowledge the Privacy Policy. You can read the full policy and SunCalc license below.",
+privacyAccept:'Continue',
 privacyDecline:'Decline',
-privacyRead:'Read the full policy',
+privacyRead:'Read Privacy Policy',
+privacyLicense:'Read SunCalc license',
+geoDeniedDesc:'Location access was denied. Tap Try again to request it once more. If Android does not show a permission dialog, open Settings → Apps → Yasno Weather → Permissions → Location and allow access. You can still search for a city manually.',
+geoRetry:'Try again', geoLater:'Not now',
 privacyWarn:'⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.'
 };
 let STR={...STR_EN};
@@ -998,14 +1042,19 @@ const I18N = {
     "wx_hstorm": "Сильная гроза",
     "geoTitle": "Узнать ваше местоположение?",
     "geoDesc": "Местоположение используется для определения места и загрузки погоды. Если вы разрешите геолокацию, координаты устройства напрямую передаются в Open-Meteo для прогноза и в Nominatim для обратного геокодирования. Yasno локально хранит только последнее выбранное место, включая координаты, а не историю местоположений. Названия городов, введённые в поиск, передаются в Nominatim. Город можно ввести вручную.",
+    "geoDeniedDesc": "Доступ к местоположению был отклонён. Нажмите «Повторить попытку», чтобы запросить его ещё раз. Если Android больше не показывает системный запрос, откройте Настройки → Приложения → Yasno Weather → Разрешения → Местоположение и разрешите доступ. Город по-прежнему можно найти вручную.",
+    "geoRetry": "Повторить попытку",
+    "geoLater": "Не сейчас",
+    "privacyLicense": "Прочитать лицензию SunCalc",
+
     "geoOk": "Ок",
     "geoNo": "Нет, спасибо",
     "iosHint": "На iPhone/iPad: Поделиться → «На экран Домой»",
     "privacyTitle": "Политика конфиденциальности",
-    "privacyText": "Для использования Yasno нужно принять Политику конфиденциальности. Yasno разработал и поддерживает Иван Суслов. В приложении нет рекламы и аналитики. Последнее выбранное место и один последний прогноз хранятся локально; координаты и названия городов передаются в Open-Meteo и Nominatim. Файлы шрифтов запрашиваются у Google Fonts.",
-    "privacyAccept": "Принять",
+    "privacyText": "Добро пожаловать в Yasno Weather. Нажимая «Продолжить», вы подтверждаете, что ознакомились с Политикой конфиденциальности. Ниже можно прочитать политику и лицензию SunCalc.",
+    "privacyAccept": "Продолжить",
     "privacyDecline": "Отклонить",
-    "privacyRead": "Ознакомиться с полным текстом",
+    "privacyRead": "Прочитать Политику конфиденциальности",
     "privacyWarn": "⚠️ Приложение не может работать без вашего согласия. Примите Политику конфиденциальности, чтобы продолжить."
   },
   "es": {
@@ -1115,14 +1164,19 @@ const I18N = {
     "wx_hstorm": "Tormenta eléctrica intensa",
     "geoTitle": "¿Quieres permitir conocer tu ubicación?",
     "geoDesc": "Usamos la ubicación para identificar el lugar y cargar el tiempo. Si la permites, las coordenadas del dispositivo se envían directamente a Open-Meteo para el pronóstico y a Nominatim para la geocodificación inversa. Yasno guarda localmente solo el último lugar seleccionado, incluidas sus coordenadas; no conserva un historial de ubicaciones. Los nombres escritos en la búsqueda se envían a Nominatim. También puedes escribir una ciudad manualmente.",
+    "geoDeniedDesc": "Se denegó el acceso a la ubicación. Toca Intentar de nuevo para volver a solicitarlo. Si Android no muestra el diálogo de permiso, abre Ajustes → Aplicaciones → Yasno Weather → Permisos → Ubicación y permite el acceso. También puedes buscar una ciudad manualmente.",
+    "geoRetry": "Intentar de nuevo",
+    "geoLater": "Ahora no",
+    "privacyLicense": "Leer la licencia de SunCalc",
+
     "geoOk": "Aceptar",
     "geoNo": "No, gracias",
     "iosHint": "En iPhone/iPad: Compartir → «Añadir a pantalla de inicio»",
     "privacyTitle": "Política de privacidad",
-    "privacyText": "Para usar Yasno, debes aceptar esta Política de privacidad. Yasno fue desarrollado y es gestionado por Ivan Suslov. La aplicación no muestra anuncios ni realiza análisis. El último lugar seleccionado y el último pronóstico se guardan localmente; las coordenadas y los nombres de ciudades se envían a Open-Meteo y Nominatim. Los archivos de fuentes se solicitan a Google Fonts.",
-    "privacyAccept": "Aceptar",
+    "privacyText": "Te damos la bienvenida a Yasno Weather. Al tocar Continuar, confirmas que has leído la Política de privacidad. A continuación puedes leer la política completa y la licencia de SunCalc.",
+    "privacyAccept": "Continuar",
     "privacyDecline": "Rechazar",
-    "privacyRead": "Leer la política completa",
+    "privacyRead": "Leer la Política de privacidad",
     "privacyWarn": "⚠️ La aplicación no puede funcionar sin tu consentimiento. Acepta la Política de privacidad para continuar."
   },
   "pt": {
@@ -1232,14 +1286,19 @@ const I18N = {
     "wx_hstorm": "Trovoada forte",
     "geoTitle": "Permitir localização?",
     "geoDesc": "Usamos a localização para identificar o local e carregar a previsão. Se você permitir, as coordenadas do dispositivo são enviadas diretamente ao Open-Meteo para a previsão e ao Nominatim para a geocodificação reversa. O Yasno guarda localmente apenas o último local selecionado, incluindo as coordenadas; não mantém histórico de localização. Os nomes digitados na busca são enviados ao Nominatim. Você também pode digitar uma cidade manualmente.",
+    "geoDeniedDesc": "O acesso à localização foi negado. Toque em Tentar novamente para solicitá-lo outra vez. Se o Android não mostrar a janela de permissão, abra Configurações → Apps → Yasno Weather → Permissões → Localização e permita o acesso. Você ainda pode pesquisar uma cidade manualmente.",
+    "geoRetry": "Tentar novamente",
+    "geoLater": "Agora não",
+    "privacyLicense": "Ler a licença do SunCalc",
+
     "geoOk": "OK",
     "geoNo": "Não, obrigado",
     "iosHint": "No iPhone/iPad: Compartilhar → “Adicionar à Tela de Início”",
     "privacyTitle": "Política de Privacidade",
-    "privacyText": "Para usar o Yasno, você precisa aceitar esta Política de Privacidade. O Yasno foi desenvolvido e é operado por Ivan Suslov. O aplicativo não exibe anúncios nem faz análise de uso. O último local selecionado e a previsão mais recente ficam armazenados localmente; coordenadas e nomes de cidades são enviados ao Open-Meteo e ao Nominatim. Os arquivos de fontes são solicitados ao Google Fonts.",
-    "privacyAccept": "Aceitar",
+    "privacyText": "Boas-vindas ao Yasno Weather. Ao tocar em Continuar, você confirma que leu a Política de Privacidade. Abaixo, você pode ler a política completa e a licença do SunCalc.",
+    "privacyAccept": "Continuar",
     "privacyDecline": "Recusar",
-    "privacyRead": "Ler a política completa",
+    "privacyRead": "Ler a Política de Privacidade",
     "privacyWarn": "⚠️ O aplicativo não pode funcionar sem seu consentimento. Aceite a Política de Privacidade para continuar."
   },
   "de": {
@@ -1349,14 +1408,19 @@ const I18N = {
     "wx_hstorm": "Schweres Gewitter",
     "geoTitle": "Standort kennen?",
     "geoDesc": "Wir verwenden den Standort, um den Ort zu bestimmen und das Wetter zu laden. Wenn du zustimmst, werden die Koordinaten deines Geräts direkt an Open-Meteo für die Vorhersage und an Nominatim für die umgekehrte Geokodierung gesendet. Yasno speichert lokal nur den zuletzt ausgewählten Ort einschließlich seiner Koordinaten und führt keinen Standortverlauf. In die Suche eingegebene Ortsnamen werden an Nominatim gesendet. Du kannst einen Ort auch manuell eingeben.",
+    "geoDeniedDesc": "Der Standortzugriff wurde abgelehnt. Tippe auf Erneut versuchen, um ihn noch einmal anzufragen. Wenn Android keinen Berechtigungsdialog mehr anzeigt, öffne Einstellungen → Apps → Yasno Weather → Berechtigungen → Standort und erlaube den Zugriff. Du kannst weiterhin manuell nach einer Stadt suchen.",
+    "geoRetry": "Erneut versuchen",
+    "geoLater": "Nicht jetzt",
+    "privacyLicense": "SunCalc-Lizenz lesen",
+
     "geoOk": "OK",
     "geoNo": "Nein, danke",
     "iosHint": "Auf iPhone/iPad: Teilen → „Zum Home-Bildschirm“",
     "privacyTitle": "Datenschutzerklärung",
-    "privacyText": "Um Yasno zu nutzen, musst du dieser Datenschutzerklärung zustimmen. Yasno wurde von Ivan Suslov entwickelt und wird von ihm betrieben. Die App enthält keine Werbung und führt keine Analyse durch. Der zuletzt ausgewählte Ort und die letzte Vorhersage werden lokal gespeichert; Koordinaten und Stadtnamen werden an Open-Meteo und Nominatim gesendet. Schriftdateien werden bei Google Fonts angefragt.",
-    "privacyAccept": "Akzeptieren",
+    "privacyText": "Willkommen bei Yasno Weather. Wenn du auf Weiter tippst, bestätigst du, dass du die Datenschutzerklärung zur Kenntnis genommen hast. Unten kannst du die vollständige Erklärung und die SunCalc-Lizenz lesen.",
+    "privacyAccept": "Weiter",
     "privacyDecline": "Ablehnen",
-    "privacyRead": "Vollständige Richtlinie lesen",
+    "privacyRead": "Datenschutzerklärung lesen",
     "privacyWarn": "⚠️ Die App kann ohne deine Zustimmung nicht funktionieren. Akzeptiere die Datenschutzerklärung, um fortzufahren."
   },
   "fr": {
@@ -1466,14 +1530,19 @@ const I18N = {
     "wx_hstorm": "Violent orage",
     "geoTitle": "Connaître votre position ?",
     "geoDesc": "Nous utilisons la position pour déterminer le lieu et charger la météo. Si vous l’autorisez, les coordonnées de l’appareil sont envoyées directement à Open-Meteo pour les prévisions et à Nominatim pour le géocodage inverse. Yasno stocke localement uniquement le dernier lieu choisi, coordonnées comprises, sans historique de localisation. Les noms saisis dans la recherche sont envoyés à Nominatim. Vous pouvez aussi saisir une ville manuellement.",
+    "geoDeniedDesc": "L’accès à la position a été refusé. Appuyez sur Réessayer pour le demander à nouveau. Si Android n’affiche plus la boîte d’autorisation, ouvrez Paramètres → Applications → Yasno Weather → Autorisations → Position et autorisez l’accès. Vous pouvez toujours rechercher une ville manuellement.",
+    "geoRetry": "Réessayer",
+    "geoLater": "Pas maintenant",
+    "privacyLicense": "Lire la licence SunCalc",
+
     "geoOk": "OK",
     "geoNo": "Non, merci",
     "iosHint": "Sur iPhone/iPad : Partager → « Ajouter à l’écran d’accueil »",
     "privacyTitle": "Politique de confidentialité",
-    "privacyText": "Pour utiliser Yasno, vous devez accepter cette Politique de confidentialité. Yasno est développé et exploité par Ivan Suslov. L’application ne contient pas de publicité et ne réalise pas d’analyse. Le dernier lieu choisi et la dernière prévision sont stockés localement ; les coordonnées et les noms de villes sont envoyés à Open-Meteo et Nominatim. Les fichiers de polices sont demandés à Google Fonts.",
-    "privacyAccept": "Accepter",
+    "privacyText": "Bienvenue dans Yasno Weather. En appuyant sur Continuer, vous confirmez avoir pris connaissance de la Politique de confidentialité. Vous pouvez lire ci-dessous la politique complète et la licence SunCalc.",
+    "privacyAccept": "Continuer",
     "privacyDecline": "Refuser",
-    "privacyRead": "Lire la politique complète",
+    "privacyRead": "Lire la Politique de confidentialité",
     "privacyWarn": "⚠️ L’application ne peut pas fonctionner sans votre consentement. Acceptez la Politique de confidentialité pour continuer."
   },
   "it": {
@@ -1583,14 +1652,19 @@ const I18N = {
     "wx_hstorm": "Temporale forte",
     "geoTitle": "Conoscere la tua posizione?",
     "geoDesc": "Usiamo la posizione per identificare il luogo e caricare il meteo. Se autorizzi la geolocalizzazione, le coordinate del dispositivo vengono inviate direttamente a Open-Meteo per le previsioni e a Nominatim per la geocodifica inversa. Yasno salva localmente solo l’ultimo luogo selezionato, comprese le coordinate, senza conservare una cronologia delle posizioni. I nomi digitati nella ricerca vengono inviati a Nominatim. Puoi anche inserire una città manualmente.",
+    "geoDeniedDesc": "L’accesso alla posizione è stato negato. Tocca Riprova per richiederlo di nuovo. Se Android non mostra più la finestra di autorizzazione, apri Impostazioni → App → Yasno Weather → Autorizzazioni → Posizione e consenti l’accesso. Puoi comunque cercare una città manualmente.",
+    "geoRetry": "Riprova",
+    "geoLater": "Non ora",
+    "privacyLicense": "Leggi la licenza SunCalc",
+
     "geoOk": "OK",
     "geoNo": "No, grazie",
     "iosHint": "Su iPhone/iPad: Condividi → «Aggiungi alla schermata Home»",
     "privacyTitle": "Informativa sulla privacy",
-    "privacyText": "Per usare Yasno devi accettare questa Informativa sulla privacy. Yasno è sviluppata e gestita da Ivan Suslov. L’app non mostra pubblicità e non svolge analisi. L’ultimo luogo selezionato e l’ultima previsione sono salvati localmente; coordinate e nomi delle città vengono inviati a Open-Meteo e Nominatim. I file dei caratteri sono richiesti a Google Fonts.",
-    "privacyAccept": "Accetta",
+    "privacyText": "Benvenuto in Yasno Weather. Toccando Continua, confermi di aver preso visione dell’Informativa sulla privacy. Qui sotto puoi leggere l’informativa completa e la licenza SunCalc.",
+    "privacyAccept": "Continua",
     "privacyDecline": "Rifiuta",
-    "privacyRead": "Leggi l’informativa completa",
+    "privacyRead": "Leggi l’Informativa sulla privacy",
     "privacyWarn": "⚠️ L’app non può funzionare senza il tuo consenso. Accetta l’Informativa sulla privacy per continuare."
   },
   "ja": {
@@ -1700,14 +1774,19 @@ const I18N = {
     "wx_hstorm": "激しい雷雨",
     "geoTitle": "位置情報を確認しますか？",
     "geoDesc": "場所の特定と天気の取得に位置情報を使います。許可すると、端末の座標は予報取得のためOpen-Meteoへ、逆ジオコーディングのためNominatimへ直接送信されます。Yasnoが端末内に保存する場所は、座標を含む最後に選択した1か所だけで、位置履歴は保存しません。検索に入力した都市名はNominatimへ送信されます。都市は手動でも入力できます。",
+    "geoDeniedDesc": "位置情報へのアクセスは拒否されました。「再試行」をタップしてもう一度リクエストしてください。Androidで許可ダイアログが表示されない場合は、設定 → アプリ → Yasno Weather → 権限 → 位置情報を開き、アクセスを許可してください。都市は手動でも検索できます。",
+    "geoRetry": "再試行",
+    "geoLater": "今はしない",
+    "privacyLicense": "SunCalcライセンスを読む",
+
     "geoOk": "OK",
     "geoNo": "いいえ",
     "iosHint": "iPhone/iPad: 共有 → 「ホーム画面に追加」",
     "privacyTitle": "プライバシーポリシー",
-    "privacyText": "Yasnoの利用には、このプライバシーポリシーへの同意が必要です。YasnoはIvan Suslovが開発・運営しています。広告はなく、利用状況の分析も行いません。最後に選択した場所と最新の予報を端末内に保存します。座標と都市検索語はOpen-MeteoとNominatimに送信され、フォントはGoogle Fontsから取得します。",
-    "privacyAccept": "同意する",
+    "privacyText": "Yasno Weatherへようこそ。「続行」をタップすると、プライバシーポリシーを確認したことを示します。以下からポリシー全文とSunCalcライセンスを読めます。",
+    "privacyAccept": "続行",
     "privacyDecline": "拒否",
-    "privacyRead": "ポリシー全文を読む",
+    "privacyRead": "プライバシーポリシーを読む",
     "privacyWarn": "⚠️ 同意なしではアプリを使用できません。続行するにはプライバシーポリシーに同意してください。"
   },
   "ko": {
@@ -1817,14 +1896,19 @@ const I18N = {
     "wx_hstorm": "강한 뇌우",
     "geoTitle": "위치를 확인할까요?",
     "geoDesc": "장소를 확인하고 날씨를 불러오기 위해 위치를 사용합니다. 허용하면 기기 좌표가 예보를 위해 Open-Meteo로, 역지오코딩을 위해 Nominatim으로 직접 전송됩니다. Yasno는 좌표를 포함한 마지막 선택 장소 하나만 기기에 저장하며 위치 기록은 보관하지 않습니다. 검색창에 입력한 도시 이름은 Nominatim으로 전송됩니다. 도시를 직접 입력할 수도 있습니다.",
+    "geoDeniedDesc": "위치 접근이 거부되었습니다. 다시 시도를 눌러 권한을 다시 요청하세요. Android에서 권한 창이 표시되지 않으면 설정 → 앱 → Yasno Weather → 권한 → 위치에서 접근을 허용하세요. 도시를 직접 검색할 수도 있습니다.",
+    "geoRetry": "다시 시도",
+    "geoLater": "나중에",
+    "privacyLicense": "SunCalc 라이선스 읽기",
+
     "geoOk": "확인",
     "geoNo": "괜찮아요",
     "iosHint": "iPhone/iPad: 공유 → “홈 화면에 추가”",
     "privacyTitle": "개인정보 보호정책",
-    "privacyText": "Yasno를 사용하려면 이 개인정보 보호정책에 동의해야 합니다. Yasno는 Ivan Suslov이 개발하고 운영합니다. 광고가 없으며 사용 분석도 하지 않습니다. 마지막으로 선택한 장소와 최신 예보 하나를 기기에 저장합니다. 좌표와 도시 검색어는 Open-Meteo와 Nominatim으로 전송되며, 글꼴 파일은 Google Fonts에서 요청합니다.",
-    "privacyAccept": "동의",
+    "privacyText": "Yasno Weather에 오신 것을 환영합니다. 계속을 누르면 개인정보 보호정책을 확인했음을 나타냅니다. 아래에서 전체 정책과 SunCalc 라이선스를 읽을 수 있습니다.",
+    "privacyAccept": "계속",
     "privacyDecline": "거부",
-    "privacyRead": "전체 정책 읽기",
+    "privacyRead": "개인정보 보호정책 읽기",
     "privacyWarn": "⚠️ 동의 없이는 앱을 사용할 수 없습니다. 계속하려면 개인정보 보호정책에 동의하세요."
   },
   "hi": {
@@ -1934,14 +2018,19 @@ const I18N = {
     "wx_hstorm": "तेज़ आंधी-तूफान",
     "geoTitle": "क्या स्थान जानना है?",
     "geoDesc": "स्थान पहचानने और मौसम लोड करने के लिए हम लोकेशन का उपयोग करते हैं। अनुमति मिलने पर डिवाइस के निर्देशांक पूर्वानुमान के लिए सीधे Open-Meteo और रिवर्स जियोकोडिंग के लिए Nominatim को भेजे जाते हैं। Yasno निर्देशांकों सहित केवल आख़िरी चुना हुआ स्थान डिवाइस पर रखता है; स्थानों का इतिहास नहीं रखता। खोज में टाइप किए गए शहर के नाम Nominatim को भेजे जाते हैं। आप शहर मैन्युअल रूप से भी दर्ज कर सकते हैं।",
+    "geoDeniedDesc": "स्थान की अनुमति अस्वीकार कर दी गई। इसे फिर से माँगने के लिए दोबारा कोशिश करें दबाएँ। यदि Android अनुमति संवाद नहीं दिखाता, तो सेटिंग्स → ऐप्स → Yasno Weather → अनुमतियाँ → स्थान खोलकर अनुमति दें। आप शहर को मैन्युअल रूप से भी खोज सकते हैं।",
+    "geoRetry": "दोबारा कोशिश करें",
+    "geoLater": "अभी नहीं",
+    "privacyLicense": "SunCalc लाइसेंस पढ़ें",
+
     "geoOk": "ठीक है",
     "geoNo": "नहीं, धन्यवाद",
     "iosHint": "iPhone/iPad: शेयर → “होम स्क्रीन पर जोड़ें”",
     "privacyTitle": "गोपनीयता नीति",
-    "privacyText": "Yasno का उपयोग करने के लिए आपको इस गोपनीयता नीति से सहमत होना होगा। Yasno को Ivan Suslov ने विकसित और संचालित किया है। इसमें विज्ञापन नहीं हैं और उपयोग विश्लेषिकी नहीं की जाती। चुना गया आख़िरी स्थान और एक नवीनतम पूर्वानुमान डिवाइस पर सहेजा जाता है; निर्देशांक और शहर के खोज नाम Open-Meteo तथा Nominatim को भेजे जाते हैं। फ़ॉन्ट फ़ाइलें Google Fonts से माँगी जाती हैं।",
-    "privacyAccept": "स्वीकार करें",
+    "privacyText": "Yasno Weather में आपका स्वागत है। जारी रखें दबाकर आप पुष्टि करते हैं कि आपने गोपनीयता नीति पढ़ ली है। नीचे पूरी नीति और SunCalc लाइसेंस पढ़ सकते हैं।",
+    "privacyAccept": "जारी रखें",
     "privacyDecline": "अस्वीकार करें",
-    "privacyRead": "पूरी नीति पढ़ें",
+    "privacyRead": "गोपनीयता नीति पढ़ें",
     "privacyWarn": "⚠️ आपकी सहमति के बिना ऐप काम नहीं कर सकता। जारी रखने के लिए गोपनीयता नीति स्वीकार करें।"
   },
   "id": {
@@ -2051,14 +2140,19 @@ const I18N = {
     "wx_hstorm": "Badai petir hebat",
     "geoTitle": "Izinkan lokasi?",
     "geoDesc": "Lokasi digunakan untuk mengenali tempat dan memuat cuaca. Jika diizinkan, koordinat perangkat dikirim langsung ke Open-Meteo untuk prakiraan dan ke Nominatim untuk geocoding terbalik. Yasno hanya menyimpan tempat terakhir yang dipilih, termasuk koordinatnya, secara lokal; riwayat lokasi tidak disimpan. Nama kota yang diketik dalam pencarian dikirim ke Nominatim. Anda juga dapat memasukkan kota secara manual.",
+    "geoDeniedDesc": "Akses lokasi ditolak. Ketuk Coba lagi untuk memintanya kembali. Jika Android tidak menampilkan dialog izin, buka Setelan → Aplikasi → Yasno Weather → Izin → Lokasi lalu izinkan akses. Anda tetap dapat mencari kota secara manual.",
+    "geoRetry": "Coba lagi",
+    "geoLater": "Jangan sekarang",
+    "privacyLicense": "Baca lisensi SunCalc",
+
     "geoOk": "Oke",
     "geoNo": "Tidak, terima kasih",
     "iosHint": "Di iPhone/iPad: Bagikan → “Tambahkan ke Layar Utama”",
     "privacyTitle": "Kebijakan Privasi",
-    "privacyText": "Untuk menggunakan Yasno, Anda harus menyetujui Kebijakan Privasi ini. Yasno dikembangkan dan dioperasikan oleh Ivan Suslov. Aplikasi ini tidak menampilkan iklan dan tidak menjalankan analitik. Tempat terakhir yang dipilih dan satu prakiraan terbaru disimpan secara lokal; koordinat dan nama kota yang dicari dikirim ke Open-Meteo dan Nominatim. Berkas font diminta dari Google Fonts.",
-    "privacyAccept": "Setuju",
+    "privacyText": "Selamat datang di Yasno Weather. Dengan mengetuk Lanjutkan, Anda menyatakan telah membaca Kebijakan Privasi. Anda dapat membaca kebijakan lengkap dan lisensi SunCalc di bawah.",
+    "privacyAccept": "Lanjutkan",
     "privacyDecline": "Tolak",
-    "privacyRead": "Baca kebijakan lengkap",
+    "privacyRead": "Baca Kebijakan Privasi",
     "privacyWarn": "⚠️ Aplikasi tidak dapat berjalan tanpa persetujuan Anda. Setujui Kebijakan Privasi untuk melanjutkan."
   },
   "ar": {
@@ -2168,14 +2262,19 @@ const I18N = {
     "wx_hstorm": "عاصفة رعدية شديدة",
     "geoTitle": "هل تريد معرفة موقعك؟",
     "geoDesc": "نستخدم الموقع لتحديد المكان وتحميل الطقس. عند السماح بذلك، تُرسل إحداثيات الجهاز مباشرةً إلى Open-Meteo للتوقعات وإلى Nominatim للترميز الجغرافي العكسي. يحتفظ Yasno محليًا بآخر مكان محدد فقط، مع إحداثياته، ولا يحتفظ بسجل للمواقع. تُرسل أسماء المدن المكتوبة في البحث إلى Nominatim. ويمكنك إدخال المدينة يدويًا أيضًا.",
+    "geoDeniedDesc": "تم رفض الوصول إلى الموقع. اضغط على «إعادة المحاولة» لطلبه مجددًا. إذا لم يعرض Android نافذة الإذن، فافتح الإعدادات ← التطبيقات ← Yasno Weather ← الأذونات ← الموقع واسمح بالوصول. لا يزال بإمكانك البحث عن مدينة يدويًا.",
+    "geoRetry": "إعادة المحاولة",
+    "geoLater": "ليس الآن",
+    "privacyLicense": "قراءة ترخيص SunCalc",
+
     "geoOk": "موافق",
     "geoNo": "لا، شكرًا",
     "iosHint": "على iPhone/iPad: مشاركة → «إضافة إلى الشاشة الرئيسية»",
     "privacyTitle": "سياسة الخصوصية",
-    "privacyText": "لاستخدام Yasno، يجب الموافقة على سياسة الخصوصية هذه. طوّر Ivan Suslov تطبيق Yasno ويديره. لا يحتوي التطبيق على إعلانات ولا يجري تحليلات استخدام. يُحفظ آخر مكان محدد وآخر توقع واحد محليًا؛ وتُرسل الإحداثيات وأسماء المدن التي تبحث عنها إلى Open-Meteo وNominatim. وتُطلب ملفات الخطوط من Google Fonts.",
-    "privacyAccept": "موافقة",
+    "privacyText": "مرحبًا بك في Yasno Weather. بالضغط على «متابعة»، تؤكد أنك اطّلعت على سياسة الخصوصية. يمكنك قراءة السياسة كاملةً وترخيص SunCalc أدناه.",
+    "privacyAccept": "متابعة",
     "privacyDecline": "رفض",
-    "privacyRead": "قراءة السياسة كاملة",
+    "privacyRead": "قراءة سياسة الخصوصية",
     "privacyWarn": "⚠️ لا يمكن للتطبيق العمل دون موافقتك. وافق على سياسة الخصوصية للمتابعة."
   },
   "tr": {
@@ -2285,14 +2384,19 @@ const I18N = {
     "wx_hstorm": "Şiddetli gök gürültülü fırtına",
     "geoTitle": "Konumunuz bilinsin mi?",
     "geoDesc": "Yeri belirlemek ve hava durumunu yüklemek için konumu kullanıyoruz. İzin verirseniz cihaz koordinatları tahmin için doğrudan Open-Meteo’ya, ters geocoding için Nominatim’e gönderilir. Yasno koordinatlarıyla birlikte yalnızca son seçilen yeri yerel olarak saklar; konum geçmişi tutmaz. Aramaya yazılan şehir adları Nominatim’e gönderilir. Şehri elle de girebilirsiniz.",
+    "geoDeniedDesc": "Konum erişimi reddedildi. Yeniden istemek için Tekrar dene’ye dokunun. Android izin penceresini göstermiyorsa Ayarlar → Uygulamalar → Yasno Weather → İzinler → Konum bölümünü açıp erişime izin verin. Şehri elle aramaya devam edebilirsiniz.",
+    "geoRetry": "Tekrar dene",
+    "geoLater": "Şimdi değil",
+    "privacyLicense": "SunCalc lisansını oku",
+
     "geoOk": "Tamam",
     "geoNo": "Hayır, teşekkürler",
     "iosHint": "iPhone/iPad: Paylaş → “Ana Ekrana Ekle”",
     "privacyTitle": "Gizlilik Politikası",
-    "privacyText": "Yasno’yu kullanmak için bu Gizlilik Politikasını kabul etmelisiniz. Yasno, Ivan Suslov tarafından geliştirilmiş ve işletilmektedir. Uygulamada reklam yoktur ve kullanım analizi yapılmaz. Son seçilen yer ve en son tahmin yerel olarak saklanır; koordinatlar ve aranan şehir adları Open-Meteo ile Nominatim’e gönderilir. Yazı tipi dosyaları Google Fonts’tan istenir.",
-    "privacyAccept": "Kabul et",
+    "privacyText": "Yasno Weather’a hoş geldiniz. Devam’a dokunarak Gizlilik Politikasını okuduğunuzu onaylarsınız. Aşağıdan politikanın tamamını ve SunCalc lisansını okuyabilirsiniz.",
+    "privacyAccept": "Devam",
     "privacyDecline": "Reddet",
-    "privacyRead": "Politikanın tamamını oku",
+    "privacyRead": "Gizlilik Politikasını oku",
     "privacyWarn": "⚠️ Onayınız olmadan uygulama çalışamaz. Devam etmek için Gizlilik Politikasını kabul edin."
   }
 }
@@ -2472,7 +2576,7 @@ function filterPlaces(res,forms){
   if(typed.length) pool=typed;
   const alive=pool.filter(p=>p.population>0);
   if(alive.length) pool=alive;
-  const isExact=p=>forms.includes(normStr(p.name||''));
+  const isExact=p=>forms.includes(normStr(p.name||'')) || forms.includes(normStr(p.name_en||''));
   const exact=pool.filter(isExact);
   if(exact.length) pool=exact;
   pool.sort((a,b)=>(b.population||0)-(a.population||0));
@@ -2659,7 +2763,8 @@ setInterval(async () => {
   if (!state.data || !state.place || _autoRefreshBusy) return;
   _autoRefreshBusy = true;
   try {
-    await loadWeather(state.place);
+    if(state.place.geo === true) await requestGeo(true);
+    else await loadWeather(state.place);
   } catch (e) {}
   finally {
     _autoRefreshBusy = false;
@@ -2686,6 +2791,12 @@ const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
 q.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
 goBtn.addEventListener('click',submitSearch);
+$('#refreshPageBtn').addEventListener('click',()=>window.location.reload());
+$('#changeCityBtn').addEventListener('click',()=>{
+  q.focus();
+  q.select();
+  q.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'});
+});
 clearBtn.addEventListener('click',()=>{ q.value=''; clearBtn.classList.remove('show'); hidePickBar(); q.focus(); });
 q.addEventListener('input',()=>clearBtn.classList.toggle('show',!!q.value));
 
@@ -2767,20 +2878,31 @@ async function geocode(name){
     omSearch(variants[0],'en').then(r=>{ om['0:en']=r; }),
     variants[1]?omSearch(variants[1],'en').then(r=>{ om['1:en']=r; }):Promise.resolve()
   ]);
-  let primary=om['0:'+LANG]||[];
-  if(!primary.length) primary=om['0:en']||[];
-  if(!primary.length&&variants[1]) primary=om['1:en']||[];
   const enPool=[...(om['0:en']||[]),...(om['1:en']||[])];
+  const localPool=om['0:'+LANG]||[];
   const omOk=(om['0:'+LANG]!=null)||(om['0:en']!=null)||(om['1:en']!=null);
 
+  // Determine WHICH physical places matched using the language-neutral
+  // (English) pool. Localized names are overlaid for display only. This
+  // guarantees the same place is selected regardless of the UI language,
+  // so weather never changes when the user switches language.
   const enById=new Map();
   for(const p of enPool) if(p&&p.id!=null&&!enById.has(p.id)) enById.set(p.id,p);
+  const localById=new Map();
+  for(const p of localPool) if(p&&p.id!=null&&!localById.has(p.id)) localById.set(p.id,p);
+
+  const primary=enPool.length?enPool:localPool;
+
   const mergedOM=(primary||[]).map(p=>{
-    const e=enById.get(p.id);
+    const e=enById.get(p.id)||p;
+    const l=localById.get(p.id);
     return Object.assign({},p,{
-      name_en:e?e.name:p.name,
-      admin_en:e?e.admin1:p.admin1,
-      country_en:e?e.country:p.country
+      name:(l&&l.name)||p.name,
+      admin1:(l&&l.admin1)||p.admin1,
+      country:(l&&l.country)||p.country,
+      name_en:e.name||p.name,
+      admin_en:e.admin1||p.admin1,
+      country_en:e.country||p.country
     });
   });
 
@@ -2805,7 +2927,7 @@ async function geocode(name){
     .sort((a,b)=>b.pop-a.pop)
     .slice(0,8);
 
-  const isExact=p=>forms.includes(normStr(p.name));
+  const isExact=p=>forms.includes(normStr(p.name||''))||forms.includes(normStr(p.nameEn||''));
   const byPop=(a,b)=>(b.pop||0)-(a.pop||0);
   const mergedArr=[], seenC=new Set();
   const push=p=>{
@@ -2862,20 +2984,23 @@ async function requestGeo(silent=false){
     hidePickBar(); goBtn.disabled=false; goBtn.textContent=t('find');
   }
   const finish=()=>{ if(requestId===geoRequestId) btn.classList.remove('spin'); };
-  const unavailable=async()=>{
+  const unavailable=async(error)=>{
+    if(error && error.code===1){ try{ localStorage.setItem('yasno-geo-denied','1'); }catch(e){} }
     if(intent!==locationIntent){ finish(); return; }
     finish();
     document.getElementById('splash-screen').classList.add('hidden');
     if(silent && saved){ await loadWeather(saved,intent); }
+    else if(!silent && error && error.code===1){ showGeoModal(true); }
     else { if(!silent) toast('Location unavailable'); q.focus(); }
   };
   if(!navigator.geolocation){ await unavailable(); return; }
   btn.classList.add('spin');
   await new Promise(resolve=>{
-    const fail=()=>{ unavailable().then(resolve,resolve); };
+    const fail=error=>{ unavailable(error).then(resolve,resolve); };
     const success=async pos=>{
       try{
         if(intent!==locationIntent) return;
+        try{ localStorage.removeItem('yasno-geo-denied'); }catch(e){}
         const {latitude:la,longitude:lo}=pos.coords;
         const place={name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'};
         if(!validPlace(place)){ await unavailable(); return; }
@@ -2895,13 +3020,28 @@ async function requestGeo(silent=false){
         if(intent===locationIntent) await loadWeather(place,intent);
       } finally { finish(); resolve(); }
     };
-    try{ navigator.geolocation.getCurrentPosition(success,fail,{timeout:9000}); }catch(e){ fail(); }
+    try{ navigator.geolocation.getCurrentPosition(success,fail,{timeout:9000}); }catch(e){ fail(e); }
   });
 }
-$('#geo').addEventListener('click',()=>requestGeo(false));
+$('#geo').addEventListener('click',()=>{
+  let denied=false; try{ denied=localStorage.getItem('yasno-geo-denied')==='1'; }catch(e){}
+  if(denied) showGeoModal(true); else requestGeo(false);
+});
 
-function showGeoModal(){
+function showGeoModal(retry=false){
   document.getElementById('splash-screen').classList.add('hidden');
+  $('#geoModal').dataset.retry=retry?'1':'0';
+  const desc=$('#geoModal [data-i18n="geoDesc"]');
+  const allow=$('#geoAllow'), decline=$('#geoDecline');
+  if(retry){
+    desc.textContent=t('geoDeniedDesc');
+    allow.textContent=t('geoRetry');
+    decline.textContent=t('geoLater');
+  }else{
+    desc.textContent=t('geoDesc');
+    allow.textContent=t('geoOk');
+    decline.textContent=t('geoNo');
+  }
   $('#geoModal').style.display='flex';
 }
 function hideGeoModal(){
@@ -2913,7 +3053,7 @@ $('#geoAllow').addEventListener('click',()=>{
     requestGeo(); 
 });
 $('#geoDecline').addEventListener('click',()=>{ 
-    try { localStorage.setItem('yasno-geo-asked','1'); } catch(e){}
+    try { localStorage.setItem('yasno-geo-asked','1'); localStorage.setItem('yasno-geo-denied','1'); } catch(e){}
     hideGeoModal(); 
     q.focus(); 
 });
@@ -2927,10 +3067,6 @@ $('#privAccept').addEventListener('click',()=>{
   try{ localStorage.setItem('privacy-accepted','true'); }catch(e){}
   hidePrivacyModal();
   continueInit();
-});
-$('#privDecline').addEventListener('click',()=>{
-  $('#privWarn').classList.add('show');
-  if(navigator.vibrate) navigator.vibrate(40);
 });
 $('#unit').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||b.classList.contains('on')) return;
@@ -2948,9 +3084,10 @@ function buildLangSelect(){
     const code=e.target.value;
     LANG=code;
     try{ localStorage.setItem('yasno-lang',code); }catch(err){}
-    if(code==='en'){ STR={...STR_EN}; applyLang(); return; }
+    if(code==='en'){ STR={...STR_EN}; applyLang(); refreshCityNameForLanguage(); return; }
     STR=await translateDict(code);
     applyLang();
+    refreshCityNameForLanguage();
   });  
   const geoSel=$('#geoLangSel');
   if(geoSel){
@@ -2960,14 +3097,100 @@ function buildLangSelect(){
       const code=e.target.value;
       LANG=code;
       try{ localStorage.setItem('yasno-lang',code); }catch(err){}
-      if(code==='en'){ STR={...STR_EN}; applyLang(); return; }
+      if(code==='en'){ STR={...STR_EN}; applyLang(); refreshCityNameForLanguage(); return; }
       STR=await translateDict(code);
       applyLang();
+      refreshCityNameForLanguage();
     });
   }
 }
 
+let cityNameLangIntent=0;
+async function refreshCityNameForLanguage(){
+  const place=state.place, lang=LANG;
+  if(!state.data || !place || place.geo || !validPlace(place)) return;
+  const intent=++cityNameLangIntent;
+
+  // Build a list of stable anchor names. The English name is the most
+  // language-neutral identifier: querying it in any target language makes
+  // Open-Meteo return the SAME physical place, just with a localized label.
+  // The user's typed input and the current display name are kept as backups.
+  const anchors=[];
+  if(place.nameEn) anchors.push(place.nameEn);
+  const inputVal=(q.value||'').trim();
+  if(inputVal && !anchors.includes(inputVal)) anchors.push(inputVal);
+  if(place.name && !anchors.includes(place.name)) anchors.push(place.name);
+  if(!anchors.length) return;
+
+  const distKm=(lat1,lon1,lat2,lon2)=>{
+    const R=6371, rad=Math.PI/180;
+    const dLat=(lat2-lat1)*rad, dLon=(lon2-lon1)*rad;
+    const a=Math.sin(dLat/2)**2 + Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(Math.max(0,1-a)));
+  };
+
+  let localized=null, english=null, bestKm=Infinity;
+
+  for(const anchor of anchors){
+    let loc=null, en=null;
+    try{
+      if(lang==='en'){
+        loc=await omSearch(anchor,'en');
+        en=loc;
+      } else {
+        const both=await Promise.all([
+          omSearch(anchor, lang),
+          omSearch(anchor, 'en')
+        ]);
+        loc=both[0]; en=both[1];
+      }
+    }catch(e){ /* try the next anchor */ }
+    if(intent!==cityNameLangIntent || LANG!==lang || state.place!==place) return;
+    if(!loc || !loc.length) continue;
+
+    for(const c of loc){
+      const lat=+c.latitude, lon=+c.longitude;
+      if(!Number.isFinite(lat)||!Number.isFinite(lon)) continue;
+      const km=distKm(place.lat,place.lon,lat,lon);
+      if(km<bestKm){
+        bestKm=km; localized=c;
+        if(en){
+          const e=en.find(x=>x.id===c.id);
+          english=e||null;
+        } else {
+          english=null;
+        }
+      }
+    }
+    // Found a very close match — stop early, no need to try more anchors.
+    if(bestKm<3) break;
+  }
+
+  // If nothing reasonably close was found, keep the current label instead of
+  // replacing it with an unrelated city. 100 km tolerance is wide enough to
+  // catch small towns that Nominatim/Open-Meteo jitter by a few km.
+  if(!localized || bestKm>100) return;
+
+  const updatedPlace={...place,
+    name:localized.name||place.name,
+    admin:localized.admin1||place.admin,
+    country:localized.country||place.country,
+    cc:(localized.country_code||place.cc||'').toUpperCase()
+  };
+  // Only refresh the English anchor when we actually got a proper English
+  // result — never store a localized name into nameEn.
+  if(english && english.name) updatedPlace.nameEn=english.name;
+  else if(!updatedPlace.nameEn) updatedPlace.nameEn=localized.name;
+
+  state.place=updatedPlace;
+  state.lastPlace=updatedPlace;
+  try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+  saveWeatherCache();
+  renderAll(state.data,updatedPlace);
+}
+
 function applyLang(){
+
   document.documentElement.lang=LANG;
   document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
@@ -2975,9 +3198,22 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
     $('#langSel').value=LANG;
   const geoSel=$('#geoLangSel'); if(geoSel) geoSel.value=LANG;
+  const geoModal=$('#geoModal');
+  if(geoModal && geoModal.style.display==='flex' && geoModal.dataset.retry==='1'){
+    const desc=geoModal.querySelector('[data-i18n="geoDesc"]');
+    if(desc) desc.textContent=t('geoDeniedDesc');
+    $('#geoAllow').textContent=t('geoRetry'); $('#geoDecline').textContent=t('geoLater');
+  }
   $('#unit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.u===state.unit));
   $('#installBtn').title=t('install');
+  const langToolLabels={
+    en:['Refresh','Change city'],ru:['Обновить','Сменить город'],es:['Actualizar','Cambiar ciudad'],pt:['Atualizar','Mudar cidade'],de:['Aktualisieren','Stadt ändern'],fr:['Actualiser','Changer de ville'],it:['Aggiorna','Cambia città'],ja:['更新','都市を変更'],ko:['새로고침','도시 변경'],hi:['रीफ़्रेश','शहर बदलें'],id:['Muat ulang','Ganti kota'],ar:['تحديث','تغيير المدينة'],tr:['Yenile','Şehri değiştir']
+  }[LANG]||['Refresh','Change city'];
+  const refreshPageBtn=$('#refreshPageBtn'), changeCityBtn=$('#changeCityBtn');
+  if(refreshPageBtn){ refreshPageBtn.title=langToolLabels[0]; refreshPageBtn.setAttribute('aria-label',langToolLabels[0]); $('#refreshPageLabel').textContent=langToolLabels[0]; }
+  if(changeCityBtn){ changeCityBtn.title=langToolLabels[1]; changeCityBtn.setAttribute('aria-label',langToolLabels[1]); $('#changeCityLabel').textContent=langToolLabels[1]; }
   const wlBtn=$('#weatherLegendBtn'); if(wlBtn) wlBtn.title=t('weatherLegend');
+  const legalBtn=$('#legalBtn'); if(legalBtn) legalBtn.title=t('privacyTitle');
   if($('#weatherLegendModal')?.classList.contains('show')) renderWeatherLegend();
   const da=dirsArr();
   $('#cN').textContent=da[0]; $('#cE').textContent=da[4]; $('#cS').textContent=da[8]; $('#cW').textContent=da[12];
@@ -3023,7 +3259,8 @@ async function loadWeather(place,intent=locationIntent){
   // the exact IANA timezone is available and must drive the live city clock.
   if(data.timezone && data.timezone!=='auto') place.tz=data.timezone;
   if(Number.isFinite(data.utc_offset_seconds)) place.utcOffsetSeconds=data.utc_offset_seconds;
-  state.astro=moonTimesForPlace(data,place);
+  // Moon-time calculations are optional: a missing or unavailable moon-times.js must not block weather rendering.
+  try{ state.astro=moonTimesForPlace(data,place); }catch(err){ state.astro=null; console.warn('Moon times unavailable; continuing with weather display.',err); }
   try{ localStorage.setItem('atmos-place',JSON.stringify(place)); }catch(e){}
   saveWeatherCache();
   try{ renderAll(data,place); }catch(err){ console.warn(err); }
@@ -3460,18 +3697,58 @@ $('#weatherErrRetry').addEventListener('click',async()=>{
     continueInit();
 })();
 
-function continueInit(){
+async function continueInit(){
   const saved=readSavedPlace();
   if(!navigator.onLine){
     if(!restoreWeatherCache()) showOfflineScreen();
     return;
   }
+
+  // Check the browser's actual geolocation permission when supported.
+  // The permission dialog itself must be requested from the user's button click.
+  let geoPermission='unknown';
+  try{
+    if(navigator.permissions && navigator.permissions.query){
+      const permission=await navigator.permissions.query({name:'geolocation'});
+      geoPermission=permission.state;
+    }
+  }catch(e){ /* Some browsers/WebViews do not support the Permissions API. */ }
+
   const geoAsked=(()=>{ try{return localStorage.getItem('yasno-geo-asked')==='1';}catch(e){return false;} })();
+  let geoDenied=(()=>{ try{return localStorage.getItem('yasno-geo-denied')==='1';}catch(e){return false;} })();
+
+  if(geoPermission==='granted'){
+    try{ localStorage.removeItem('yasno-geo-denied'); }catch(e){}
+    geoDenied=false;
+  }else if(geoPermission==='denied'){
+    try{ localStorage.setItem('yasno-geo-denied','1'); }catch(e){}
+    geoDenied=true;
+  }
+
+  // Show the in-app retry prompt on every new entry after a denial.
+  // If the browser has permanently blocked the request, the prompt explains
+  // how to enable location in browser/app settings; manual city search remains available.
+  if(geoDenied){
+    if(saved) loadWeather(saved);
+    showGeoModal(true);
+    return;
+}
+
   if(geoShortcutPending){
     geoShortcutPending=false;
-    if(!geoAsked) showGeoModal(); else requestGeo();
-  } else if(!geoAsked){ showGeoModal(); }
-  else if(saved){
+    if(geoPermission==='granted') requestGeo();
+    else if(!geoAsked) showGeoModal();
+    else if(geoPermission==='prompt') showGeoModal(true);
+    else requestGeo();
+  } else if(geoPermission==='granted'){
+    if(saved){
+      if(saved.geo===true) requestGeo(true); else loadWeather(saved);
+    }else requestGeo();
+  } else if(!geoAsked){
+    showGeoModal();
+  } else if(geoPermission==='prompt'){
+    showGeoModal(true);
+  } else if(saved){
     if(saved.geo===true) requestGeo(true); else loadWeather(saved);
   } else {
     document.getElementById('splash-screen').classList.add('hidden'); q.focus();
@@ -4055,8 +4332,6 @@ function renderPrivacyContent(){
   $('#privfTitle').textContent = s.pTitle || 'Privacy Policy';
   $('#privfUpdated').textContent = s.pUpdated || '';
   $('#privfTldr').innerHTML = '<b>TL;DR</b> — ' + (s.pTldr || '');
-  $('#privfAccept').textContent = s.pAccept || 'Accept';
-  $('#privfDecline').textContent = s.pDecline || 'Decline';
   $('#privfTranslatingTxt').textContent = s.pTranslating || 'Translating…';
 
   let html = '';
@@ -4091,38 +4366,36 @@ function renderPrivacyContent(){
     sel.innerHTML = LANGS.map(([c,n]) => `<option value="${c}">${n}</option>`).join('');
     sel.value = LANG;
     sel.addEventListener('change', async e => {
-      LANG = e.target.value;
-      try{ localStorage.setItem('yasno-lang', LANG); }catch(err){}
-      PRIVACY_STR = translatePrivacy(LANG);
-      STR = await translateDict(LANG);
-      applyLang();
-    });
+  LANG = e.target.value;
+  try{ localStorage.setItem('yasno-lang', LANG); }catch(err){}
+  PRIVACY_STR = translatePrivacy(LANG);
+  STR = await translateDict(LANG);
+  applyLang();
+  renderPrivacyContent();
+  refreshCityNameForLanguage();
+});
   }
 })();
 
-$('#openFullPrivacy').addEventListener('click', () => {
+function openLegalModal(showLicense=false){
   $('#privfLangSel').value = LANG;
-  $('#privfWarn').classList.remove('show');
   $('#privacyFullModal').classList.add('show');
   PRIVACY_STR = translatePrivacy(LANG);
   renderPrivacyContent();
-});
+  const body=$('#privacyFullModal .privf-body');
+  body.scrollTop=0;
+  if(showLicense) requestAnimationFrame(()=>$('#privfLicenseSection').scrollIntoView({block:'start'}));
+}
+$('#openFullPrivacy').addEventListener('click', () => openLegalModal(false));
+$('#openSunCalcLicense').addEventListener('click', () => openLegalModal(true));
+$('#legalBtn').addEventListener('click', () => openLegalModal(false));
 $('#privfClose').addEventListener('click', () => {
   $('#privacyFullModal').classList.remove('show');
 });
 document.querySelector('#privacyFullModal .privf-back').addEventListener('click', () => {
   $('#privacyFullModal').classList.remove('show');
 });
-$('#privfAccept').addEventListener('click', () => {
-  try{ localStorage.setItem('privacy-accepted','true'); }catch(e){}
-  $('#privacyFullModal').classList.remove('show');
-  hidePrivacyModal();
-  continueInit();
-});
-$('#privfDecline').addEventListener('click', () => {
-  $('#privfWarn').classList.add('show');
-  if(navigator.vibrate) navigator.vibrate(40);
-});
+
 
 const WEATHER_STATES=[
   ['01','wx_clear','sun'],['02','wx_ptcl','ptcl'],['03','wx_over','cloud'],
