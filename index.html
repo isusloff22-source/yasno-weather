@@ -3001,10 +3001,23 @@ async function submitSearch(){
   if(res&&res.country){ showCountryNotice(); return; }
   if(res&&res.items&&res.items.length){
     hideErr();
-    const sameName=res.items.length>1&&res.items.every(p=>canon(p)===canon(res.items[0]));
-    if(sameName){ showPickBar(res.items,name); return; }
-    await enrichPlaceNames(res.items[0]);
-    loadWeather(res.items[0]); return;
+    // Drop duplicates that are the same physical place but arrived from
+    // different pools with slightly different coordinates (within ~5 km).
+    const dedup=[];
+    for(const it of res.items){
+      let isDup=false;
+      for(const kept of dedup){
+        const dLat=Math.abs((it.lat||0)-(kept.lat||0));
+        const dLon=Math.abs((it.lon||0)-(kept.lon||0));
+        if(dLat<0.05 && dLon<0.05){ isDup=true; break; }
+      }
+      if(!isDup) dedup.push(it);
+    }
+    const items=dedup;
+    const sameName=items.length>1&&items.every(p=>canon(p)===canon(items[0]));
+    if(sameName){ showPickBar(items,name); return; }
+    await enrichPlaceNames(items[0]);
+    loadWeather(items[0]); return;
   }
   if(res&&res.netfail){
     if(state.data) toast(t('netErr'));
