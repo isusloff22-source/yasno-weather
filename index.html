@@ -430,7 +430,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 .privf-head{display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .privf-head .ico{font-size:30px}
 .privf-head h2{font:700 17px/1.3 var(--disp);color:var(--ink);flex:1;min-width:140px}
-.privf-lang{appearance:none;-webkit-appearance:none;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
+.privf-lang{appearance:none;-webkit-appearance:none;flex-basis:100%;order:10;margin-top:4px;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
   border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 10px center;
   color:var(--ink);font:600 12px var(--mono);cursor:pointer;transition:.25s}
 .privf-lang:hover{border-color:rgba(255,209,102,.5)}
@@ -2586,7 +2586,8 @@ function filterPlaces(res,forms){
     if(seen.has(key)) continue; seen.add(key);
     out.push({name:p.name,nameEn:p.name_en||p.name,admin:p.admin1||'',adminEn:p.admin_en||p.admin1||'',admin2:p.admin2||'',admin3:p.admin3||'',admin4:p.admin4||'',country:p.country||'',
       countryEn:p.country_en||p.country||'',cc:p.country_code||'',
-      lat:p.latitude,lon:p.longitude,tz:p.timezone||'auto',pop:p.population||0,popReal:true});
+      lat:p.latitude,lon:p.longitude,tz:p.timezone||'auto',pop:p.population||0,popReal:true,
+      omId:(p.id!=null?p.id:null)});
     if(out.length>=6) break;
   }
   return out;
@@ -2860,6 +2861,17 @@ async function nmSearch(qq){
 async function translateToEn(text){
   return null;
 }
+
+async function localizeByOmId(omId, langCode){
+  if(omId==null) return null;
+  try{
+    const r=await fetchRetry(`https://geocoding-api.open-meteo.com/v1/get?id=${omId}&language=${langCode}&format=json`,2);
+    const j=await r.json();
+    return j && j.id!=null ? j : null;
+  }catch(e){ return null; }
+}
+
+
 async function geocode(name){
   if(isCountryName(name)) return {country:true};
   const nq=normStr(name);
@@ -2927,21 +2939,15 @@ async function geocode(name){
     .sort((a,b)=>b.pop-a.pop)
     .slice(0,8);
 
-  const isExact=p=>forms.includes(normStr(p.name||''))||forms.includes(normStr(p.nameEn||''));
   const byPop=(a,b)=>(b.pop||0)-(a.pop||0);
   const mergedArr=[], seenC=new Set();
   const push=p=>{
     const key=(p.lat!=null?p.lat.toFixed(2):'?')+','+(p.lon!=null?p.lon.toFixed(2):'?');
     if(seenC.has(key)) return; seenC.add(key); mergedArr.push(p);
   };
-  omItems.filter(isExact).sort(byPop).forEach(push);
-  nmItems.filter(isExact).sort(byPop).forEach(push);
-  if(!mergedArr.length){
     omItems.sort(byPop).forEach(push);
-    nmItems.sort(byPop).forEach(push);
-  }
+  nmItems.sort(byPop).forEach(push);
   const items=mergedArr.slice(0,6);
-
   const omCountry=[...mergedOM,...enPool].some(p=>p&&COUNTRY_FC.has(p.feature_code));
   const nmCountry=nmRaw.length&&nmRaw[0].addresstype==='country';
   if(items.length) return {country:false,items};
@@ -3137,10 +3143,30 @@ async function refreshCityNameForLanguage(){
     return;
   }
 
-  // Build a list of stable anchor names. The English name is the most
-  // language-neutral identifier: querying it in any target language makes
-  // Open-Meteo return the SAME physical place, just with a localized label.
-  // The user's typed input and the current display name are kept as backups.
+  // Preferred path: Open-Meteo /v1/get by the place's unique id.
+  // Returns the SAME city with a localized name in the new language —
+  // no re-search, no string matching, no transliteration.
+  if(place.omId!=null){
+    const loc=await localizeByOmId(place.omId, lang);
+    if(intent!==cityNameLangIntent || LANG!==lang || state.place!==place) return;
+    if(loc && loc.name){
+      const updatedPlace={...place,
+        name:loc.name,
+        admin:loc.admin1||place.admin,
+        country:loc.country||place.country,
+        cc:(loc.country_code||place.cc||'').toUpperCase()
+      };
+      state.place=updatedPlace;
+      state.lastPlace=updatedPlace;
+      try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+      saveWeatherCache();
+      renderAll(state.data,updatedPlace);
+      return;
+    }
+  }
+
+  // Fallback: older saved places (no omId) or /v1/get failures —
+  // re-search by name using the existing anchor logic below.
   const anchors=[];
   if(place.nameEn) anchors.push(place.nameEn);
   const inputVal=(q.value||'').trim();
@@ -3188,13 +3214,9 @@ async function refreshCityNameForLanguage(){
         }
       }
     }
-    // Found a very close match — stop early, no need to try more anchors.
     if(bestKm<3) break;
   }
 
-  // If nothing reasonably close was found, keep the current label instead of
-  // replacing it with an unrelated city. 100 km tolerance is wide enough to
-  // catch small towns that Nominatim/Open-Meteo jitter by a few km.
   if(!localized || bestKm>100) return;
 
   const updatedPlace={...place,
@@ -3203,8 +3225,6 @@ async function refreshCityNameForLanguage(){
     country:localized.country||place.country,
     cc:(localized.country_code||place.cc||'').toUpperCase()
   };
-  // Only refresh the English anchor when we actually got a proper English
-  // result — never store a localized name into nameEn.
   if(english && english.name) updatedPlace.nameEn=english.name;
   else if(!updatedPlace.nameEn) updatedPlace.nameEn=localized.name;
 
@@ -3216,7 +3236,6 @@ async function refreshCityNameForLanguage(){
 }
 
 function applyLang(){
-
   document.documentElement.lang=LANG;
   document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
