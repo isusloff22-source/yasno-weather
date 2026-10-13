@@ -2840,7 +2840,7 @@ function showPickBar(items,name){
     if(usedLabels[label]!==undefined){ usedLabels[label]++; label=label+' ('+(usedLabels[label]+1)+')'; }
     else usedLabels[label]=0;
     b.textContent=label;
-    b.addEventListener('click',()=>{ hidePickBar(); hideErr(); loadWeather(p); });
+    b.addEventListener('click',async()=>{ hidePickBar(); hideErr(); await enrichPlaceNames(p); loadWeather(p); });
     box.appendChild(b);
   });
   $('#pickBar').classList.add('show');
@@ -2869,6 +2869,21 @@ async function localizeByOmId(omId, langCode){
     const j=await r.json();
     return j && j.id!=null ? j : null;
   }catch(e){ return null; }
+}
+
+
+async function enrichPlaceNames(place){
+  if(!place || place.omId==null) return place;
+  const en = LANG==='en' ? null : await localizeByOmId(place.omId,'en');
+  const loc = await localizeByOmId(place.omId, LANG);
+  if(en && en.name) place.nameEn = en.name;
+  if(loc && loc.name){
+    place.name = loc.name;
+    if(loc.admin1) place.admin = loc.admin1;
+    if(loc.country) place.country = loc.country;
+    if(loc.country_code) place.cc = loc.country_code.toUpperCase();
+  }
+  return place;
 }
 
 
@@ -2972,6 +2987,7 @@ async function submitSearch(){
     hideErr();
     const sameName=res.items.length>1&&res.items.every(p=>canon(p)===canon(res.items[0]));
     if(sameName){ showPickBar(res.items,name); return; }
+    await enrichPlaceNames(res.items[0]);
     loadWeather(res.items[0]); return;
   }
   if(res&&res.netfail){
