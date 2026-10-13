@@ -104,7 +104,7 @@ body.night #stars{opacity:1}
   color:var(--mut);font-size:17px;display:none;transition:.2s}
 #clear:hover{background:rgba(255,255,255,.1);color:#fff}
 #clear.show{display:block}
-#goBtn{padding:0 24px;border-radius:999px;font:600 14px var(--body);color:#231a04;flex:none;
+#goBtn{padding:0 24px;min-width:96px;border-radius:999px;font:600 14px var(--body);color:#231a04;flex:none;
   background:linear-gradient(180deg,#ffd166,#ffb703);transition:.25s;box-shadow:0 6px 18px rgba(255,183,3,.3)}
 #goBtn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,183,3,.42)}
 #goBtn:disabled{opacity:.65;transform:none;cursor:wait}
@@ -136,14 +136,14 @@ body.night #stars{opacity:1}
 .seg button{padding:11px 14px;font:600 13px var(--mono);color:var(--mut);transition:.25s}
 .seg button.on{background:linear-gradient(180deg,#ffd166,#ffb703);color:#231a04}
 
-#langSel{appearance:none;-webkit-appearance:none;max-width:150px;padding:11px 30px 11px 14px;border-radius:999px;
+#langSel{appearance:none;-webkit-appearance:none;width:150px;max-width:150px;padding:11px 30px 11px 14px;border-radius:999px;
   border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 12px center;
   color:var(--ink);font:600 13px var(--mono);cursor:pointer;transition:.25s}
 #langSel:hover{border-color:rgba(255,209,102,.5)}
 #langSel option{background:#0a1a28;color:#eef7ff}
 .langTools{display:flex;flex-direction:column;align-items:stretch;gap:5px;flex:none}
 .langToolActions{display:flex;gap:5px;justify-content:center}
-.langToolBtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:25px;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:rgba(6,18,30,.55);color:var(--mut);font:500 10px var(--body);white-space:nowrap;cursor:pointer;transition:.2s}
+.langToolBtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:25px;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:rgba(6,18,30,.55);color:var(--mut);font:500 10px var(--body);white-space:nowrap;cursor:pointer;transition:.2s;min-width:74px;max-width:74px;overflow:hidden;text-overflow:ellipsis}
 .langToolBtn svg{width:12px;height:12px;flex:none;color:var(--acc2)}
 .langToolBtn:hover{border-color:rgba(255,209,102,.5);color:var(--ink);background:rgba(255,255,255,.08)}
 
@@ -430,7 +430,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 .privf-head{display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .privf-head .ico{font-size:30px}
 .privf-head h2{font:700 17px/1.3 var(--disp);color:var(--ink);flex:1;min-width:140px}
-.privf-lang{appearance:none;-webkit-appearance:none;flex-basis:100%;order:10;margin-top:4px;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
+.privf-lang{appearance:none;-webkit-appearance:none;flex-basis:100%;order:10;margin-top:4px;width:150px;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
   border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 10px center;
   color:var(--ink);font:600 12px var(--mono);cursor:pointer;transition:.25s}
 .privf-lang:hover{border-color:rgba(255,209,102,.5)}
@@ -3268,7 +3268,7 @@ async function refreshCityNameForLanguage(){
 
 function applyLang(){
   document.documentElement.lang=LANG;
-  document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
+  document.documentElement.dir='ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
