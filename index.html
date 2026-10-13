@@ -2874,8 +2874,8 @@ async function localizeByOmId(omId, langCode){
 
 async function enrichPlaceNames(place){
   if(!place || place.omId==null) return place;
-  const en = LANG==='en' ? null : await localizeByOmId(place.omId,'en');
-  const loc = await localizeByOmId(place.omId, LANG);
+  const en = await localizeByOmId(place.omId,'en');
+  const loc = (LANG==='en') ? en : await localizeByOmId(place.omId, LANG);
   if(en && en.name) place.nameEn = en.name;
   if(loc && loc.name){
     place.name = loc.name;
