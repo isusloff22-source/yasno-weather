@@ -89,10 +89,11 @@ body.night #stars{opacity:1}
 @keyframes popS{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 .top{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding-bottom:14px}
-.logo{display:flex;align-items:center;gap:11px;user-select:none}
-.logo svg{width:36px;height:36px;filter:drop-shadow(0 0 12px rgba(255,183,3,.5))}
+.logo{display:flex;align-items:center;gap:11px;user-select:none;width:200px;flex:0 0 200px;min-width:0}
+.logo svg{width:36px;height:36px;filter:drop-shadow(0 0 12px rgba(255,183,3,.5));flex:none}
 .logo b{font:700 19px/1 var(--disp);letter-spacing:.08em}
-.logo small{display:block;font:400 10.5px var(--body);letter-spacing:.24em;text-transform:uppercase;color:var(--mut);margin-top:4px}
+.logo small{display:block;font:400 10.5px var(--body);letter-spacing:.24em;text-transform:uppercase;color:var(--mut);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.logo > div{min-width:0;flex:1}
 .searchRow{display:flex;gap:10px;flex:1;min-width:260px;max-width:640px}
 .search{position:relative;flex:1}
 .search>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--mut);pointer-events:none}
