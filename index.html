@@ -3108,8 +3108,34 @@ function buildLangSelect(){
 let cityNameLangIntent=0;
 async function refreshCityNameForLanguage(){
   const place=state.place, lang=LANG;
-  if(!state.data || !place || place.geo || !validPlace(place)) return;
+  if(!state.data || !place || !validPlace(place)) return;
   const intent=++cityNameLangIntent;
+
+  // For "your location" the city label comes from Nominatim reverse geocoding
+  // in the active language. Re-run that request whenever the language changes
+  // so the label updates immediately — no second tap on the geo button needed.
+  if(place.geo){
+    let rev=null;
+    try{
+      const r=await nominatimFetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${place.lat}&lon=${place.lon}&zoom=10&addressdetails=1&accept-language=${lang}`);
+      rev=await r.json();
+    }catch(e){ return; }
+    if(intent!==cityNameLangIntent || LANG!==lang || state.place!==place) return;
+    if(!rev || rev.error) return;
+    const a=rev.address||{};
+    const updatedPlace={...place,
+      geoCity:a.city||a.town||a.village||a.municipality||rev.name||place.geoCity||'',
+      admin:a.state||a.region||a.county||place.admin||'',
+      country:a.country||place.country||'',
+      cc:((a.country_code||place.cc||'')+'').toUpperCase()
+    };
+    state.place=updatedPlace;
+    state.lastPlace=updatedPlace;
+    try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+    saveWeatherCache();
+    renderAll(state.data,updatedPlace);
+    return;
+  }
 
   // Build a list of stable anchor names. The English name is the most
   // language-neutral identifier: querying it in any target language makes
