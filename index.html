@@ -2899,16 +2899,31 @@ async function geocode(name){
   }
   const forms=[...new Set(variants.map(normStr))];
 
-  const om={};
-  await Promise.all([
+    const om={};
+  const hasCyr=/[\u0400-\u04FF]/.test(name);
+  const hasCJK=/[\u3000-\u9FFF\uF900-\uFAFF]/.test(name);
+  const hasArab=/[\u0600-\u06FF\u0750-\u077F]/.test(name);
+  const hasKor=/[\uAC00-\uD7AF\u1100-\u11FF]/.test(name);
+  const hasHin=/[\u0900-\u097F]/.test(name);
+  const hasGrk=/[\u0370-\u03FF]/.test(name);
+  const hasHeb=/[\u0590-\u05FF]/.test(name);
+  const hasTha=/[\u0E00-\u0E7F]/.test(name);
+  const nativeLang=hasCyr?'ru':(hasCJK?'ja':(hasArab?'ar':(hasKor?'ko':(hasHin?'hi':(hasGrk?'el':(hasHeb?'he':(hasTha?'th':null)))))));
+  const tasks=[
     omSearch(variants[0],LANG).then(r=>{ om['0:'+LANG]=r; }),
-    omSearch(variants[0],'en').then(r=>{ om['0:en']=r; }),
-    variants[1]?omSearch(variants[1],'en').then(r=>{ om['1:en']=r; }):Promise.resolve()
-  ]);
-  const enPool=[...(om['0:en']||[]),...(om['1:en']||[])];
+    omSearch(variants[0],'en').then(r=>{ om['0:en']=r; })
+  ];
+  // Always also query the language of the typed script. Without this, a
+  // Cyrillic query like "Москва" while LANG=en will not find the real
+  // Moscow — only a transliterated namesake.
+  if(nativeLang && nativeLang!==LANG){
+    tasks.push(omSearch(variants[0],nativeLang).then(r=>{ om['0:'+nativeLang]=r; }));
+  }
+  if(variants[1]) tasks.push(omSearch(variants[1],'en').then(r=>{ om['1:en']=r; }));
+  await Promise.all(tasks);
+  const enPool=[...(om['0:en']||[]),...(om['0:ru']||[]),...(om['0:ja']||[]),...(om['0:ar']||[]),...(om['1:en']||[])];
   const localPool=om['0:'+LANG]||[];
-  const omOk=(om['0:'+LANG]!=null)||(om['0:en']!=null)||(om['1:en']!=null);
-
+  const omOk=(om['0:'+LANG]!=null)||(om['0:en']!=null)||(om['0:ru']!=null)||(om['1:en']!=null);
   // Determine WHICH physical places matched using the language-neutral
   // (English) pool. Localized names are overlaid for display only. This
   // guarantees the same place is selected regardless of the UI language,
