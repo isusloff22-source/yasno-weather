@@ -3,68 +3,259 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#041e30">
 <title>Yasno — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{font-family:system-ui,sans-serif;max-width:720px;margin:0 auto;padding:24px;background:#0c2434;color:#d7ecfb;line-height:1.7}
-h1{color:#ffb703}h2{color:#8fd8ff;margin-top:28px}
-.tldr{background:rgba(255,183,3,.12);border-left:3px solid #ffb703;padding:14px 18px;border-radius:10px;color:#ffe9bd}
-li{margin-bottom:8px}
-.updated{color:#7f9bb0;font-size:13px}
+:root{
+  --ink:#eef7ff; --mut:#a6c3d6; --dim:#7f9bb0;
+  --panel:rgba(9,24,38,.55); --panel2:rgba(13,31,48,.6);
+  --line:rgba(160,215,255,.14);
+  --acc:#ffb703; --acc2:#8fd8ff;
+  --disp:'Unbounded',system-ui,sans-serif;
+  --body:'Golos Text',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--body);
+  color:var(--ink);
+  min-height:100vh;
+  background:linear-gradient(180deg,#041e30 0%,#0c4468 52%,#1f86c0 100%);
+  background-attachment:fixed;
+  line-height:1.7;
+  padding:32px 16px;
+}
+.privf-box{
+  max-width:720px;
+  margin:0 auto;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  backdrop-filter:blur(14px);
+}
+.privf-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:22px 28px;
+  border-bottom:1px solid var(--line);
+}
+.privf-head .ico{font-size:30px;flex:none}
+.privf-head h2{
+  font:700 18px/1.3 var(--disp);
+  color:var(--ink);
+  letter-spacing:.01em;
+}
+.privf-body{
+  padding:24px 28px 28px;
+  text-align:left;
+}
+.privf-updated{
+  font:500 12px var(--mono);
+  color:var(--dim);
+  margin-bottom:16px;
+}
+.privf-tldr{
+  background:rgba(255,183,3,.1);
+  border-left:3px solid var(--acc);
+  border-radius:10px;
+  padding:14px 18px;
+  margin-bottom:22px;
+  font-size:14px;
+  color:#ffe9bd;
+}
+.privf-tldr b{color:var(--acc)}
+.privf-section{
+  margin-bottom:24px;
+  padding-bottom:20px;
+  border-bottom:1px solid rgba(160,215,255,.08);
+}
+.privf-section:last-child{
+  border-bottom:none;
+  margin-bottom:0;
+  padding-bottom:0;
+}
+.privf-section h3{
+  font:700 15px/1.35 var(--disp);
+  color:var(--acc2);
+  margin-bottom:10px;
+  letter-spacing:.01em;
+}
+.privf-section p{
+  font-size:14.5px;
+  color:var(--mut);
+  margin-bottom:10px;
+}
+.privf-section p:last-child{margin-bottom:0}
+.privf-section ul{
+  margin:10px 0 12px 0;
+  padding-left:0;
+  list-style:none;
+}
+.privf-section ul li{
+  position:relative;
+  padding-left:22px;
+  margin-bottom:9px;
+  font-size:14.5px;
+  color:var(--mut);
+}
+.privf-section ul li::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:10px;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ffd166,#ff8f3f);
+}
+.privf-section a{
+  color:var(--acc2);
+  text-decoration:none;
+  border-bottom:1px dashed rgba(143,216,255,.4);
+  transition:.2s;
+}
+.privf-section a:hover{
+  color:#fff;
+  border-bottom-color:rgba(255,255,255,.5);
+}
+.privf-license{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:11.5px/1.6 var(--mono);
+  color:var(--mut);
+  margin:10px 0 0;
+  background:rgba(0,0,0,.15);
+  border-radius:10px;
+  padding:14px 16px;
+  border:1px solid rgba(160,215,255,.08);
+}
+@media (max-width:560px){
+  body{padding:16px 12px}
+  .privf-box{border-radius:18px}
+  .privf-head{padding:18px 20px}
+  .privf-head h2{font-size:16px}
+  .privf-body{padding:20px 20px 22px}
+  .privf-section p,
+  .privf-section ul li{font-size:14px}
+}
 </style>
 </head>
 <body>
-<h1>🛡️ Yasno — Privacy Policy</h1>
-<p class="updated">Last updated: 11 October 2026</p>
-<div class="tldr"><b>TL;DR</b> — Yasno has no own backend or analytics. Preferences, consent, the last selected place and one last forecast are stored locally. Coordinates and city searches are sent directly to external services.</div>
 
-<h2>1. Introduction</h2>
-<p>Yasno is a free weather application developed and operated by Ivan Suslov. This Privacy Policy explains what data the app processes and how.</p>
-<p>By using Yasno you agree to the terms described below. If you do not agree — please do not use the app.</p>
+<div class="privf-box">
+  <div class="privf-head">
+    <span class="ico">🛡️</span>
+    <h2>Privacy Policy</h2>
+  </div>
 
-<h2>2. Data Yasno does not keep</h2>
-<p>Yasno does not keep personal profiles or histories of your activity. It has no own backend or analytics. Requests sent directly to external providers are described in section 4. The list below describes data Yasno does not retain; the last selected place is stored locally as described in section 5.</p>
-<ul>
-<li>Your name, email, phone number or any identity</li>
-<li>Your history of locations or movements</li>
-<li>A history of your city searches</li>
-<li>Device identifiers, IP addresses, fingerprints</li>
-<li>Usage statistics or analytics</li>
-</ul>
-<p>The app contains no advertising, no trackers and no third-party analytics SDKs.</p>
+  <div class="privf-body">
 
-<h2>3. Location data</h2>
-<p>If you allow geolocation, coordinates are sent directly from your device to Open-Meteo for a forecast and to Nominatim for reverse geocoding.</p>
-<ul>
-<li>Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.</li>
-<li>Yasno does not keep a location history; it stores only the last selected place locally, including its coordinates.</li>
-<li>You can always disable location in your device settings or type the city manually.</li>
-</ul>
+    <div class="privf-updated">Last updated: 11 October 2026</div>
 
-<h2>4. Weather data</h2>
-<p>Forecasts are requested from Open-Meteo. City search and reverse geocoding use OpenStreetMap Nominatim. Font files are requested from Google Fonts.</p>
-<p>Open-Meteo receives coordinates for forecasts; Nominatim receives coordinates for reverse geocoding and the place names you search. Google receives font requests. These providers may also receive your IP address and standard connection data. Yasno has no own backend or analytics.</p>
+    <div class="privf-tldr"><b>TL;DR</b> — Yasno has no own backend or analytics. Preferences, consent, one last selected place and one last forecast are stored locally. Coordinates and city searches go directly to external services.</div>
 
-<h2>5. Local storage</h2>
-<p>Yasno stores these items locally on your device:</p>
-<ul>
-<li>Selected language</li>
-<li>Temperature unit (°C / °F)</li>
-<li>The last selected place, including its coordinates, and one last forecast with its original receive time</li>
-<li>Your consent to this policy and whether the location prompt has been shown</li>
-</ul>
-<p>These items are stored locally on your device. Requests described in section 4 go directly to the named providers. The service worker does not cache API responses. Offline, Yasno shows only the last forecast it received, with its original receive time in the Updated field. Clear app data to delete the local items.</p>
+    <div class="privf-section">
+      <h3>1. Introduction</h3>
+      <p>Yasno is a free weather application developed and operated by Ivan Suslov. This Privacy Policy explains what data the app processes and how.</p>
+      <p>By using Yasno you agree to the terms described below. If you do not agree — please do not use the app.</p>
+    </div>
 
-<h2>6. Language translations</h2>
-<p>Yasno includes hand-written interface translations for 13 languages: English, Russian, Spanish, Brazilian Portuguese, German, French, Italian, Japanese, Korean, Hindi, Indonesian, Arabic and Turkish.</p>
-<p>Yasno does not use Google Translate or any other automatic translation service for the app interface or this policy. Only the translations bundled with the app are used.</p>
+    <div class="privf-section">
+      <h3>2. Data Yasno does not keep</h3>
+      <p>Yasno does not keep personal profiles or histories of your activity. It has no own backend or analytics. Requests sent directly to external providers are described in section 4.</p>
+      <ul>
+        <li>Your name, email, phone number or any identity</li>
+        <li>Your location history</li>
+        <li>Your search queries for cities</li>
+        <li>Device identifiers, IP addresses, fingerprints</li>
+        <li>Usage statistics or analytics</li>
+      </ul>
+      <p>The app contains no advertising, no trackers and no third-party analytics SDKs.</p>
+    </div>
 
-<h2>7. Children</h2>
-<p>Yasno does not ask for your age. The data practices described above apply to all users. Age ratings may vary by region.</p>
+    <div class="privf-section">
+      <h3>3. Location data</h3>
+      <p>If you allow geolocation, coordinates are sent directly from your device to Open-Meteo for a forecast and to Nominatim for reverse geocoding.</p>
+      <ul>
+        <li>Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.</li>
+        <li>Yasno does not keep a location history; it stores only the last selected place locally, as described in section 5.</li>
+        <li>You can always disable location in your device settings or type the city manually.</li>
+      </ul>
+    </div>
 
-<h2>8. Changes to this policy</h2>
-<p>If this policy changes, we will update the “Last updated” date above. Continued use of the app means you accept the new version.</p>
+    <div class="privf-section">
+      <h3>4. Weather data</h3>
+      <p>Forecasts are requested from Open-Meteo. City search and reverse geocoding use OpenStreetMap Nominatim. Font files are requested from Google Fonts.</p>
+      <p>Open-Meteo receives coordinates for forecasts; Nominatim receives coordinates for reverse geocoding and the place names you search. Google receives font requests. These providers may also receive your IP address and standard connection data. Yasno has no own backend or analytics.</p>
+    </div>
 
-<h2>9. Contact</h2>
-<p>Questions about this policy? Contact the developer, Ivan Suslov, at <a href="mailto:yasno.weather@proton.me">yasno.weather@proton.me</a>.</p>
+    <div class="privf-section">
+      <h3>5. Local storage</h3>
+      <p>Yasno stores these items locally on your device:</p>
+      <ul>
+        <li>Selected language</li>
+        <li>Temperature unit (°C / °F)</li>
+        <li>The last selected place, including its coordinates, and one last forecast with its original receive time, for reuse and offline viewing</li>
+        <li>Your consent to this policy and whether the location prompt has been shown</li>
+      </ul>
+      <p>These items are stored locally on your device. Requests described in section 4 go directly to the named providers. The service worker does not cache API responses. Offline, Yasno shows only the last forecast it received, with its original receive time in the Updated field. Clear app data to delete the local items.</p>
+    </div>
+
+    <div class="privf-section">
+      <h3>6. Language translations</h3>
+      <p>Yasno includes hand-written interface translations for 13 languages: English, Russian, Spanish, Brazilian Portuguese, German, French, Italian, Japanese, Korean, Hindi, Indonesian, Arabic and Turkish.</p>
+      <p>Yasno does not use Google Translate or any other automatic translation service for the app interface or this policy. Only the translations bundled with the app are used.</p>
+    </div>
+
+    <div class="privf-section">
+      <h3>7. Children</h3>
+      <p>Yasno does not ask for your age. The data practices described above apply to all users. Age ratings may vary by region.</p>
+    </div>
+
+    <div class="privf-section">
+      <h3>8. Changes to this policy</h3>
+      <p>If this policy changes, we will update the “Last updated” date above. Continued use of the app means you accept the new version.</p>
+    </div>
+
+    <div class="privf-section">
+      <h3>9. Contact</h3>
+      <p>Questions about this policy? Contact the developer, Ivan Suslov, at <a href="mailto:yasno.weather@proton.me">yasno.weather@proton.me</a>.</p>
+    </div>
+
+    <div class="privf-section">
+      <h3>SunCalc license (BSD-2-Clause)</h3>
+      <p>SunCalc is used for sun and moon calculations.</p>
+      <pre class="privf-license">Copyright (c) 2026, Volodymyr Agafonkin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
