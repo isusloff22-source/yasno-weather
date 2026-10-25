@@ -3445,10 +3445,7 @@ function renderAll(data,place){
     safe(()=>{
     function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     const primary = LANG==='en' ? (place.nameEn||place.name||'') : (place.name||place.nameEn||'');
-    if(place.geo&&place.geoCity){
-      $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}:</span> `;
-      $('#cityName').insertAdjacentText('beforeend', esc(place.geoCity));
-    }else if(place.geo){
+    if(place.geo){
       $('#cityName').innerHTML=`<span class="geoLbl">${t('yourPlace')}</span>`;
     }else{
       $('#cityName').textContent=primary;
