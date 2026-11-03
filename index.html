@@ -337,6 +337,7 @@ body.night #stars{opacity:1}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
 }
 
 #geoModal{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -713,7 +714,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
     </div>
   </header>
 
-  <div id="errBar"><span id="errMsg"></span><button id="errRetry" data-i18n="retry">Retry</button></div>
+  <div id="errBar" role="status" aria-live="polite"><span id="errMsg"></span><button id="errRetry" data-i18n="retry">Retry</button></div>
   <div id="pickBar"><span id="pickMsg"></span><div id="pickBtns"></div></div>
 
   <main id="main">
@@ -2918,6 +2919,9 @@ function validWeather(data){
 function saveWeatherCache(){
   try{ localStorage.setItem(WEATHER_CACHE_KEY,JSON.stringify({version:1,place:state.place,data:state.data,astro:state.astro,aqi:state.aqi,savedAt:state.lastWeatherAt})); }catch(e){}
 }
+function cachedForecastLabel(){
+  return ({en:'Saved forecast',ru:'Сохранённый прогноз',es:'Pronóstico guardado',pt:'Previsão salva',de:'Gespeicherte Vorhersage',fr:'Prévisions enregistrées',it:'Previsioni salvate',ja:'保存した予報',ko:'저장된 예보',hi:'सहेजा गया पूर्वानुमान',id:'Prakiraan tersimpan',ar:'التوقعات المحفوظة',tr:'Kayıtlı tahmin'})[LANG]||'Saved forecast';
+}
 function restoreWeatherCache(place){
   let cache;
   try{ cache=JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY)); }catch(e){ return false; }
@@ -3066,9 +3070,21 @@ window.addEventListener('online',()=>refreshCurrentWeatherIfStale());
 
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
-q.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
+q.addEventListener('keydown',e=>{
+  if(e.isComposing) return;
+  if(e.key==='Enter'){ e.preventDefault(); submitSearch(); }
+  if(e.key==='Escape') clearBtn.click();
+});
 goBtn.addEventListener('click',submitSearch);
-$('#refreshPageBtn').addEventListener('click',()=>window.location.reload());
+$('#refreshPageBtn').addEventListener('click',async()=>{
+  const btn=$('#refreshPageBtn');
+  if(btn.disabled) return;
+  btn.disabled=true;
+  try{
+    if(state.place){ toast(t('refreshing')); await loadWeather(state.place); }
+    else q.focus();
+  }finally{ btn.disabled=false; }
+});
 $('#changeCityBtn').addEventListener('click',()=>{
   q.focus();
   q.select();
@@ -3116,7 +3132,13 @@ function showPickBar(items,name){
     if(usedLabels[label]!==undefined){ usedLabels[label]++; label=label+' ('+(usedLabels[label]+1)+')'; }
     else usedLabels[label]=0;
     b.textContent=label;
-    b.addEventListener('click',async()=>{ hidePickBar(); hideErr(); await enrichPlaceNames(p); loadWeather(p); });
+    b.addEventListener('click',async()=>{
+      const intent=++locationIntent;
+      if(state.ctrl) state.ctrl.abort();
+      hidePickBar(); hideErr();
+      await enrichPlaceNames(p);
+      if(intent===locationIntent) loadWeather(p,intent);
+    });
     box.appendChild(b);
   });
   $('#pickBar').classList.add('show');
@@ -3287,7 +3309,8 @@ async function submitSearch(){
     const sameName=items.length>1&&items.every(p=>canon(p)===canon(items[0]));
     if(sameName){ showPickBar(items,name); return; }
     await enrichPlaceNames(items[0]);
-    loadWeather(items[0]); return;
+    if(intent===locationIntent) loadWeather(items[0],intent);
+    return;
   }
   if(res&&res.netfail){
     if(state.data) toast(t('netErr'));
@@ -3606,6 +3629,7 @@ async function loadWeather(place,intent=locationIntent){
     r=await fetchRetry(url,3,ctrl.signal);
   }catch(e){
     if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
+    if(restoreWeatherCache(place)){ showErr(t('netErr'),true); return; }
     const online=await hasInternetConnection();
     if(intent!==locationIntent || state.ctrl!==ctrl) return;
     if(!online){ if(!restoreWeatherCache(place)) showOfflineScreen(); }
@@ -3616,7 +3640,11 @@ async function loadWeather(place,intent=locationIntent){
   let data;
   try{ data=await r.json(); }catch(e){ data=null; }
   if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
-  if(!validWeather(data)){ showWeatherErrorScreen(); return; }
+  if(!validWeather(data)){
+    if(restoreWeatherCache(place)) showErr(t('netErr'),true);
+    else showWeatherErrorScreen();
+    return;
+  }
 
   let aqiData=null;
   try{
@@ -3799,7 +3827,7 @@ function renderAll(data,place){
   safe(()=>{
     const received=new Date(state.lastWeatherAt||Date.now());
     const stamp=state.cached?received.toLocaleString(LANG,{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):received.toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'});
-    $('#updAt').textContent=t('updated')+' '+stamp+(state.cached?' · '+t('offlineTitle'):'');
+    $('#updAt').textContent=t('updated')+' '+stamp+(state.cached?' · '+cachedForecastLabel():'');
   });
 
   if(renderAll._seen){

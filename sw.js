@@ -60,6 +60,10 @@ async function networkFirstHtml(request) {
       const cache = await caches.open(CACHE);
       await cache.put(canonicalStaticUrl(request), response.clone());
     }
+    if ([502, 503, 504].includes(response.status)) {
+      const cached = await cachedStaticResponse(request);
+      if (cached) return cached;
+    }
     return response;
   } catch (error) {
     const cached = await cachedStaticResponse(request);
@@ -82,7 +86,12 @@ async function cacheFirstAsset(request) {
 
 async function navigationWithOfflineFallback(request) {
   try {
-    return await fetch(request);
+    const response = await fetch(request);
+    if ([502, 503, 504].includes(response.status)) {
+      const cached = await cachedStaticResponse(new URL('index.html', SCOPE).href);
+      if (cached) return cached;
+    }
+    return response;
   } catch (error) {
     const indexUrl = new URL('index.html', SCOPE).href;
     const cached = await cachedStaticResponse(indexUrl);
