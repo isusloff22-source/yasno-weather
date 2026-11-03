@@ -145,7 +145,7 @@ body.night #stars{opacity:1}
 #langSel option{background:#0a1a28;color:#eef7ff}
 .langTools{display:flex;flex-direction:column;align-items:stretch;gap:5px;flex:none}
 .langToolActions{display:flex;gap:5px;justify-content:center}
-.langToolBtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:25px;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:rgba(6,18,30,.55);color:var(--mut);font:500 10px var(--body);white-space:nowrap;cursor:pointer;transition:.2s;min-width:74px;max-width:74px;overflow:hidden;text-overflow:ellipsis}
+.langToolBtn{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:25px;padding:4px 7px;border:1px solid var(--line);border-radius:9px;background:rgba(6,18,30,.55);color:var(--mut);font:500 9px var(--body);white-space:nowrap;cursor:pointer;transition:.2s}
 .langToolBtn svg{width:12px;height:12px;flex:none;color:var(--acc2)}
 .langToolBtn:hover{border-color:rgba(255,209,102,.5);color:var(--ink);background:rgba(255,255,255,.08)}
 
@@ -184,7 +184,9 @@ body.night #stars{opacity:1}
 #sunSvg{width:100%;display:block}
 #sunArc{stroke-dasharray:264;transition:stroke-dashoffset 1.2s cubic-bezier(.3,.8,.3,1)}
 .sunrow{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--mut)}
-.sunrow.ex>div{min-width:0;max-width:48%}
+.sunrows2{display:flex;flex-direction:column;gap:6px;margin-top:6px;font-size:13px;color:var(--mut)}
+.srow2{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.srow2 b{font:600 13px var(--mono);color:var(--ink);white-space:nowrap}
 .sunrow b{display:block;font:600 17px var(--mono);color:var(--ink);margin-top:3px;white-space:nowrap}
 .sunrow:last-child{text-align:right}
 
@@ -746,9 +748,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
           <div><span data-i18n="sunrise">Sunrise</span><b id="sunrise">--:--</b></div>
           <div><span data-i18n="sunset">Sunset</span><b id="sunset">--:--</b></div>
         </div>
-        <div class="sunrow ex" style="margin-top:6px">
-          <div><span data-i18n="twilight">Civil twilight</span><b id="twilight">--:--</b></div>
-          <div><span data-i18n="goldenHour">Golden hour</span><b id="golden" style="font-size:14.5px;white-space:nowrap">--:--</b></div>
+        <div class="sunrows2">
+          <div class="srow2"><span data-i18n="twilight">Civil twilight</span><b id="twilight">--:--</b></div>
+          <div class="srow2"><span data-i18n="goldenHour">Golden hour</span><b id="golden">--:--</b></div>
         </div>
         <div class="c-sub" id="dayDelta" style="text-align:center;margin-top:8px"></div>
       </div>
