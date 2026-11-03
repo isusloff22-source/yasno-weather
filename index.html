@@ -184,7 +184,8 @@ body.night #stars{opacity:1}
 #sunSvg{width:100%;display:block}
 #sunArc{stroke-dasharray:264;transition:stroke-dashoffset 1.2s cubic-bezier(.3,.8,.3,1)}
 .sunrow{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--mut)}
-.sunrow b{display:block;font:600 17px var(--mono);color:var(--ink);margin-top:3px}
+.sunrow.ex>div{min-width:0;max-width:48%}
+.sunrow b{display:block;font:600 17px var(--mono);color:var(--ink);margin-top:3px;white-space:nowrap}
 .sunrow:last-child{text-align:right}
 
 .ctitle{display:flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
@@ -745,7 +746,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
           <div><span data-i18n="sunrise">Sunrise</span><b id="sunrise">--:--</b></div>
           <div><span data-i18n="sunset">Sunset</span><b id="sunset">--:--</b></div>
         </div>
-        <div class="sunrow" style="margin-top:6px">
+        <div class="sunrow ex" style="margin-top:6px">
           <div><span data-i18n="twilight">Civil twilight</span><b id="twilight">--:--</b></div>
           <div><span data-i18n="goldenHour">Golden hour</span><b id="golden" style="font-size:14.5px;white-space:nowrap">--:--</b></div>
         </div>
@@ -3750,7 +3751,7 @@ function renderAll(data,place){
     $('#heroIco').innerHTML=ICON[k.icon]||ICON.cloud;
     $('#feels').textContent=dispT(c.apparent_temperature)+'°';
     const wImp=state.unit==='f';
-    $('#fWind').textContent=(wImp?fmt(c.wind_speed_10m/1.609)+' mph':fmt(c.wind_speed_10m)+' '+t('kmh'))+' · '+fmt1(c.wind_speed_10m/3.6)+' '+t('ms');
+    $('#fWind').textContent=(wImp?fmt(c.wind_speed_10m/1.609)+' mph':fmt(c.wind_speed_10m)+' '+t('kmh'))+'   ('+fmt1(c.wind_speed_10m/3.6)+' '+t('ms')+')';
     $('#fHum').textContent=c.relative_humidity_2m+'%';
     if(c.precipitation>0){ $('#fPrecipWrap').style.display=''; $('#fPrecip').textContent=fmt1(c.precipitation)+' '+t('mm'); }
     else $('#fPrecipWrap').style.display='none';
@@ -3951,7 +3952,7 @@ function renderDetails(data){
   const c=data.current, d=data.daily, h=data.hourly;
   const wImp=state.unit==='f';
   const wUnit=wImp?'mph':t('kmh');
-  $('#windVal').innerHTML=(wImp?fmt(c.wind_speed_10m/1.609):fmt(c.wind_speed_10m))+`<i>${wUnit}</i><i>${fmt1(c.wind_speed_10m/3.6)} ${t('ms')}</i>`;
+  $('#windVal').innerHTML=(wImp?fmt(c.wind_speed_10m/1.609):fmt(c.wind_speed_10m))+`<i>${wUnit}</i><i>   (${fmt1(c.wind_speed_10m/3.6)} ${t('ms')})</i>`;
   $('#windDir').textContent=`${windDirName(c.wind_direction_10m)} · ${Math.round(c.wind_direction_10m)}°`;
   $('#windGust').textContent=c.wind_gusts_10m>c.wind_speed_10m+2?`${t('gust')} ${fmt(wImp?c.wind_gusts_10m/1.609:c.wind_gusts_10m)} ${wUnit}`:'';
   $('#windNeedle').style.transform=`rotate(${c.wind_direction_10m}deg)`;
