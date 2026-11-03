@@ -1,4 +1,4 @@
-const CACHE = 'yasno-v2';
+const CACHE = 'yasno-v3';
 const SCOPE = new URL(self.registration.scope);
 const STATIC_FILES = [
   'index.html',
@@ -13,10 +13,19 @@ const STATIC_URLS = STATIC_FILES.map(file => new URL(file, SCOPE).href);
 const STATIC_PATHS = new Set(STATIC_URLS.map(url => new URL(url).pathname));
 
 self.addEventListener('install', event => {
-  event.waitUntil(Promise.all([
-    caches.open(CACHE).then(cache => cache.addAll(STATIC_URLS)),
-    self.skipWaiting()
-  ]));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.all(STATIC_URLS.map(async url => {
+      try {
+        const response = await fetch(new Request(url, { cache: 'reload' }));
+        if (response.ok) await cache.put(canonicalStaticUrl(url), response);
+      } catch (error) {
+        // Один незагрузившийся файл не должен блокировать установку —
+        // fetch-обработчик догрузит его при первом запросе.
+      }
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {

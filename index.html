@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
 :root{
@@ -207,7 +208,7 @@ body.night #stars{opacity:1}
 .htv{font:700 16px var(--mono)}
 .hp{font:500 11px var(--mono);color:var(--acc2);min-height:13px}
 
-.days5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.days5{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px}
 .dcard{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:20px;
   padding:16px 16px 14px;backdrop-filter:blur(14px);box-shadow:0 14px 36px rgba(0,0,0,.22);
   transition:transform .3s,border-color .3s,box-shadow .3s;animation:popS .6s var(--d,0s) both}
@@ -247,7 +248,7 @@ body.night #stars{opacity:1}
 #chart{width:100%;height:auto;display:block}
 .legend{display:flex;gap:18px;margin-top:10px;font-size:12px;color:var(--mut)}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:3px;margin-right:7px;vertical-align:middle;font-style:normal}
-.legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}
+.legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}.legend .l3 i{background:rgba(143,216,255,.55)}
 .windbox{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-top:10px}
 .compass{width:80px;height:80px;flex:none}
 .compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50px 50px;transform-box:view-box}
@@ -501,6 +502,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div id="geoModal" style="display:none">
@@ -743,6 +745,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
           <div><span data-i18n="sunrise">Sunrise</span><b id="sunrise">--:--</b></div>
           <div><span data-i18n="sunset">Sunset</span><b id="sunset">--:--</b></div>
         </div>
+        <div class="sunrow" style="margin-top:6px">
+          <div><span data-i18n="twilight">Civil twilight</span><b id="twilight">--:--</b></div>
+          <div><span data-i18n="goldenHour">Golden hour</span><b id="golden" style="font-size:14.5px;white-space:nowrap">--:--</b></div>
+        </div>
+        <div class="c-sub" id="dayDelta" style="text-align:center;margin-top:8px"></div>
       </div>
     </section>
 
@@ -752,7 +759,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
     </section>
 
     <section class="reveal" style="--d:.19s">
-      <div class="ctitle"><span class="ci" style="--chip:rgba(124,199,255,.16);--cic:#7cc7ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span data-i18n="d5">5-day forecast</span><small data-i18n="d5sub">feels-like · humidity · pressure</small></div>
+      <div class="ctitle"><span class="ci" style="--chip:rgba(124,199,255,.16);--cic:#7cc7ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span data-i18n="d5">5-day forecast</span><small data-i18n="d5sub">feels-like · humidity · pressure</small><button class="pbtn" id="d5Toggle" type="button" style="margin-left:10px;padding:5px 14px;font-size:12px">7 days</button></div>
       <div class="days5" id="days5"></div>
     </section>
 
@@ -760,7 +767,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
       <div class="card span12 reveal" style="--d:.24s">
         <div class="ctitle"><span class="ci" style="--chip:rgba(255,143,63,.16);--cic:#ffb27a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 17l5-6 4 3 6-8 3 4"/></svg></span><span data-i18n="week">Temperature · week</span><small data-i18n="weeksub">daily & feels-like</small></div>
         <div id="chartBox"></div>
-        <div class="legend"><span class="l1"><i></i><span data-i18n="legDay">daily</span></span><span class="l2"><i></i><span data-i18n="legFeel">feels like</span></span></div>
+        <div class="legend"><span class="l1"><i></i><span data-i18n="legDay">daily</span></span><span class="l2"><i></i><span data-i18n="legFeel">feels like</span></span><span class="l3"><i></i><span data-i18n="legPrec">precipitation</span></span></div>
       </div>
 
       <div class="card span12 reveal" style="--d:.26s">
@@ -844,6 +851,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
         <div class="c-sub" id="visLbl">—</div>
         <div class="sunpct"><div id="sunBar"></div></div>
         <div class="hrow2"><span data-i18n="clear">Clear sky</span><b id="sunPct">--%</b></div>
+      </div>
+
+      <div class="card span4 reveal" style="--d:.52s">
+        <div class="ctitle"><span class="ci" style="--chip:rgba(52,211,153,.14);--cic:#6ee7b7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c4 4.6 4 9.4 0 13-4-3.6-4-8.4 0-13z"/><path d="M12 16v5M8 21h8"/></svg></span><span data-i18n="aqi">Air quality</span></div>
+        <div class="c-big" id="aqiVal">--</div>
+        <div class="c-sub" id="aqiLbl">—</div>
+        <div class="hrow2"><span>PM2.5</span><b id="pm25">--</b></div>
+        <div class="hrow2"><span>PM10</span><b id="pm10">--</b></div>
       </div>
     </section>
   </main>
@@ -932,7 +947,8 @@ privacyRead:'Read Privacy Policy',
 privacyLicense:'Read SunCalc license',
 geoDeniedDesc:'Location access was denied. Tap Try again to request it once more. If Android does not show a permission dialog, open Settings → Apps → Yasno Weather → Permissions → Location and allow access. You can still search for a city manually.',
 geoRetry:'Try again', geoLater:'Not now',
-privacyWarn:'⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.'
+privacyWarn:'⚠️ The app cannot work without your consent. Please accept the Privacy Policy to continue.',
+aqi:'Air quality', aqiL1:'Good', aqiL2:'Moderate', aqiL3:'Unhealthy for sensitive groups', aqiL4:'Unhealthy', aqiL5:'Very unhealthy', aqiL6:'Hazardous', pm25:'PM2.5', pm10:'PM10', twilight:'Civil twilight', goldenHour:'Golden hour', dayLonger:'__N__ min longer than yesterday', dayShorter:'__N__ min shorter than yesterday', daySame:'Same length as yesterday', legPrec:'precipitation', d5more:'Show 7 days', d5less:'Show 5 days', refreshing:'Refreshing…', ms:'m/s'
 };
 let STR={...STR_EN};
 // ========== ВСТРОЕННЫЕ ТОЧНЫЕ ПЕРЕВОДЫ ==========
@@ -1057,7 +1073,26 @@ const I18N = {
     "privacyAccept": "Продолжить",
     "privacyDecline": "Отклонить",
     "privacyRead": "Прочитать Политику конфиденциальности",
-    "privacyWarn": "⚠️ Приложение не может работать без вашего согласия. Примите Политику конфиденциальности, чтобы продолжить."
+    "privacyWarn": "⚠️ Приложение не может работать без вашего согласия. Примите Политику конфиденциальности, чтобы продолжить.",
+    "aqi": "Качество воздуха",
+    "aqiL1": "Хорошее",
+    "aqiL2": "Умеренное",
+    "aqiL3": "Вредное для чувствительных групп",
+    "aqiL4": "Вредное",
+    "aqiL5": "Очень вредное",
+    "aqiL6": "Опасное",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Гражданские сумерки",
+    "goldenHour": "Золотой час",
+    "dayLonger": "день на __N__ мин длиннее вчерашнего",
+    "dayShorter": "день на __N__ мин короче вчерашнего",
+    "daySame": "такой же, как вчера",
+    "legPrec": "осадки",
+    "d5more": "Показать 7 дней",
+    "d5less": "Показать 5 дней",
+    "refreshing": "Обновление…",
+    "ms": "м/с"
   },
   "es": {
     "tagline": "clima inteligente · en todo el mundo",
@@ -1179,7 +1214,26 @@ const I18N = {
     "privacyAccept": "Continuar",
     "privacyDecline": "Rechazar",
     "privacyRead": "Leer la Política de privacidad",
-    "privacyWarn": "⚠️ La aplicación no puede funcionar sin tu consentimiento. Acepta la Política de privacidad para continuar."
+    "privacyWarn": "⚠️ La aplicación no puede funcionar sin tu consentimiento. Acepta la Política de privacidad para continuar.",
+    "aqi": "Calidad del aire",
+    "aqiL1": "Buena",
+    "aqiL2": "Moderada",
+    "aqiL3": "Insalubre para grupos sensibles",
+    "aqiL4": "Insalubre",
+    "aqiL5": "Muy insalubre",
+    "aqiL6": "Peligrosa",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Crepúsculo civil",
+    "goldenHour": "Hora dorada",
+    "dayLonger": "__N__ min más largo que ayer",
+    "dayShorter": "__N__ min más corto que ayer",
+    "daySame": "Igual de largo que ayer",
+    "legPrec": "precipitación",
+    "d5more": "Mostrar 7 días",
+    "d5less": "Mostrar 5 días",
+    "refreshing": "Actualizando…",
+    "ms": "m/s"
   },
   "pt": {
     "tagline": "clima inteligente · em todo o mundo",
@@ -1301,7 +1355,26 @@ const I18N = {
     "privacyAccept": "Continuar",
     "privacyDecline": "Recusar",
     "privacyRead": "Ler a Política de Privacidade",
-    "privacyWarn": "⚠️ O aplicativo não pode funcionar sem seu consentimento. Aceite a Política de Privacidade para continuar."
+    "privacyWarn": "⚠️ O aplicativo não pode funcionar sem seu consentimento. Aceite a Política de Privacidade para continuar.",
+    "aqi": "Qualidade do ar",
+    "aqiL1": "Boa",
+    "aqiL2": "Moderada",
+    "aqiL3": "Insalubre para grupos sensíveis",
+    "aqiL4": "Insalubre",
+    "aqiL5": "Muito insalubre",
+    "aqiL6": "Perigosa",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Crepúsculo civil",
+    "goldenHour": "Hora dourada",
+    "dayLonger": "__N__ min mais longo que ontem",
+    "dayShorter": "__N__ min mais curto que ontem",
+    "daySame": "Mesmo comprimento de ontem",
+    "legPrec": "precipitação",
+    "d5more": "Mostrar 7 dias",
+    "d5less": "Mostrar 5 dias",
+    "refreshing": "Atualizando…",
+    "ms": "m/s"
   },
   "de": {
     "tagline": "intelligentes Wetter · weltweit",
@@ -1423,7 +1496,26 @@ const I18N = {
     "privacyAccept": "Weiter",
     "privacyDecline": "Ablehnen",
     "privacyRead": "Datenschutzerklärung lesen",
-    "privacyWarn": "⚠️ Die App kann ohne deine Zustimmung nicht funktionieren. Akzeptiere die Datenschutzerklärung, um fortzufahren."
+    "privacyWarn": "⚠️ Die App kann ohne deine Zustimmung nicht funktionieren. Akzeptiere die Datenschutzerklärung, um fortzufahren.",
+    "aqi": "Luftqualität",
+    "aqiL1": "Gut",
+    "aqiL2": "Mäßig",
+    "aqiL3": "Ungesund für empfindliche Gruppen",
+    "aqiL4": "Ungesund",
+    "aqiL5": "Sehr ungesund",
+    "aqiL6": "Gefährlich",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Zivildämmerung",
+    "goldenHour": "Goldene Stunde",
+    "dayLonger": "__N__ Min. länger als gestern",
+    "dayShorter": "__N__ Min. kürzer als gestern",
+    "daySame": "Gleich lang wie gestern",
+    "legPrec": "Niederschlag",
+    "d5more": "7 Tage anzeigen",
+    "d5less": "5 Tage anzeigen",
+    "refreshing": "Aktualisierung…",
+    "ms": "m/s"
   },
   "fr": {
     "tagline": "météo intelligente · dans le monde entier",
@@ -1545,7 +1637,26 @@ const I18N = {
     "privacyAccept": "Continuer",
     "privacyDecline": "Refuser",
     "privacyRead": "Lire la Politique de confidentialité",
-    "privacyWarn": "⚠️ L’application ne peut pas fonctionner sans votre consentement. Acceptez la Politique de confidentialité pour continuer."
+    "privacyWarn": "⚠️ L’application ne peut pas fonctionner sans votre consentement. Acceptez la Politique de confidentialité pour continuer.",
+    "aqi": "Qualité de l’air",
+    "aqiL1": "Bonne",
+    "aqiL2": "Modérée",
+    "aqiL3": "Malsaine pour les groupes sensibles",
+    "aqiL4": "Malsaine",
+    "aqiL5": "Très malsaine",
+    "aqiL6": "Dangereuse",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Crépuscule civil",
+    "goldenHour": "Heure dorée",
+    "dayLonger": "__N__ min de plus qu’hier",
+    "dayShorter": "__N__ min de moins qu’hier",
+    "daySame": "Même durée qu’hier",
+    "legPrec": "précipitations",
+    "d5more": "Afficher 7 jours",
+    "d5less": "Afficher 5 jours",
+    "refreshing": "Mise à jour…",
+    "ms": "m/s"
   },
   "it": {
     "tagline": "meteo intelligente · in tutto il mondo",
@@ -1667,7 +1778,26 @@ const I18N = {
     "privacyAccept": "Continua",
     "privacyDecline": "Rifiuta",
     "privacyRead": "Leggi l’Informativa sulla privacy",
-    "privacyWarn": "⚠️ L’app non può funzionare senza il tuo consenso. Accetta l’Informativa sulla privacy per continuare."
+    "privacyWarn": "⚠️ L’app non può funzionare senza il tuo consenso. Accetta l’Informativa sulla privacy per continuare.",
+    "aqi": "Qualità dell’aria",
+    "aqiL1": "Buona",
+    "aqiL2": "Moderata",
+    "aqiL3": "Poco salutare per i gruppi sensibili",
+    "aqiL4": "Poco salutare",
+    "aqiL5": "Molto poco salutare",
+    "aqiL6": "Pericolosa",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Crepuscolo civile",
+    "goldenHour": "Ora d’oro",
+    "dayLonger": "__N__ min più lungo di ieri",
+    "dayShorter": "__N__ min più corto di ieri",
+    "daySame": "Uguale a ieri",
+    "legPrec": "precipitazioni",
+    "d5more": "Mostra 7 giorni",
+    "d5less": "Mostra 5 giorni",
+    "refreshing": "Aggiornamento…",
+    "ms": "m/s"
   },
   "ja": {
     "tagline": "スマート天気 · 世界中で",
@@ -1789,7 +1919,26 @@ const I18N = {
     "privacyAccept": "続行",
     "privacyDecline": "拒否",
     "privacyRead": "プライバシーポリシーを読む",
-    "privacyWarn": "⚠️ 同意なしではアプリを使用できません。続行するにはプライバシーポリシーに同意してください。"
+    "privacyWarn": "⚠️ 同意なしではアプリを使用できません。続行するにはプライバシーポリシーに同意してください。",
+    "aqi": "空気質",
+    "aqiL1": "良い",
+    "aqiL2": "普通",
+    "aqiL3": "敏感なグループには不健康",
+    "aqiL4": "不健康",
+    "aqiL5": "非常に不健康",
+    "aqiL6": "危険",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "市民薄明",
+    "goldenHour": "ゴールデンアワー",
+    "dayLonger": "昨日より__N__分長い",
+    "dayShorter": "昨日より__N__分短い",
+    "daySame": "昨日と同じ",
+    "legPrec": "降水量",
+    "d5more": "7日間を表示",
+    "d5less": "5日間を表示",
+    "refreshing": "更新中…",
+    "ms": "m/s"
   },
   "ko": {
     "tagline": "스마트 날씨 · 전 세계",
@@ -1911,7 +2060,26 @@ const I18N = {
     "privacyAccept": "계속",
     "privacyDecline": "거부",
     "privacyRead": "개인정보 보호정책 읽기",
-    "privacyWarn": "⚠️ 동의 없이는 앱을 사용할 수 없습니다. 계속하려면 개인정보 보호정책에 동의하세요."
+    "privacyWarn": "⚠️ 동의 없이는 앱을 사용할 수 없습니다. 계속하려면 개인정보 보호정책에 동의하세요.",
+    "aqi": "대기질",
+    "aqiL1": "좋음",
+    "aqiL2": "보통",
+    "aqiL3": "민감군에 나쁨",
+    "aqiL4": "나쁨",
+    "aqiL5": "매우 나쁨",
+    "aqiL6": "위험",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "박명",
+    "goldenHour": "골든아워",
+    "dayLonger": "어제보다 __N__분 김",
+    "dayShorter": "어제보다 __N__분 짧음",
+    "daySame": "어제와 같음",
+    "legPrec": "강수량",
+    "d5more": "7일 보기",
+    "d5less": "5일 보기",
+    "refreshing": "새로고침 중…",
+    "ms": "m/s"
   },
   "hi": {
     "tagline": "स्मार्ट मौसम · पूरी दुनिया में",
@@ -1994,7 +2162,7 @@ const I18N = {
     "moonN6": "घटता गिबस",
     "moonN7": "अंतिम चतुर्थांश",
     "moonN8": "घटता चंद्र",
-    "dirs": "उ, उउपू, पू, पूपू, पू, पूपू, दपू, ददपू, द, ददप, दप, पपद, प, पपउ, पउ, उउप",
+    "dirs": "उ,उउपू,उपू,पूउपू,पू,पूदपू,दपू,ददपू,द,ददप,दप,पदप,प,पउप,उप,उउप",
     "install": "ऐप इंस्टॉल करें",
     "installed": "ऐप इंस्टॉल हो गया",
     "weatherLegend": "मौसम संबंधी घटनाएँ",
@@ -2033,7 +2201,26 @@ const I18N = {
     "privacyAccept": "जारी रखें",
     "privacyDecline": "अस्वीकार करें",
     "privacyRead": "गोपनीयता नीति पढ़ें",
-    "privacyWarn": "⚠️ आपकी सहमति के बिना ऐप काम नहीं कर सकता। जारी रखने के लिए गोपनीयता नीति स्वीकार करें।"
+    "privacyWarn": "⚠️ आपकी सहमति के बिना ऐप काम नहीं कर सकता। जारी रखने के लिए गोपनीयता नीति स्वीकार करें।",
+    "aqi": "वायु गुणवत्ता",
+    "aqiL1": "अच्छी",
+    "aqiL2": "मध्यम",
+    "aqiL3": "संवेदनशील समूहों के लिए हानिकारक",
+    "aqiL4": "हानिकारक",
+    "aqiL5": "बहुत हानिकारक",
+    "aqiL6": "खतरनाक",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "गोधूलि",
+    "goldenHour": "गोल्डन आवर",
+    "dayLonger": "कल से __N__ मिनट लंबा",
+    "dayShorter": "कल से __N__ मिनट छोटा",
+    "daySame": "कल जितना ही लंबा",
+    "legPrec": "वर्षा",
+    "d5more": "7 दिन दिखाएँ",
+    "d5less": "5 दिन दिखाएँ",
+    "refreshing": "रीफ़्रेश हो रहा है…",
+    "ms": "मी/से"
   },
   "id": {
     "tagline": "cuaca pintar · di seluruh dunia",
@@ -2155,7 +2342,26 @@ const I18N = {
     "privacyAccept": "Lanjutkan",
     "privacyDecline": "Tolak",
     "privacyRead": "Baca Kebijakan Privasi",
-    "privacyWarn": "⚠️ Aplikasi tidak dapat berjalan tanpa persetujuan Anda. Setujui Kebijakan Privasi untuk melanjutkan."
+    "privacyWarn": "⚠️ Aplikasi tidak dapat berjalan tanpa persetujuan Anda. Setujui Kebijakan Privasi untuk melanjutkan.",
+    "aqi": "Kualitas udara",
+    "aqiL1": "Baik",
+    "aqiL2": "Sedang",
+    "aqiL3": "Tidak sehat bagi kelompok sensitif",
+    "aqiL4": "Tidak sehat",
+    "aqiL5": "Sangat tidak sehat",
+    "aqiL6": "Berbahaya",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Fajar & senja warga",
+    "goldenHour": "Jam emas",
+    "dayLonger": "__N__ menit lebih lama dari kemarin",
+    "dayShorter": "__N__ menit lebih pendek dari kemarin",
+    "daySame": "Sama panjangnya dengan kemarin",
+    "legPrec": "curah hujan",
+    "d5more": "Tampilkan 7 hari",
+    "d5less": "Tampilkan 5 hari",
+    "refreshing": "Memuat ulang…",
+    "ms": "m/dtk"
   },
   "ar": {
     "tagline": "طقس ذكي · حول العالم",
@@ -2277,7 +2483,26 @@ const I18N = {
     "privacyAccept": "متابعة",
     "privacyDecline": "رفض",
     "privacyRead": "قراءة سياسة الخصوصية",
-    "privacyWarn": "⚠️ لا يمكن للتطبيق العمل دون موافقتك. وافق على سياسة الخصوصية للمتابعة."
+    "privacyWarn": "⚠️ لا يمكن للتطبيق العمل دون موافقتك. وافق على سياسة الخصوصية للمتابعة.",
+    "aqi": "جودة الهواء",
+    "aqiL1": "جيدة",
+    "aqiL2": "مقبولة",
+    "aqiL3": "ضارة بالفئات الحساسة",
+    "aqiL4": "ضارة",
+    "aqiL5": "ضارة جدًا",
+    "aqiL6": "خطيرة",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "الشفق المدني",
+    "goldenHour": "الساعة الذهبية",
+    "dayLonger": "أطول من الأمس بـ __N__ دقيقة",
+    "dayShorter": "أقصر من الأمس بـ __N__ دقيقة",
+    "daySame": "نفس مدة الأمس",
+    "legPrec": "هطول",
+    "d5more": "إظهار 7 أيام",
+    "d5less": "إظهار 5 أيام",
+    "refreshing": "جارٍ التحديث…",
+    "ms": "م/ث"
   },
   "tr": {
     "tagline": "akıllı hava durumu · dünya genelinde",
@@ -2399,7 +2624,26 @@ const I18N = {
     "privacyAccept": "Devam",
     "privacyDecline": "Reddet",
     "privacyRead": "Gizlilik Politikasını oku",
-    "privacyWarn": "⚠️ Onayınız olmadan uygulama çalışamaz. Devam etmek için Gizlilik Politikasını kabul edin."
+    "privacyWarn": "⚠️ Onayınız olmadan uygulama çalışamaz. Devam etmek için Gizlilik Politikasını kabul edin.",
+    "aqi": "Hava kalitesi",
+    "aqiL1": "İyi",
+    "aqiL2": "Orta",
+    "aqiL3": "Hassas gruplar için sağlıksız",
+    "aqiL4": "Sağlıksız",
+    "aqiL5": "Çok sağlıksız",
+    "aqiL6": "Tehlikeli",
+    "pm25": "PM2.5",
+    "pm10": "PM10",
+    "twilight": "Alacakaranlık",
+    "goldenHour": "Altın saat",
+    "dayLonger": "Dünden __N__ dk daha uzun",
+    "dayShorter": "Dünden __N__ dk daha kısa",
+    "daySame": "Dünle aynı uzunlukta",
+    "legPrec": "yağış",
+    "d5more": "7 günü göster",
+    "d5less": "5 günü göster",
+    "refreshing": "Yenileniyor…",
+    "ms": "m/sn"
   }
 }
 
@@ -2639,17 +2883,25 @@ const ICON = {
 const $ = s => document.querySelector(s);
 let savedUnit='c';
 try{ if(localStorage.getItem('yasno-unit')==='f') savedUnit='f'; }catch(e){}
-const state = { unit:savedUnit, data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0, cached:false };
+const state = { unit:savedUnit, data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0, cached:false, aqi:null, d5n:5 };
 let locationIntent=0, geoRequestId=0;
 let geoShortcutPending=new URLSearchParams(location.search).get('action')==='geo';
 const WEATHER_CACHE_KEY='yasno-last-weather';
+const PLACE_KEY='yasno-place';
 
 function validPlace(place){
   return !!place && Number.isFinite(place.lat) && Number.isFinite(place.lon)
     && Math.abs(place.lat)<=90 && Math.abs(place.lon)<=180;
 }
 function readSavedPlace(){
-  try{ const place=JSON.parse(localStorage.getItem('atmos-place')); return validPlace(place)?place:null; }catch(e){ return null; }
+  try{
+    let raw=localStorage.getItem(PLACE_KEY);
+    if(!raw) raw=localStorage.getItem('atmos-place'); // legacy key from earlier builds
+    const place=JSON.parse(raw);
+    if(!validPlace(place)) return null;
+    if(!localStorage.getItem(PLACE_KEY)){ try{ localStorage.setItem(PLACE_KEY,raw); }catch(e){} }
+    return place;
+  }catch(e){ return null; }
 }
 function validWeather(data){
   return !!data && !!data.current && Number.isFinite(data.current.temperature_2m)
@@ -2657,7 +2909,7 @@ function validWeather(data){
     && Array.isArray(data.daily?.time) && data.daily.time.length>0;
 }
 function saveWeatherCache(){
-  try{ localStorage.setItem(WEATHER_CACHE_KEY,JSON.stringify({version:1,place:state.place,data:state.data,astro:state.astro,savedAt:state.lastWeatherAt})); }catch(e){}
+  try{ localStorage.setItem(WEATHER_CACHE_KEY,JSON.stringify({version:1,place:state.place,data:state.data,astro:state.astro,aqi:state.aqi,savedAt:state.lastWeatherAt})); }catch(e){}
 }
 function restoreWeatherCache(place){
   let cache;
@@ -2666,7 +2918,7 @@ function restoreWeatherCache(place){
     || !Number.isFinite(cache.savedAt) || cache.savedAt<=0) return false;
   if(place && (Math.abs(place.lat-cache.place.lat)>0.000001 || Math.abs(place.lon-cache.place.lon)>0.000001)) return false;
   state.place=cache.place; state.lastPlace=cache.place; state.data=cache.data;
-  state.astro=cache.astro; state.lastWeatherAt=cache.savedAt; state.cached=true;
+  state.astro=cache.astro; state.aqi=cache.aqi||null; state.lastWeatherAt=cache.savedAt; state.cached=true;
   hideErr(); hidePickBar(); hideOfflineScreen(); hideWeatherErrorScreen();
   renderAll(state.data,state.place);
   document.getElementById('splash-screen').classList.add('hidden');
@@ -2738,11 +2990,11 @@ function setStorm(on){
   if(on){ flashTimer=setTimeout(loop,1200); } else el.classList.remove('flash');
 }
 function setScene(k,isDay){
-  const metaTheme = document.querySelector('meta[name="theme-color"]');
-  if(metaTheme) metaTheme.setAttribute('content', getComputedStyle(document.body).getPropertyValue('--sky1').trim() || '#041e30');
   document.body.classList.remove('wx-2','wx-3','wx-45','wx-48','wx-rain','wx-frz','wx-snow','wx-storm','night');
   if(!isDay) document.body.classList.add('night');
   if(k.cls) document.body.classList.add(k.cls);
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if(metaTheme) metaTheme.setAttribute('content', getComputedStyle(document.body).getPropertyValue('--sky1').trim() || '#041e30');
   document.querySelectorAll('.amb').forEach(a=>a.classList.toggle('on',!!k.amb));
   setPrecip(k.rain||0,k.snow||0);
   setStorm(!!k.storm);
@@ -2789,6 +3041,21 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible') refreshCurrentWeatherIfStale();
 });
 window.addEventListener('online',()=>refreshCurrentWeatherIfStale());
+
+(function pullToRefresh(){
+  let startY=null, busyPull=false;
+  const modalOpen=()=>!!(document.querySelector('#offlineModal.show, #weatherErrModal.show')||($('#geoModal')&&$('#geoModal').style.display==='flex'));
+  window.addEventListener('touchstart',e=>{ startY=(window.scrollY<=0&&!modalOpen())?e.touches[0].clientY:null; },{passive:true});
+  window.addEventListener('touchmove',e=>{
+    if(startY==null||busyPull) return;
+    if(e.touches[0].clientY-startY>90){
+      busyPull=true; startY=null; setTimeout(()=>busyPull=false,3000);
+      if(!navigator.onLine){ toast(t('offlineTitle')); return; }
+      if(state.place){ toast(t('refreshing')); loadWeather(state.place); }
+    }
+  },{passive:true});
+  window.addEventListener('touchend',()=>{ startY=null; },{passive:true});
+})();
 
 const q=$('#q'), clearBtn=$('#clear'), goBtn=$('#goBtn');
 
@@ -2860,10 +3127,6 @@ async function nmSearch(qq){
     const j=await r.json(); return (j&&j.length)?j:[];
   }catch(e){ return null; }
 }
-async function translateToEn(text){
-  return null;
-}
-
 async function localizeByOmId(omId, langCode){
   if(omId==null) return null;
   try{
@@ -2895,9 +3158,8 @@ async function geocode(name){
 
   const variants=[name];
   if(hasNonLatin(name)){
-    const en=await translateToEn(name);
-    if(en && normStr(en)!==nq){ variants.push(en); }
-    else { const l=toLatin(name); if(l && l!==nq) variants.push(l); }
+    const l=toLatin(name);
+    if(l && l!==nq) variants.push(l);
   }
   const forms=[...new Set(variants.map(normStr))];
 
@@ -2912,9 +3174,9 @@ async function geocode(name){
   const hasTha=/[\u0E00-\u0E7F]/.test(name);
   const nativeLang=hasCyr?'ru':(hasCJK?'ja':(hasArab?'ar':(hasKor?'ko':(hasHin?'hi':(hasGrk?'el':(hasHeb?'he':(hasTha?'th':null)))))));
   const tasks=[
-    omSearch(variants[0],LANG).then(r=>{ om['0:'+LANG]=r; }),
-    omSearch(variants[0],'en').then(r=>{ om['0:en']=r; })
+    omSearch(variants[0],LANG).then(r=>{ om['0:'+LANG]=r; })
   ];
+  if(LANG!=='en') tasks.push(omSearch(variants[0],'en').then(r=>{ om['0:en']=r; }));
   // Always also query the language of the typed script. Without this, a
   // Cyrillic query like "Москва" while LANG=en will not find the real
   // Moscow — only a transliterated namesake.
@@ -3127,6 +3389,12 @@ $('#unit').addEventListener('click',e=>{
   $('#unit').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
   if(state.data) renderAll(state.data,state.place);
 });
+$('#d5Toggle').addEventListener('click',()=>{
+  state.d5n=state.d5n===5?7:5;
+  const d5t=$('#d5Toggle');
+  d5t.textContent=state.d5n===5?t('d5more'):t('d5less');
+  if(state.data) renderDays5(state.data);
+});
 
 function buildLangSelect(){
   const sel=$('#langSel');
@@ -3183,7 +3451,7 @@ async function refreshCityNameForLanguage(){
     };
     state.place=updatedPlace;
     state.lastPlace=updatedPlace;
-    try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+    try{ localStorage.setItem(PLACE_KEY,JSON.stringify(updatedPlace)); }catch(e){}
     saveWeatherCache();
     renderAll(state.data,updatedPlace);
     return;
@@ -3204,7 +3472,7 @@ async function refreshCityNameForLanguage(){
       };
       state.place=updatedPlace;
       state.lastPlace=updatedPlace;
-      try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+      try{ localStorage.setItem(PLACE_KEY,JSON.stringify(updatedPlace)); }catch(e){}
       saveWeatherCache();
       renderAll(state.data,updatedPlace);
       return;
@@ -3276,14 +3544,14 @@ async function refreshCityNameForLanguage(){
 
   state.place=updatedPlace;
   state.lastPlace=updatedPlace;
-  try{ localStorage.setItem('atmos-place',JSON.stringify(updatedPlace)); }catch(e){}
+  try{ localStorage.setItem(PLACE_KEY,JSON.stringify(updatedPlace)); }catch(e){}
   saveWeatherCache();
   renderAll(state.data,updatedPlace);
 }
 
 function applyLang(){
   document.documentElement.lang=LANG;
-  document.documentElement.dir='ltr';
+  document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
@@ -3297,6 +3565,7 @@ function applyLang(){
   }
   $('#unit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.u===state.unit));
   $('#installBtn').title=t('install');
+  const d5t=$('#d5Toggle'); if(d5t) d5t.textContent=(state.d5n===5?t('d5more'):t('d5less'));
   const langToolLabels={
     en:['Refresh','Change city'],ru:['Обновить','Сменить город'],es:['Actualizar','Cambiar ciudad'],pt:['Atualizar','Mudar cidade'],de:['Aktualisieren','Stadt ändern'],fr:['Actualiser','Changer de ville'],it:['Aggiorna','Cambia città'],ja:['更新','都市を変更'],ko:['새로고침','도시 변경'],hi:['रीफ़्रेश','शहर बदलें'],id:['Muat ulang','Ganti kota'],ar:['تحديث','تغيير المدينة'],tr:['Yenile','Şehri değiştir']
   }[LANG]||['Refresh','Change city'];
@@ -3342,6 +3611,14 @@ async function loadWeather(place,intent=locationIntent){
   if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
   if(!validWeather(data)){ showWeatherErrorScreen(); return; }
 
+  let aqiData=null;
+  try{
+    const ra=await fetchRetry(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${place.lat}&longitude=${place.lon}&current=us_aqi,pm2_5,pm10&timezone=auto`,2,ctrl.signal);
+    aqiData=await ra.json();
+  }catch(e){ aqiData=null; }
+  if(ctrl.signal.aborted || intent!==locationIntent || state.ctrl!==ctrl) return;
+  state.aqi=(aqiData&&aqiData.current&&aqiData.current.us_aqi!=null)?aqiData.current:null;
+
   hideErr(); hidePickBar(); hideOfflineScreen(); hideWeatherErrorScreen();
   state.data=data; state.place=place; state.cached=false;
   state.lastWeatherAt=Date.now();
@@ -3352,7 +3629,7 @@ async function loadWeather(place,intent=locationIntent){
   if(Number.isFinite(data.utc_offset_seconds)) place.utcOffsetSeconds=data.utc_offset_seconds;
   // Moon-time calculations are optional: a missing or unavailable moon-times.js must not block weather rendering.
   try{ state.astro=moonTimesForPlace(data,place); }catch(err){ state.astro=null; console.warn('Moon times unavailable; continuing with weather display.',err); }
-  try{ localStorage.setItem('atmos-place',JSON.stringify(place)); }catch(e){}
+  try{ localStorage.setItem(PLACE_KEY,JSON.stringify(place)); }catch(e){}
   saveWeatherCache();
   try{ renderAll(data,place); }catch(err){ console.warn(err); }
   document.getElementById('splash-screen').classList.add('hidden');
@@ -3394,6 +3671,16 @@ function moonTimesForPlace(data,place){
       if(localDay===day) result[key][0]=localDay+'T'+p.hour+':'+p.minute;
     }
   }
+  try{
+    const sEvents=YasnoMoonTimes.getSunTimes(new Date(midnight),place.lat,place.lon);
+    const toLocalIso=dt=>{
+      if(!dt||!isFinite(dt.getTime())) return null;
+      const p={}; formatter.formatToParts(dt).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value;});
+      return p.year+'-'+p.month+'-'+p.day+'T'+p.hour+':'+p.minute;
+    };
+    result.dawn=toLocalIso(sEvents.dawn);
+    result.dusk=toLocalIso(sEvents.dusk);
+  }catch(e){ result.dawn=null; result.dusk=null; }
   return result;
 }
 
@@ -3462,7 +3749,8 @@ function renderAll(data,place){
     tempColor(c.temperature_2m);
     $('#heroIco').innerHTML=ICON[k.icon]||ICON.cloud;
     $('#feels').textContent=dispT(c.apparent_temperature)+'°';
-    $('#fWind').textContent=fmt(c.wind_speed_10m)+' '+t('kmh');
+    const wImp=state.unit==='f';
+    $('#fWind').textContent=(wImp?fmt(c.wind_speed_10m/1.609)+' mph':fmt(c.wind_speed_10m)+' '+t('kmh'))+' · '+fmt1(c.wind_speed_10m/3.6)+' '+t('ms');
     $('#fHum').textContent=c.relative_humidity_2m+'%';
     if(c.precipitation>0){ $('#fPrecipWrap').style.display=''; $('#fPrecip').textContent=fmt1(c.precipitation)+' '+t('mm'); }
     else $('#fPrecipWrap').style.display='none';
@@ -3480,6 +3768,20 @@ function renderAll(data,place){
     ['sunDot','sunCore'].forEach(id=>{ const e=document.getElementById(id);
       if(e){ e.setAttribute('cx',px.toFixed(1)); e.setAttribute('cy',py.toFixed(1)); } });
     $('#sunArc').style.opacity=(now<riseT||now>setT)? .35 : 1;
+    const day0=d.daylight_duration[0]||0, day1=d.daylight_duration[1];
+    const dd=$('#dayDelta');
+    if(dd){
+      if(day1!=null&&day1>0){
+        const diff=Math.round((day0-day1)/60);
+        if(diff>0) dd.textContent='↗ '+t('dayLonger').replace('__N__',Math.abs(diff));
+        else if(diff<0) dd.textContent='↘ '+t('dayShorter').replace('__N__',Math.abs(diff));
+        else dd.textContent=t('daySame');
+      } else dd.textContent='';
+    }
+    const ast=state.astro||{};
+    const dawnS=ast.dawn?cityTimeStr(ast.dawn):'--:--', duskS=ast.dusk?cityTimeStr(ast.dusk):'--:--';
+    const twEl=$('#twilight'); if(twEl) twEl.textContent=dawnS+' – '+duskS;
+    const goEl=$('#golden'); if(goEl) goEl.textContent=dawnS+'–'+$('#sunrise').textContent+' · '+$('#sunset').textContent+'–'+duskS;
   });
 
   safe(()=>renderHours(data));
@@ -3547,7 +3849,7 @@ function renderDays5(data){
   const byDay={};
   h.time.forEach((tt,i)=>{ const day=tt.slice(0,10); (byDay[day]=byDay[day]||[]).push(i); });
   let html='';
-  for(let i=0;i<5&&i<d.time.length;i++){
+  for(let i=0;i<Math.min(state.d5n||5,d.time.length);i++){
     const wk=kindForDay(d,i);
     const kk=KIND[wk];
     const hums=(byDay[d.time[i]]||[]).map(j=>h.relative_humidity_2m[j]).filter(v=>v!=null);
@@ -3613,7 +3915,7 @@ function renderChart(data){
   const pFeel=path('apparent_temperature');
   const area=pMax+`L${x(n-1).toFixed(1)},${H-pB} L${x(0).toFixed(1)},${H-pB} Z`;
   const nowDay=data.current.time.slice(0,10), ni=days.indexOf(nowDay);
-  let nightSh='',labels='',dots='',vals2='',marker='';
+  let nightSh='',labels='',dots='',vals2='',marker='',bars='';
   for(let i=0;i<n;i++){
     if(i%2!==0) nightSh+=`<rect x="${(pL+slot*i).toFixed(1)}" y="${pT-10}" width="${slot.toFixed(1)}" height="${H-pT-pB+10}" fill="rgba(255,255,255,.035)"/>`;
     labels+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="middle">${dayName(d.time[i],i)}</text>`;
@@ -3622,11 +3924,18 @@ function renderChart(data){
     vals2+=`<text x="${x(i).toFixed(1)}" y="${y(h.temperature_2m[j]).toFixed(1)-12}" text-anchor="middle" class="cv">${dispT(h.temperature_2m[j])}°</text>`;
     vals2+=`<text x="${x(i).toFixed(1)}" y="${y(d.temperature_2m_min[i])+20}" text-anchor="middle" class="cv lo">${dispT(d.temperature_2m_min[i])}°</text>`;
   }
+  const maxPrec=Math.max(1,...d.precipitation_sum.slice(0,n));
+  for(let i=0;i<n;i++){
+    const pv=d.precipitation_sum[i]||0;
+    if(!pv) continue;
+    const bh=Math.min(30,pv/maxPrec*30);
+    bars+=`<rect x="${(x(i)-Math.min(14,slot*0.28)).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${Math.min(28,slot*0.56).toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="rgba(143,216,255,.4)"/>`;
+  }
   if(ni>=0) marker=`<line x1="${x(ni).toFixed(1)}" y1="${pT-6}" x2="${x(ni).toFixed(1)}" y2="${H-pB}" stroke="rgba(255,183,3,.5)" stroke-dasharray="3 4"/><text x="${x(ni).toFixed(1)}" y="${pT-12}" text-anchor="middle" class="cv today">${t('today').toLowerCase()}</text>`;
   $('#chartBox').innerHTML=`<svg id="chart" viewBox="0 0 ${W} ${H}">
     <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="rgba(255,183,3,.34)"/><stop offset="1" stop-color="rgba(255,183,3,0)"/></linearGradient></defs>
-    ${nightSh}
+    ${nightSh}${bars}
     <path d="${area}" fill="url(#ag)"/>
     <path d="${pFeel}" fill="none" stroke="#8fd8ff" stroke-width="2" stroke-linecap="round" opacity=".85" pathLength="1" style="stroke-dashoffset:1;transition:stroke-dashoffset 1.6s .3s cubic-bezier(.3,.8,.3,1)"/>
     <path d="${pMax}" fill="none" stroke="#ffb703" stroke-width="3" stroke-linecap="round" pathLength="1" style="stroke-dashoffset:1;transition:stroke-dashoffset 1.4s .1s cubic-bezier(.3,.8,.3,1)"/>
@@ -3640,9 +3949,11 @@ function renderChart(data){
 
 function renderDetails(data){
   const c=data.current, d=data.daily, h=data.hourly;
-  $('#windVal').innerHTML=fmt(c.wind_speed_10m)+`<i>${t('kmh')}</i>`;
+  const wImp=state.unit==='f';
+  const wUnit=wImp?'mph':t('kmh');
+  $('#windVal').innerHTML=(wImp?fmt(c.wind_speed_10m/1.609):fmt(c.wind_speed_10m))+`<i>${wUnit}</i><i>${fmt1(c.wind_speed_10m/3.6)} ${t('ms')}</i>`;
   $('#windDir').textContent=`${windDirName(c.wind_direction_10m)} · ${Math.round(c.wind_direction_10m)}°`;
-  $('#windGust').textContent=c.wind_gusts_10m>c.wind_speed_10m+2?`${t('gust')} ${fmt(c.wind_gusts_10m)} ${t('kmh')}`:'';
+  $('#windGust').textContent=c.wind_gusts_10m>c.wind_speed_10m+2?`${t('gust')} ${fmt(wImp?c.wind_gusts_10m/1.609:c.wind_gusts_10m)} ${wUnit}`:'';
   $('#windNeedle').style.transform=`rotate(${c.wind_direction_10m}deg)`;
 
   const hum=c.relative_humidity_2m;
@@ -3655,9 +3966,10 @@ function renderDetails(data){
   const dew=jNow>=0?h.dew_point_2m[jNow]:null;
   $('#dewVal').textContent=dew!=null?dispT(dew)+'°':'';
 
-  $('#pressVal').innerHTML=fmt(c.pressure_msl*0.750062)+`<i>${t('mmhg')}</i>`;
+  const impP=state.unit==='f';
+  $('#pressVal').innerHTML=(impP?fmt1(c.pressure_msl*0.02953):fmt(c.pressure_msl*0.750062))+`<i>${impP?'inHg':t('mmhg')}</i>`;
   $('#pressHpa').textContent=fmt(c.pressure_msl)+' '+t('hpa');
-  $('#pressRange').textContent=`${fmt(d.pressure_msl_min[0]*0.750062)}–${fmt(d.pressure_msl_max[0]*0.750062)}`;
+  $('#pressRange').textContent=impP?`${fmt1(d.pressure_msl_min[0]*0.02953)}–${fmt1(d.pressure_msl_max[0]*0.02953)} inHg`:`${fmt(d.pressure_msl_min[0]*0.750062)}–${fmt(d.pressure_msl_max[0]*0.750062)}`;
 
   const uvNow=jNow>=0?h.uv_index[jNow]:0;
   $('#uvVal').textContent=fmt1(uvNow);
@@ -3678,6 +3990,26 @@ function renderDetails(data){
   const sunPct=Math.max(0,Math.min(100, d.sunshine_duration[0]/Math.max(d.daylight_duration[0],1)*100));
   $('#sunPct').textContent=fmt(sunPct)+'%';
   requestAnimationFrame(()=>$('#sunBar').style.width=sunPct.toFixed(0)+'%');
+
+  const aq=state.aqi;
+  if(aq){
+    const v=Math.round(aq.us_aqi);
+    $('#aqiVal').textContent=v;
+    let aqiTxt=t('aqiL6'), aqiCol='#b91c1c';
+    for(const [th,key,col] of [[50,'aqiL1','#39d353'],[100,'aqiL2','#ffd166'],[150,'aqiL3','#ff8c00'],[200,'aqiL4','#e5383b'],[300,'aqiL5','#9d4edd']]){
+      if(v<=th){ aqiTxt=t(key); aqiCol=col; break; }
+    }
+    $('#aqiLbl').textContent=aqiTxt;
+    $('#aqiLbl').style.color=aqiCol;
+    $('#pm25').textContent=aq.pm2_5!=null?fmt1(aq.pm2_5)+' µg/m³':'—';
+    $('#pm10').textContent=aq.pm10!=null?fmt1(aq.pm10)+' µg/m³':'—';
+  } else {
+    $('#aqiVal').textContent='--';
+    $('#aqiLbl').textContent='—';
+    $('#aqiLbl').style.color='';
+    $('#pm25').textContent='--';
+    $('#pm10').textContent='--';
+  }
 }
 async function hasInternetConnection(){
   if(!navigator.onLine) return false;

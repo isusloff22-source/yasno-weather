@@ -348,7 +348,50 @@ function getMoonTimes(date, lat, lon) {
     return result;
 }
 
-const YasnoMoonTimes = {getMoonTimes};
+// ---- Sun times subset (SunCalc v2.0.2 algorithms, BSD-2-Clause) ----
+const J0 = 0.0009;
+function fromJulian(j){ return new Date((j + 0.5 - J1970) * dayMs); }
+function solarMeanAnomaly(d){ return rad * (357.5291 + 0.98560028 * d); }
+function eclipticLongitude(M){
+    const C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M));
+    const P = rad * 102.9372;
+    return M + C + P + PI;
+}
+function sunDeclination(d){ return asin(sin(eclipticLongitude(solarMeanAnomaly(d))) * sin(rad * 23.4397)); }
+function julianCycle(d, lw){ return Math.round(d - J0 - lw / (2 * PI)); }
+function approxTransit(Ht, lw, n){ return J0 + (Ht + lw) / (2 * PI) + n; }
+function solarTransitJ(ds, M, L){ return J2000 + ds + 0.0053 * sin(M) - 0.0069 * sin(2 * L); }
+function hourAngle(h, phi, d){ return acos((sin(h) - sin(phi) * sin(d)) / (cos(phi) * cos(d))); }
+function getSetJ(h, lw, phi, dec, n, M, L){
+    const w = hourAngle(h, phi, dec);
+    const a = approxTransit(w, lw, n);
+    return solarTransitJ(a, M, L);
+}
+function getSunTimes(date, lat, lon){
+    const day = normalizeDate(date);
+    validateCoordinate('lat', lat, -90, 90);
+    validateCoordinate('lon', lon, -180, 180);
+    day.setUTCHours(0, 0, 0, 0);
+    const lw = rad * -lon, phi = rad * lat;
+    const d = toDays(day);
+    const n = julianCycle(d, lw);
+    const ds = approxTransit(0, lw, n);
+    const M = solarMeanAnomaly(ds);
+    const L = eclipticLongitude(M);
+    const dec = sunDeclination(ds);
+    const Jnoon = solarTransitJ(ds, M, L);
+    const result = {};
+    for (const [name, angle] of [['dawn', -6], ['sunrise', -0.833]]){
+        const Jset = getSetJ(rad * angle, lw, phi, dec, n, M, L);
+        const Jrise = Jnoon - (Jset - Jnoon);
+        const riseD = fromJulian(Jrise), setD = fromJulian(Jset);
+        result[name] = isFinite(riseD.getTime()) ? riseD : undefined;
+        result[name === 'dawn' ? 'dusk' : 'sunset'] = isFinite(setD.getTime()) ? setD : undefined;
+    }
+    return result;
+}
+
+const YasnoMoonTimes = {getMoonTimes, getSunTimes};
 
 if (typeof module === 'object' && module.exports) module.exports = YasnoMoonTimes;
 if (typeof window !== 'undefined') window.YasnoMoonTimes = YasnoMoonTimes;
