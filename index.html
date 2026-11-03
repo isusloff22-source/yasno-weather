@@ -133,6 +133,7 @@ body.night #stars{opacity:1}
 .icoBtn svg{width:19px;height:19px;color:var(--acc2)}
 .icoBtn:hover{border-color:rgba(255,209,102,.5);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .icoBtn.spin svg{animation:spin 1s linear infinite}
+.icoRow{display:flex;gap:10px;align-items:center;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:rgba(6,18,30,.55);flex:none}
 .seg button{padding:11px 14px;font:600 13px var(--mono);color:var(--mut);transition:.25s}
@@ -253,6 +254,7 @@ body.night #stars{opacity:1}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:3px;margin-right:7px;vertical-align:middle;font-style:normal}
 .legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}.legend .l3 i{background:rgba(143,216,255,.55)}
 .windbox{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-top:10px}
+#windVal{justify-content:center;text-align:center}
 .compass{width:80px;height:80px;flex:none}
 .compass .needle{transition:transform 1s cubic-bezier(.3,1.4,.4,1);transform-origin:50px 50px;transform-box:view-box}
 .sunpct{margin-top:14px;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.09)}
@@ -677,6 +679,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
       <button id="goBtn" data-i18n="find">Search</button>
     </div>
 
+    <div class="icoRow">
     <button class="icoBtn" id="geo" title="My location">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
     </button>
@@ -689,16 +692,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
     <button class="icoBtn" id="installBtn" style="display:none" title="Install app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
     </button>
+    </div>
     <div class="langTools">
       <select id="langSel" title="Language"></select>
       <div class="langToolActions">
-        <button class="langToolBtn" id="refreshPageBtn" type="button" title="Refresh page" aria-label="Refresh page">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5"/><path d="M4.9 9a7.5 7.5 0 0 1 12.4-2L20 12M4 17v-5h5"/><path d="M19.1 15a7.5 7.5 0 0 1-12.4 2L4 12"/></svg>
-          <span id="refreshPageLabel">Refresh</span>
-        </button>
         <button class="langToolBtn" id="changeCityBtn" type="button" title="Change city" aria-label="Change city">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
           <span id="changeCityLabel">Change city</span>
+        </button>
+        <button class="langToolBtn" id="refreshPageBtn" type="button" title="Refresh page" aria-label="Refresh page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5"/><path d="M4.9 9a7.5 7.5 0 0 1 12.4-2L20 12M4 17v-5h5"/><path d="M19.1 15a7.5 7.5 0 0 1-12.4 2L4 12"/></svg>
+          <span id="refreshPageLabel">Refresh</span>
         </button>
       </div>
     </div>
