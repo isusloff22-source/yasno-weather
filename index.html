@@ -506,6 +506,15 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
   .weather-legend-list{grid-template-columns:1fr;padding:12px}
   .weather-legend-head{padding:16px 18px}
 }
+#appUpdate[hidden]{display:none}
+#appUpdate{position:fixed;z-index:100010;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin-inline:auto;max-width:520px;padding:16px;background:#102d42;color:#f1f7fc;border:1px solid #54788e;border-radius:16px;box-shadow:0 8px 32px #0006;font:14px/1.5 var(--body)}
+#appUpdate p{margin:0 0 12px}
+.app-update-actions{display:flex;flex-wrap:wrap;gap:8px}
+#appUpdate button{min-height:44px;padding:8px 16px;border:1px solid #89aec4;border-radius:10px;background:transparent;color:#f1f7fc;font:600 14px var(--body);cursor:pointer}
+#appUpdate #appUpdateApply{background:#ffd166;border-color:#ffd166;color:#231a04}
+#appUpdate button:hover{filter:brightness(1.12)}
+#appUpdate button:focus-visible{outline:3px solid #8fd8ff;outline-offset:3px}
+#appUpdate button:disabled{opacity:.65;cursor:wait}
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -879,17 +888,105 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 </div>
 
 <div id="toast" role="status"></div>
+<section id="appUpdate" hidden aria-label="Application update">
+  <p id="appUpdateText" role="status" aria-live="polite"></p>
+  <div class="app-update-actions">
+    <button id="appUpdateApply" type="button"></button>
+    <button id="appUpdateLater" type="button"></button>
+  </div>
+</section>
 
 <script src="moon-times.js"></script>
 <script>
 'use strict';
+// APP_UPDATE_START
+const APP_UPDATE_LABELS={
+  en:['A new version is available','Update app','Later','Updating…','Could not update. Please try again.'],
+  ru:['Доступна новая версия','Обновить приложение','Позже','Обновление…','Не удалось обновить. Попробуйте ещё раз.'],
+  es:['Hay una nueva versión','Actualizar aplicación','Más tarde','Actualizando…','No se pudo actualizar. Inténtalo de nuevo.'],
+  pt:['Nova versão disponível','Atualizar aplicativo','Mais tarde','Atualizando…','Não foi possível atualizar. Tente novamente.'],
+  de:['Eine neue Version ist verfügbar','App aktualisieren','Später','Aktualisierung…','Aktualisierung fehlgeschlagen. Erneut versuchen.'],
+  fr:['Une nouvelle version est disponible','Mettre à jour','Plus tard','Mise à jour…','Échec de la mise à jour. Réessayez.'],
+  it:['È disponibile una nuova versione','Aggiorna app','Più tardi','Aggiornamento…','Aggiornamento non riuscito. Riprova.'],
+  ja:['新しいバージョンがあります','アプリを更新','後で','更新中…','更新できませんでした。もう一度お試しください。'],
+  ko:['새 버전이 있습니다','앱 업데이트','나중에','업데이트 중…','업데이트하지 못했습니다. 다시 시도하세요.'],
+  hi:['नया संस्करण उपलब्ध है','ऐप अपडेट करें','बाद में','अपडेट हो रहा है…','अपडेट नहीं हो सका। फिर कोशिश करें।'],
+  id:['Versi baru tersedia','Perbarui aplikasi','Nanti','Memperbarui…','Pembaruan gagal. Coba lagi.'],
+  ar:['يتوفر إصدار جديد','تحديث التطبيق','لاحقًا','جارٍ التحديث…','تعذّر التحديث. حاول مجددًا.'],
+  tr:['Yeni bir sürüm var','Uygulamayı güncelle','Daha sonra','Güncelleniyor…','Güncellenemedi. Tekrar deneyin.']
+};
+let appUpdateRegistration=null, appUpdateBusy=false, appUpdateFailed=false;
+let appUpdateTimer=null, appUpdateReloaded=false, appUpdateDismissed=null;
+function refreshAppUpdateText(){
+  const labels=APP_UPDATE_LABELS[LANG]||APP_UPDATE_LABELS.en;
+  document.getElementById('appUpdate').setAttribute('aria-label',labels[0]);
+  document.getElementById('appUpdateText').textContent=labels[appUpdateFailed?4:0];
+  document.getElementById('appUpdateApply').textContent=labels[appUpdateBusy?3:1];
+  document.getElementById('appUpdateApply').disabled=appUpdateBusy;
+  document.getElementById('appUpdateLater').textContent=labels[2];
+  document.getElementById('appUpdateLater').disabled=appUpdateBusy;
+}
+function showAppUpdate(){
+  const waiting=appUpdateRegistration?.waiting;
+  if(!waiting || !navigator.serviceWorker.controller || waiting===appUpdateDismissed) return;
+  refreshAppUpdateText();
+  document.getElementById('appUpdate').hidden=false;
+}
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW registered'))
-      .catch(err => console.log('SW failed', err));
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    // Only the tab that requested the update reloads automatically, once.
+    if(!appUpdateBusy || appUpdateReloaded) return;
+    appUpdateReloaded=true;
+    clearTimeout(appUpdateTimer);
+    window.location.reload();
+  });
+  document.getElementById('appUpdateLater').addEventListener('click',()=>{
+    appUpdateDismissed=appUpdateRegistration?.waiting;
+    document.getElementById('appUpdate').hidden=true;
+  });
+  document.getElementById('appUpdateApply').addEventListener('click',()=>{
+    if(appUpdateBusy) return;
+    const waiting=appUpdateRegistration?.waiting;
+    if(!waiting){ window.location.reload(); return; }
+    appUpdateBusy=true;
+    appUpdateFailed=false;
+    refreshAppUpdateText();
+    const failed=()=>{
+      clearTimeout(appUpdateTimer);
+      appUpdateBusy=false;
+      appUpdateFailed=true;
+      refreshAppUpdateText();
+    };
+    appUpdateTimer=setTimeout(failed,20000);
+    try{ waiting.postMessage({type:'SKIP_WAITING'}); }catch(e){ failed(); }
+  });
+  window.addEventListener('load',async()=>{
+    try{
+      const reg=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+      appUpdateRegistration=reg;
+      showAppUpdate();
+      const watchInstalling=()=>{
+        const worker=reg.installing;
+        if(worker) worker.addEventListener('statechange',()=>{
+          if(worker.state==='installed') showAppUpdate();
+        });
+      };
+      reg.addEventListener('updatefound',watchInstalling);
+      watchInstalling();
+      let lastCheck=0;
+      const check=()=>{
+        if(document.visibilityState==='hidden' || !navigator.onLine || Date.now()-lastCheck<60000) return;
+        lastCheck=Date.now();
+        reg.update().catch(()=>{}); // Offline/update failures must not interrupt weather.
+        showAppUpdate();
+      };
+      document.addEventListener('visibilitychange',check);
+      window.addEventListener('online',check);
+      check();
+    }catch(err){ console.warn('SW registration failed',err); }
   });
 }
+// APP_UPDATE_END
 const LANGS=("en:English|ru:Русский|es:Español|pt:Português (Brasil)|de:Deutsch|fr:Français|it:Italiano|ja:日本語|ko:한국어|hi:हिन्दी|id:Bahasa Indonesia|ar:العربية|tr:Türkçe").split("|").map(s=>{const i=s.indexOf(":");return [s.slice(0,i),s.slice(i+1)];});
 const RTL=new Set(['ar']);
 
@@ -3580,6 +3677,7 @@ async function refreshCityNameForLanguage(){
 }
 
 function applyLang(){
+  refreshAppUpdateText();
   document.documentElement.lang=LANG;
   document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');

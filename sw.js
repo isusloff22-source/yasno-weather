@@ -1,4 +1,5 @@
-const CACHE = 'yasno-v3';
+// Bump this version whenever publishing changed application files.
+const CACHE = 'yasno-v4';
 const SCOPE = new URL(self.registration.scope);
 const STATIC_FILES = [
   'index.html',
@@ -24,8 +25,14 @@ self.addEventListener('install', event => {
         // fetch-обработчик догрузит его при первом запросе.
       }
     }));
-    await self.skipWaiting();
+    // Updates wait for the user's confirmation; first installation activates normally.
   })());
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    event.waitUntil(self.skipWaiting());
+  }
 });
 
 self.addEventListener('activate', event => {
