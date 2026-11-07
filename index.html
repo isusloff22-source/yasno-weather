@@ -250,7 +250,7 @@ body.night #stars{opacity:1}
 .c-sub{color:var(--mut);font-size:13.5px;margin-top:7px}
 .span4{grid-column:span 4}.span12{grid-column:span 12}
 #chart{width:100%;height:auto;display:block}
-.legend{display:flex;gap:18px;margin-top:10px;font-size:12px;color:var(--mut)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12px;color:var(--mut)}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:3px;margin-right:7px;vertical-align:middle;font-style:normal}
 .legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}.legend .l3 i{background:rgba(143,216,255,.55)}
 .windbox{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-top:10px}
@@ -438,7 +438,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
   background:var(--panel2);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .privf-head{display:grid;grid-template-columns:auto minmax(0,1fr) 36px;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line)}
 .privf-head .ico{font-size:30px}
-.privf-head h2{font:700 15px/1.3 var(--disp);color:var(--ink);flex:1;min-width:0;overflow-wrap:anywhere}
+.privf-head h2{font:700 13px/1.3 var(--disp);color:var(--ink);flex:1;min-width:0;overflow-wrap:anywhere}
 .privf-lang{appearance:none;-webkit-appearance:none;grid-column:1 / -1;grid-row:2;margin-top:4px;width:150px;max-width:150px;padding:9px 30px 9px 12px;border-radius:999px;
   border:1px solid var(--line);background:rgba(6,18,30,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="%238fd8ff" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 10px center;
   color:var(--ink);font:600 12px var(--mono);cursor:pointer;transition:.25s}
@@ -2990,7 +2990,9 @@ const ICON = {
 const $ = s => document.querySelector(s);
 let savedUnit='c';
 try{ if(localStorage.getItem('yasno-unit')==='f') savedUnit='f'; }catch(e){}
-const state = { unit:savedUnit, data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0, cached:false, aqi:null, d5n:5 };
+let savedDays=5;
+try{ if(localStorage.getItem('yasno-forecast-days')==='7') savedDays=7; }catch(e){}
+const state = { unit:savedUnit, data:null, place:null, ctrl:null, lastPlace:null, astro:null, lastWeatherAt:0, cached:false, aqi:null, d5n:savedDays };
 let locationIntent=0, geoRequestId=0;
 let geoShortcutPending=new URLSearchParams(location.search).get('action')==='geo';
 const WEATHER_CACHE_KEY='yasno-last-weather';
@@ -3447,9 +3449,9 @@ async function requestGeo(silent=false){
         const {latitude:la,longitude:lo}=pos.coords;
         const place={name:'loc',nameEn:'Your location',geo:true,geoCity:'',admin:'',country:'',cc:'',lat:la,lon:lo,tz:'auto'};
         if(!validPlace(place)){ await unavailable(); return; }
-        if(silent && saved?.geo && Math.abs(saved.lat-la)<0.02 && Math.abs(saved.lon-lo)<0.02){
+        if(silent && saved?.geo && saved.admin && saved.country && Math.abs(saved.lat-la)<0.02 && Math.abs(saved.lon-lo)<0.02){
           Object.assign(place,saved,{lat:la,lon:lo});
-        } else if(!silent){
+        } else {
           try{
             const r=await nominatimFetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${la}&lon=${lo}&zoom=10&addressdetails=1&accept-language=${LANG}`);
             const j=await r.json(), a=j.address;
@@ -3520,6 +3522,8 @@ $('#unit').addEventListener('click',e=>{
 });
 $('#d5Toggle').addEventListener('click',()=>{
   state.d5n=state.d5n===5?7:5;
+  try{ localStorage.setItem('yasno-forecast-days',String(state.d5n)); }catch(e){}
+  $('[data-i18n="d5"]').textContent=t('d5').replace('5',String(state.d5n));
   const d5t=$('#d5Toggle');
   d5t.textContent=state.d5n===5?t('d5more'):t('d5less');
   if(state.data) renderDays5(state.data);
@@ -3695,6 +3699,7 @@ function applyLang(){
   }
   $('#unit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.u===state.unit));
   $('#installBtn').title=t('install');
+  $('[data-i18n="d5"]').textContent=t('d5').replace('5',String(state.d5n));
   const d5t=$('#d5Toggle'); if(d5t) d5t.textContent=(state.d5n===5?t('d5more'):t('d5less'));
   const langToolLabels={
     en:['Refresh','Change city'],ru:['Обновить','Сменить город'],es:['Actualizar','Cambiar ciudad'],pt:['Atualizar','Mudar cidade'],de:['Aktualisieren','Stadt ändern'],fr:['Actualiser','Changer de ville'],it:['Aggiorna','Cambia città'],ja:['更新','都市を変更'],ko:['새로고침','도시 변경'],hi:['रीफ़्रेश','शहर बदलें'],id:['Muat ulang','Ganti kota'],ar:['تحديث','تغيير المدينة'],tr:['Yenile','Şehri değiştir']
@@ -4034,7 +4039,7 @@ function renderMoon(){
 function renderChart(data){
   const d=data.daily, h=data.hourly;
   const days=d.time.map(tt=>tt.slice(0,10));
-  const W=880,H=250,pL=18,pR=18,pT=30,pB=32;
+  const W=Math.max(320,Math.min(880,$('#chartBox').clientWidth||880)),H=250,pL=18,pR=18,pT=30,pB=32;
   const n=days.length, slot=(W-pL-pR)/n;
   const pts=days.map(iso=>{
     let j=h.time.indexOf(iso+'T12:00'); if(j<0) j=h.time.findIndex(tt=>tt.slice(0,10)===iso); return j;
@@ -4874,6 +4879,18 @@ const PRIVACY_I18N = {
     "pTranslating": "Yükleniyor…"
   }
 };
+const FORECAST_STORAGE_TEXT={
+  en:'Selected forecast length (5 or 7 days)',ru:'Выбранную длительность прогноза (5 или 7 дней)',
+  es:'Duración del pronóstico seleccionada (5 o 7 días)',pt:'Duração da previsão selecionada (5 ou 7 dias)',
+  de:'Gewählte Vorhersagedauer (5 oder 7 Tage)',fr:'Durée des prévisions choisie (5 ou 7 jours)',
+  it:'Durata delle previsioni selezionata (5 o 7 giorni)',ja:'選択した予報日数（5日間または7日間）',
+  ko:'선택한 예보 기간(5일 또는 7일)',hi:'चयनित पूर्वानुमान अवधि (5 या 7 दिन)',
+  id:'Durasi prakiraan yang dipilih (5 atau 7 hari)',ar:'مدة التوقعات المختارة (5 أو 7 أيام)',tr:'Seçilen tahmin süresi (5 veya 7 gün)'
+};
+for(const [lang,policy] of [['en',PRIVACY_EN],['ru',PRIVACY_RU],...Object.entries(PRIVACY_I18N)]){
+  policy.p5l5=FORECAST_STORAGE_TEXT[lang];
+  policy.pUpdated=new Intl.DateTimeFormat(lang,{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date('2026-11-07T12:00:00Z'));
+}
 let PRIVACY_STR = {...PRIVACY_EN};
 
 function translatePrivacy(lang){
@@ -4895,7 +4912,7 @@ function renderPrivacyContent(){
     {t:'p2t', ps:['p2a'], list:['p2l1','p2l2','p2l3','p2l4','p2l5'], after:['p2b']},
     {t:'p3t', ps:['p3a'], list:['p3l1','p3l2','p3l3']},
     {t:'p4t', ps:['p4a','p4b']},
-    {t:'p5t', ps:['p5a'], list:['p5l1','p5l2','p5l3','p5l4'], after:['p5b']},
+    {t:'p5t', ps:['p5a'], list:['p5l1','p5l2','p5l3','p5l4','p5l5'], after:['p5b']},
     {t:'p6t', ps:['p6a','p6b']},
     {t:'p7t', ps:['p7a']},
     {t:'p8t', ps:['p8a']},

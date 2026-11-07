@@ -1,5 +1,5 @@
 // Bump this version whenever publishing changed application files.
-const CACHE = 'yasno-v4';
+const CACHE = 'yasno-v5';
 const SCOPE = new URL(self.registration.scope);
 const STATIC_FILES = [
   'index.html',
