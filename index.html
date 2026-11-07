@@ -133,7 +133,7 @@ body.night #stars{opacity:1}
 .icoBtn svg{width:19px;height:19px;color:var(--acc2)}
 .icoBtn:hover{border-color:rgba(255,209,102,.5);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .icoBtn.spin svg{animation:spin 1s linear infinite}
-.icoRow{display:flex;gap:10px;align-items:center;flex:none}
+.icoRow{display:flex;gap:10px;align-items:center;flex:none;flex-wrap:wrap}
 @keyframes spin{to{transform:rotate(360deg)}}
 .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:rgba(6,18,30,.55);flex:none}
 .seg button{padding:11px 14px;font:600 13px var(--mono);color:var(--mut);transition:.25s}
@@ -510,6 +510,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 }
 #appUpdate[hidden]{display:none}
 #appUpdate{position:fixed;z-index:100010;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin-inline:auto;max-width:520px;padding:16px;background:#102d42;color:#f1f7fc;border:1px solid #54788e;border-radius:16px;box-shadow:0 8px 32px #0006;font:14px/1.5 var(--body)}
+#appUpdate{max-height:calc(100dvh - 48px);overflow-y:auto}
 #appUpdate p{margin:0 0 12px}
 .app-update-actions{display:flex;flex-wrap:wrap;gap:8px}
 #appUpdate button{min-height:44px;padding:8px 16px;border:1px solid #89aec4;border-radius:10px;background:transparent;color:#f1f7fc;font:600 14px var(--body);cursor:pointer}
@@ -517,6 +518,11 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 #appUpdate button:hover{filter:brightness(1.12)}
 #appUpdate button:focus-visible{outline:3px solid #8fd8ff;outline-offset:3px}
 #appUpdate button:disabled{opacity:.65;cursor:wait}
+#appUpdate button[hidden]{display:none}
+#appUpdateDetails{white-space:pre-line;color:#c7dfef;font-size:13px}
+#appUpdatesBtn{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:600 13px var(--body);cursor:pointer}
+#appUpdatesBtn[data-ready="true"]{border-color:#ffd166;color:#ffd166}
+#appUpdatesBtn:focus-visible{outline:3px solid #8fd8ff;outline-offset:3px}
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -692,6 +698,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
     </div>
 
     <div class="icoRow">
+    <button id="appUpdatesBtn" type="button" aria-controls="appUpdate" aria-expanded="false">Updates</button>
     <button class="icoBtn" id="geo" title="My location">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
     </button>
@@ -890,10 +897,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 </div>
 
 <div id="toast" role="status"></div>
-<section id="appUpdate" hidden aria-label="Application update">
+<section id="appUpdate" hidden aria-label="Application update" tabindex="-1">
+  <h2 id="appUpdateTitle" style="font-size:18px;margin:0 0 12px"></h2>
   <p id="appUpdateText" role="status" aria-live="polite"></p>
+  <p id="appUpdateDetails"></p>
   <div class="app-update-actions">
-    <button id="appUpdateApply" type="button"></button>
+    <button id="appUpdateApply" type="button" hidden></button>
+    <button id="appUpdateCheck" type="button"></button>
     <button id="appUpdateLater" type="button"></button>
   </div>
 </section>
@@ -902,92 +912,112 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 <script>
 'use strict';
 // APP_UPDATE_START
+const APP_VERSION='2026.11.07.1';
 const APP_UPDATE_LABELS={
-  en:['A new version is available','Update app','Later','Updating…','Could not update. Please try again.'],
-  ru:['Доступна новая версия','Обновить приложение','Позже','Обновление…','Не удалось обновить. Попробуйте ещё раз.'],
-  es:['Hay una nueva versión','Actualizar aplicación','Más tarde','Actualizando…','No se pudo actualizar. Inténtalo de nuevo.'],
-  pt:['Nova versão disponível','Atualizar aplicativo','Mais tarde','Atualizando…','Não foi possível atualizar. Tente novamente.'],
-  de:['Eine neue Version ist verfügbar','App aktualisieren','Später','Aktualisierung…','Aktualisierung fehlgeschlagen. Erneut versuchen.'],
-  fr:['Une nouvelle version est disponible','Mettre à jour','Plus tard','Mise à jour…','Échec de la mise à jour. Réessayez.'],
-  it:['È disponibile una nuova versione','Aggiorna app','Più tardi','Aggiornamento…','Aggiornamento non riuscito. Riprova.'],
-  ja:['新しいバージョンがあります','アプリを更新','後で','更新中…','更新できませんでした。もう一度お試しください。'],
-  ko:['새 버전이 있습니다','앱 업데이트','나중에','업데이트 중…','업데이트하지 못했습니다. 다시 시도하세요.'],
-  hi:['नया संस्करण उपलब्ध है','ऐप अपडेट करें','बाद में','अपडेट हो रहा है…','अपडेट नहीं हो सका। फिर कोशिश करें।'],
-  id:['Versi baru tersedia','Perbarui aplikasi','Nanti','Memperbarui…','Pembaruan gagal. Coba lagi.'],
-  ar:['يتوفر إصدار جديد','تحديث التطبيق','لاحقًا','جارٍ التحديث…','تعذّر التحديث. حاول مجددًا.'],
-  tr:['Yeni bir sürüm var','Uygulamayı güncelle','Daha sonra','Güncelleniyor…','Güncellenemedi. Tekrar deneyin.']
+ en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
+ ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
+ es:['Actualizaciones','Buscar actualizaciones','Aplicar ahora','Cerrar','Buscando…','No se pudo comprobar. Conéctate e inténtalo de nuevo.','Tienes la última versión web','Actualización lista. Cierra todas las ventanas o aplícala ahora.','YASNO actualizado','Versión','Novedades','Actualizando…','No se pudo aplicar. Reinténtalo.','Descargando. Comprueba de nuevo en breve.','Sin comprobar','Botón de actualizaciones, comprobación en segundo plano y novedades. Sin reinicios inesperados.'],
+ pt:['Atualizações','Verificar atualizações','Aplicar agora','Fechar','Verificando…','Não foi possível verificar. Conecte-se e tente novamente.','Você tem a versão web mais recente','Atualização pronta. Feche todas as janelas ou aplique agora.','YASNO atualizado','Versão','Novidades','Atualizando…','Não foi possível aplicar. Tente novamente.','Baixando. Verifique novamente em breve.','Ainda não verificado','Botão de atualizações, verificação em segundo plano e novidades. Sem reinícios inesperados.'],
+ de:['Updates','Nach Updates suchen','Jetzt anwenden','Schließen','Prüfung…','Prüfung fehlgeschlagen. Internetverbindung prüfen.','Neueste Webversion installiert','Update bereit. Alle App-Fenster schließen oder jetzt anwenden.','YASNO aktualisiert','Version','Was ist neu','Aktualisierung…','Anwendung fehlgeschlagen. Erneut versuchen.','Download läuft. Bald erneut prüfen.','Noch nicht geprüft','Update-Schaltfläche, Hintergrundprüfung und Versionshinweise. Kein unerwarteter Neustart.'],
+ fr:['Mises à jour','Vérifier les mises à jour','Appliquer','Fermer','Vérification…','Vérification impossible. Connectez-vous et réessayez.','Dernière version web installée','Mise à jour prête. Fermez toutes les fenêtres ou appliquez-la maintenant.','YASNO mis à jour','Version','Nouveautés','Mise à jour…','Échec. Réessayez.','Téléchargement en cours. Réessayez bientôt.','Pas encore vérifié','Bouton de mises à jour, vérification en arrière-plan et nouveautés. Aucun redémarrage inattendu.'],
+ it:['Aggiornamenti','Controlla aggiornamenti','Applica ora','Chiudi','Controllo…','Controllo non riuscito. Connettiti e riprova.','Ultima versione web installata','Aggiornamento pronto. Chiudi tutte le finestre o applicalo ora.','YASNO aggiornato','Versione','Novità','Aggiornamento…','Applicazione non riuscita. Riprova.','Download in corso. Ricontrolla a breve.','Non ancora controllato','Pulsante aggiornamenti, controlli in background e novità. Nessun riavvio improvviso.'],
+ ja:['更新','更新を確認','今すぐ適用','閉じる','確認中…','確認できません。接続して再試行してください。','最新のウェブ版です','更新の準備ができました。すべてのウィンドウを閉じるか、今すぐ適用してください。','YASNOを更新しました','バージョン','更新内容','更新中…','適用できません。再試行してください。','ダウンロード中です。後でもう一度確認してください。','未確認','更新ボタン、バックグラウンド確認、更新内容を追加。突然の再起動はありません。'],
+ ko:['업데이트','업데이트 확인','지금 적용','닫기','확인 중…','확인할 수 없습니다. 인터넷 연결 후 다시 시도하세요.','최신 웹 버전입니다','업데이트 준비 완료. 모든 창을 닫거나 지금 적용하세요.','YASNO 업데이트됨','버전','새로운 기능','업데이트 중…','적용 실패. 다시 시도하세요.','다운로드 중. 잠시 후 확인하세요.','아직 확인하지 않음','업데이트 버튼, 백그라운드 확인 및 변경 내역. 갑작스러운 재시작 없음.'],
+ hi:['अपडेट','अपडेट जाँचें','अभी लागू करें','बंद करें','जाँच जारी…','जाँच नहीं हो सकी। इंटरनेट से जुड़कर फिर कोशिश करें।','नवीनतम वेब संस्करण है','अपडेट तैयार है। सभी विंडो बंद करें या अभी लागू करें।','YASNO अपडेट हुआ','संस्करण','नया क्या है','अपडेट जारी…','लागू नहीं हो सका। फिर कोशिश करें।','डाउनलोड जारी है। थोड़ी देर बाद जाँचें।','अभी जाँच नहीं हुई','अपडेट बटन, पृष्ठभूमि जाँच और बदलावों की सूची। अचानक पुनः आरंभ नहीं।'],
+ id:['Pembaruan','Periksa pembaruan','Terapkan sekarang','Tutup','Memeriksa…','Tidak dapat memeriksa. Hubungkan internet dan coba lagi.','Versi web terbaru terpasang','Pembaruan siap. Tutup semua jendela atau terapkan sekarang.','YASNO diperbarui','Versi','Yang baru','Memperbarui…','Gagal menerapkan. Coba lagi.','Mengunduh. Periksa lagi sebentar.','Belum diperiksa','Tombol pembaruan, pemeriksaan latar belakang dan catatan rilis. Tanpa mulai ulang mendadak.'],
+ ar:['التحديثات','التحقق من التحديثات','تطبيق الآن','إغلاق','جارٍ التحقق…','تعذر التحقق. اتصل بالإنترنت وحاول مجددًا.','لديك أحدث إصدار ويب','التحديث جاهز. أغلق جميع النوافذ أو طبّقه الآن.','تم تحديث YASNO','الإصدار','ما الجديد','جارٍ التحديث…','تعذر التطبيق. حاول مجددًا.','جارٍ التنزيل. تحقق بعد قليل.','لم يتم التحقق بعد','زر للتحديثات وفحص في الخلفية وسجل التغييرات. دون إعادة تشغيل مفاجئة.'],
+ tr:['Güncellemeler','Güncellemeleri denetle','Şimdi uygula','Kapat','Denetleniyor…','Denetlenemedi. İnternete bağlanıp tekrar deneyin.','En son web sürümü yüklü','Güncelleme hazır. Tüm pencereleri kapatın veya şimdi uygulayın.','YASNO güncellendi','Sürüm','Yenilikler','Güncelleniyor…','Uygulanamadı. Tekrar deneyin.','İndiriliyor. Biraz sonra denetleyin.','Henüz denetlenmedi','Güncelleme düğmesi, arka plan denetimi ve sürüm notları. Beklenmedik yeniden başlatma yok.']
 };
-let appUpdateRegistration=null, appUpdateBusy=false, appUpdateFailed=false;
-let appUpdateTimer=null, appUpdateReloaded=false, appUpdateDismissed=null;
+let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
+let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
+const updateElement=id=>document.getElementById(id);
 function refreshAppUpdateText(){
-  const labels=APP_UPDATE_LABELS[LANG]||APP_UPDATE_LABELS.en;
-  document.getElementById('appUpdate').setAttribute('aria-label',labels[0]);
-  document.getElementById('appUpdateText').textContent=labels[appUpdateFailed?4:0];
-  document.getElementById('appUpdateApply').textContent=labels[appUpdateBusy?3:1];
-  document.getElementById('appUpdateApply').disabled=appUpdateBusy;
-  document.getElementById('appUpdateLater').textContent=labels[2];
-  document.getElementById('appUpdateLater').disabled=appUpdateBusy;
+ const l=APP_UPDATE_LABELS[LANG]||APP_UPDATE_LABELS.en;
+ const ready=!!appUpdateRegistration?.waiting||appUpdateControllerChanged;
+ updateElement('appUpdatesBtn').textContent=l[0]+(ready?' •':'');
+ updateElement('appUpdatesBtn').dataset.ready=String(ready);
+ updateElement('appUpdatesBtn').setAttribute('aria-expanded',String(!updateElement('appUpdate').hidden));
+ updateElement('appUpdate').setAttribute('aria-label',l[0]);
+ updateElement('appUpdateTitle').textContent=l[appUpdateWelcome?8:0];
+ updateElement('appUpdateText').textContent=l[appUpdateBusy?11:appUpdateChecking?4:ready?7:appUpdateStatus]+(appUpdateCheckedAt?' · '+appUpdateCheckedAt:'');
+ updateElement('appUpdateDetails').textContent=l[9]+' '+APP_VERSION+'\n\n'+l[10]+'\n'+l[15];
+ updateElement('appUpdateApply').textContent=l[2];
+ updateElement('appUpdateApply').hidden=!ready;
+ updateElement('appUpdateApply').disabled=appUpdateBusy;
+ updateElement('appUpdateCheck').textContent=l[1];
+ updateElement('appUpdateCheck').disabled=appUpdateChecking||appUpdateBusy;
+ updateElement('appUpdateLater').textContent=l[3];
 }
-function showAppUpdate(){
-  const waiting=appUpdateRegistration?.waiting;
-  if(!waiting || !navigator.serviceWorker.controller || waiting===appUpdateDismissed) return;
-  refreshAppUpdateText();
-  document.getElementById('appUpdate').hidden=false;
+function showAppUpdate(){refreshAppUpdateText();}
+function openAppUpdates(){
+ updateElement('appUpdate').hidden=false;
+ refreshAppUpdateText();
+ updateElement('appUpdateLater').focus();
 }
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    // Only the tab that requested the update reloads automatically, once.
-    if(!appUpdateBusy || appUpdateReloaded) return;
-    appUpdateReloaded=true;
-    clearTimeout(appUpdateTimer);
-    window.location.reload();
-  });
-  document.getElementById('appUpdateLater').addEventListener('click',()=>{
-    appUpdateDismissed=appUpdateRegistration?.waiting;
-    document.getElementById('appUpdate').hidden=true;
-  });
-  document.getElementById('appUpdateApply').addEventListener('click',()=>{
-    if(appUpdateBusy) return;
-    const waiting=appUpdateRegistration?.waiting;
-    if(!waiting){ window.location.reload(); return; }
-    appUpdateBusy=true;
-    appUpdateFailed=false;
-    refreshAppUpdateText();
-    const failed=()=>{
-      clearTimeout(appUpdateTimer);
-      appUpdateBusy=false;
-      appUpdateFailed=true;
-      refreshAppUpdateText();
-    };
-    appUpdateTimer=setTimeout(failed,20000);
-    try{ waiting.postMessage({type:'SKIP_WAITING'}); }catch(e){ failed(); }
-  });
-  window.addEventListener('load',async()=>{
-    try{
-      const reg=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
-      appUpdateRegistration=reg;
-      showAppUpdate();
-      const watchInstalling=()=>{
-        const worker=reg.installing;
-        if(worker) worker.addEventListener('statechange',()=>{
-          if(worker.state==='installed') showAppUpdate();
-        });
-      };
-      reg.addEventListener('updatefound',watchInstalling);
-      watchInstalling();
-      let lastCheck=0;
-      const check=()=>{
-        if(document.visibilityState==='hidden' || !navigator.onLine || Date.now()-lastCheck<60000) return;
-        lastCheck=Date.now();
-        reg.update().catch(()=>{}); // Offline/update failures must not interrupt weather.
-        showAppUpdate();
-      };
-      document.addEventListener('visibilitychange',check);
-      window.addEventListener('online',check);
-      check();
-    }catch(err){ console.warn('SW registration failed',err); }
-  });
+function closeAppUpdates(){
+ updateElement('appUpdate').hidden=true;
+ appUpdateWelcome=false;
+ refreshAppUpdateText();
+ updateElement('appUpdatesBtn').focus();
 }
+async function checkAppUpdates(){
+ if(appUpdateChecking)return;
+ appUpdateChecking=true;appUpdateCheckedAt='';refreshAppUpdateText();
+ try{
+  if(!navigator.onLine||!appUpdateRegistration)throw Error('unavailable');
+  await appUpdateRegistration.update();
+  const response=await fetch('./release.json',{cache:'no-store'});
+  if(!response.ok)throw Error('release unavailable');
+  const release=await response.json();
+  if(typeof release.version!=='string')throw Error('invalid release');
+  appUpdateStatus=release.version===APP_VERSION?6:13;
+  appUpdateCheckedAt=new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'});
+ }catch(e){appUpdateStatus=5;}
+ finally{appUpdateChecking=false;refreshAppUpdateText();}
+}
+updateElement('appUpdatesBtn').addEventListener('click',openAppUpdates);
+updateElement('appUpdateLater').addEventListener('click',closeAppUpdates);
+updateElement('appUpdateCheck').addEventListener('click',checkAppUpdates);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!updateElement('appUpdate').hidden)closeAppUpdates();});
+updateElement('appUpdateApply').addEventListener('click',()=>{
+ if(appUpdateBusy)return;
+ const waiting=appUpdateRegistration?.waiting;
+ if(!waiting){if(appUpdateControllerChanged)window.location.reload();return;}
+ appUpdateBusy=true;refreshAppUpdateText();
+ const failed=()=>{appUpdateBusy=false;appUpdateStatus=12;refreshAppUpdateText();updateElement('appUpdateText').textContent=(APP_UPDATE_LABELS[LANG]||APP_UPDATE_LABELS.en)[12];};
+ appUpdateTimer=setTimeout(failed,20000);
+ try{waiting.postMessage({type:'SKIP_WAITING'});}catch(e){clearTimeout(appUpdateTimer);failed();}
+});
+window.addEventListener('load',async()=>{
+ try{
+  const seen=localStorage.getItem('yasno-release-seen');
+  localStorage.setItem('yasno-release-seen',APP_VERSION);
+  // Existing users see this release once; new installations only establish a baseline.
+  if(seen!==APP_VERSION&&(seen||navigator.serviceWorker?.controller)){appUpdateWelcome=true;openAppUpdates();}
+ }catch(e){} // Updates still work when storage is unavailable.
+ if(!('serviceWorker' in navigator)){appUpdateStatus=5;refreshAppUpdateText();return;}
+ let hadController=!!navigator.serviceWorker.controller;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(!hadController){hadController=true;return;}
+  if(appUpdateBusy&&!appUpdateReloaded){appUpdateReloaded=true;clearTimeout(appUpdateTimer);window.location.reload();}
+  else if(navigator.serviceWorker.controller){appUpdateControllerChanged=true;refreshAppUpdateText();}
+ });
+ try{
+  const reg=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+  appUpdateRegistration=reg;
+  const watch=()=>{
+   const worker=reg.installing;
+   if(worker)worker.addEventListener('statechange',()=>{if(worker.state==='installed'||worker.state==='redundant')refreshAppUpdateText();});
+  };
+  reg.addEventListener('updatefound',watch);watch();
+  let lastCheck=Date.now();
+  const check=()=>{if(document.visibilityState==='hidden'||Date.now()-lastCheck<60000)return;lastCheck=Date.now();checkAppUpdates();};
+  document.addEventListener('visibilitychange',check);
+  window.addEventListener('online',()=>{lastCheck=0;check();});
+  setInterval(check,15*60*1000);
+  await checkAppUpdates();
+ }catch(e){appUpdateStatus=5;refreshAppUpdateText();}
+});
 // APP_UPDATE_END
 const LANGS=("en:English|ru:Русский|es:Español|pt:Português (Brasil)|de:Deutsch|fr:Français|it:Italiano|ja:日本語|ko:한국어|hi:हिन्दी|id:Bahasa Indonesia|ar:العربية|tr:Türkçe").split("|").map(s=>{const i=s.indexOf(":");return [s.slice(0,i),s.slice(i+1)];});
 const RTL=new Set(['ar']);
@@ -4889,6 +4919,8 @@ const FORECAST_STORAGE_TEXT={
 };
 for(const [lang,policy] of [['en',PRIVACY_EN],['ru',PRIVACY_RU],...Object.entries(PRIVACY_I18N)]){
   policy.p5l5=FORECAST_STORAGE_TEXT[lang];
+  const releaseStorage={en:'Last viewed application release, to show release notes once',ru:'Последнюю просмотренную версию приложения, чтобы показывать список изменений один раз',es:'Última versión vista, para mostrar las novedades una vez',pt:'Última versão vista, para mostrar as novidades uma vez',de:'Zuletzt angesehene Version, um Versionshinweise einmal anzuzeigen',fr:'Dernière version consultée, pour afficher les nouveautés une fois',it:'Ultima versione visualizzata, per mostrare le novità una volta',ja:'更新内容を一度だけ表示するための、最後に確認したアプリのバージョン',ko:'변경 내역을 한 번 표시하기 위한 마지막으로 확인한 앱 버전',hi:'बदलावों को एक बार दिखाने के लिए अंतिम देखा गया ऐप संस्करण',id:'Versi terakhir yang dilihat, untuk menampilkan catatan rilis sekali',ar:'آخر إصدار تم عرضه لإظهار سجل التغييرات مرة واحدة',tr:'Sürüm notlarını bir kez göstermek için son görüntülenen sürüm'};
+  policy.p5l5+='; '+releaseStorage[lang];
   policy.pUpdated=new Intl.DateTimeFormat(lang,{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date('2026-11-07T12:00:00Z'));
 }
 let PRIVACY_STR = {...PRIVACY_EN};

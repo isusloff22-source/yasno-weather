@@ -1,5 +1,5 @@
 // Bump this version whenever publishing changed application files.
-const CACHE = 'yasno-v5';
+const CACHE = 'yasno-v7';
 const SCOPE = new URL(self.registration.scope);
 const STATIC_FILES = [
   'index.html',
@@ -25,7 +25,8 @@ self.addEventListener('install', event => {
         // fetch-обработчик догрузит его при первом запросе.
       }
     }));
-    // Updates wait for the user's confirmation; first installation activates normally.
+    // Activate naturally once no old clients remain, or immediately on Apply now.
+    // Never force a running forecast to restart.
   })());
 });
 
