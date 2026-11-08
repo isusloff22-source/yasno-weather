@@ -4115,7 +4115,9 @@ function renderChart(data){
     const j=pts[i]; if(j<0) continue;
     dots+=`<circle cx="${x(i).toFixed(1)}" cy="${y(h.temperature_2m[j]).toFixed(1)}" r="4.2" fill="url(#gSun)" stroke="#0a1a28" stroke-width="2"/>`;
     vals2+=`<text x="${x(i).toFixed(1)}" y="${y(h.temperature_2m[j]).toFixed(1)-12}" text-anchor="middle" class="cv">${dispT(h.temperature_2m[j])}°</text>`;
-    vals2+=`<text x="${x(i).toFixed(1)}" y="${y(d.temperature_2m_min[i])+20}" text-anchor="middle" class="cv lo">${dispT(d.temperature_2m_min[i])}°</text>`;
+    dots+=`<circle cx="${x(i).toFixed(1)}" cy="${y(h.apparent_temperature[j]).toFixed(1)}" r="4.2" fill="#8fd8ff" stroke="#0a1a28" stroke-width="2"/>`;
+    const feelLabelY=y(h.apparent_temperature[j])+(Math.abs(y(h.temperature_2m[j])-y(h.apparent_temperature[j]))<28?20:-12);
+    vals2+=`<text x="${x(i).toFixed(1)}" y="${feelLabelY.toFixed(1)}" text-anchor="middle" class="cv lo">${dispT(h.apparent_temperature[j])}°</text>`;
   }
   const maxPrec=Math.max(1,...d.precipitation_sum.slice(0,n));
   for(let i=0;i<n;i++){
