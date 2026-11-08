@@ -286,6 +286,12 @@ body.night #stars{opacity:1}
 .foot{margin-top:34px;text-align:center;color:var(--dim);font-size:12.5px;line-height:1.7}
 .foot a{color:var(--acc2);text-decoration:none;border-bottom:1px dashed rgba(143,216,255,.4)}
 .foot b{color:var(--mut)}
+.feedback-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.foot .feedback-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;padding:10px 18px;border:1px solid var(--line);border-radius:14px;background:rgba(6,18,30,.55);color:var(--ink);font:500 14px/1.5 var(--body);text-decoration:none;transition:background .2s,border-color .2s}
+.foot .feedback-link:hover{background:rgba(6,18,30,.8);border-color:var(--acc2)}
+.foot .feedback-link:focus-visible{outline:2px solid var(--acc2);outline-offset:3px}
+.foot .feedback-link:active{background:rgba(143,216,255,.16)}
+.feedback-email{margin-bottom:16px;color:var(--mut);overflow-wrap:anywhere}
 
 #toast{position:fixed;left:50%;bottom:26px;translate:-50% 20px;z-index:99;opacity:0;pointer-events:none;
   background:rgba(10,28,44,.92);border:1px solid rgba(160,215,255,.3);color:#d7ecfb;padding:13px 20px;border-radius:14px;
@@ -890,6 +896,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
   </main>
 
   <footer class="foot reveal" style="--d:.55s">
+    <div class="feedback-actions">
+      <a class="feedback-link" id="reviewLink" href="https://play.google.com/store/apps/details?id=com.github.isusloff22_source.yasno_weather" target="_blank" rel="noopener noreferrer">Leave a review on Google Play</a>
+      <a class="feedback-link" id="reportLink" href="mailto:yasno.weather@proton.me" target="_self">Report a problem</a>
+    </div>
+    <p class="feedback-email" id="feedbackEmail">yasno.weather@proton.me</p>
     <span data-i18n="foot">Search across two world databases: Open-Meteo + OpenStreetMap</span><br>
     <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:inherit">© OpenStreetMap contributors</a><br>
     <b id="updAt"></b>
@@ -909,10 +920,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 </section>
 
 <script src="moon-times.js"></script>
+<script src="feedback.js"></script>
 <script>
 'use strict';
 // APP_UPDATE_START
-const APP_VERSION='2026.11.07.1';
+const APP_VERSION='2026.11.08.1';
 const APP_UPDATE_LABELS={
  en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
  ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
@@ -928,6 +940,8 @@ const APP_UPDATE_LABELS={
  ar:['التحديثات','التحقق من التحديثات','تطبيق الآن','إغلاق','جارٍ التحقق…','تعذر التحقق. اتصل بالإنترنت وحاول مجددًا.','لديك أحدث إصدار ويب','التحديث جاهز. أغلق جميع النوافذ أو طبّقه الآن.','تم تحديث YASNO','الإصدار','ما الجديد','جارٍ التحديث…','تعذر التطبيق. حاول مجددًا.','جارٍ التنزيل. تحقق بعد قليل.','لم يتم التحقق بعد','زر للتحديثات وفحص في الخلفية وسجل التغييرات. دون إعادة تشغيل مفاجئة.'],
  tr:['Güncellemeler','Güncellemeleri denetle','Şimdi uygula','Kapat','Denetleniyor…','Denetlenemedi. İnternete bağlanıp tekrar deneyin.','En son web sürümü yüklü','Güncelleme hazır. Tüm pencereleri kapatın veya şimdi uygulayın.','YASNO güncellendi','Sürüm','Yenilikler','Güncelleniyor…','Uygulanamadı. Tekrar deneyin.','İndiriliyor. Biraz sonra denetleyin.','Henüz denetlenmedi','Güncelleme düğmesi, arka plan denetimi ve sürüm notları. Beklenmedik yeniden başlatma yok.']
 };
+const FEEDBACK_RELEASE_NOTES={en:'Added links to leave a review on Google Play and report a problem by email.',ru:'Добавлены кнопки отзыва в Google Play и сообщения о проблеме по почте.',es:'Nuevos enlaces para opinar en Google Play e informar de problemas por correo.',pt:'Links para avaliar no Google Play e relatar problemas por e-mail.',de:'Neue Links für Google-Play-Rezensionen und Problemmeldungen per E-Mail.',fr:'Liens pour laisser un avis sur Google Play et signaler un problème par e-mail.',it:'Link per recensire su Google Play e segnalare problemi via email.',ja:'Google Playでのレビューとメールでの問題報告へのリンクを追加しました。',ko:'Google Play 리뷰 및 이메일 문제 신고 링크를 추가했습니다.',hi:'Google Play पर समीक्षा और ईमेल से समस्या बताने के लिंक जोड़े गए।',id:'Tautan ulasan Google Play dan laporan masalah melalui email ditambahkan.',ar:'أُضيفت روابط للتقييم على Google Play والإبلاغ عن مشكلة بالبريد.',tr:'Google Play yorumu ve e-postayla sorun bildirme bağlantıları eklendi.'};
+for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=FEEDBACK_RELEASE_NOTES[lang];
 let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
 let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
 const updateElement=id=>document.getElementById(id);
@@ -3714,6 +3728,7 @@ async function refreshCityNameForLanguage(){
 
 function applyLang(){
   refreshAppUpdateText();
+  refreshFeedbackLinks();
   document.documentElement.lang=LANG;
   document.documentElement.dir=RTL.has(LANG)?'rtl':'ltr';
   document.title=LANG==='en'?'Yasno — smart weather worldwide':'Yasno — '+t('tagline');
