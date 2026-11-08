@@ -924,7 +924,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 <script>
 'use strict';
 // APP_UPDATE_START
-const APP_VERSION='2026.11.08.2';
+const APP_VERSION='2026.11.08.3';
 const APP_UPDATE_LABELS={
  en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
  ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
@@ -941,9 +941,13 @@ const APP_UPDATE_LABELS={
  tr:['Güncellemeler','Güncellemeleri denetle','Şimdi uygula','Kapat','Denetleniyor…','Denetlenemedi. İnternete bağlanıp tekrar deneyin.','En son web sürümü yüklü','Güncelleme hazır. Tüm pencereleri kapatın veya şimdi uygulayın.','YASNO güncellendi','Sürüm','Yenilikler','Güncelleniyor…','Uygulanamadı. Tekrar deneyin.','İndiriliyor. Biraz sonra denetleyin.','Henüz denetlenmedi','Güncelleme düğmesi, arka plan denetimi ve sürüm notları. Beklenmedik yeniden başlatma yok.']
 };
 const FEEDBACK_RELEASE_NOTES={en:'Simplified problem reports: clearer questions, answer spaces and separate website and Google Play versions. Emails are never sent automatically.',ru:'Сообщить о проблеме стало проще: понятные вопросы, место для ответов и отдельные версии сайта и приложения из Google Play. Автоматической отправки нет.',es:'Informes más sencillos: preguntas claras, espacio para respuestas y versiones web y de Google Play separadas. Sin envío automático.',pt:'Relatos mais simples: perguntas claras, espaço para respostas e versões do site e do Google Play separadas. Sem envio automático.',de:'Einfachere Problemmeldungen mit klaren Fragen, Platz für Antworten und getrennten Web- und Google-Play-Versionen. Kein automatischer Versand.',fr:'Signalement simplifié : questions claires, espace pour les réponses et versions web et Google Play distinctes. Aucun envoi automatique.',it:'Segnalazioni più semplici: domande chiare, spazio per risposte e versioni web e Google Play separate. Nessun invio automatico.',ja:'問題報告を改善：分かりやすい質問、回答欄、ウェブ版とGoogle Play版の区別。自動送信はありません。',ko:'문제 신고 개선: 쉬운 질문, 답변 공간, 웹 및 Google Play 버전 구분. 자동 전송 없음.',hi:'समस्या बताना आसान: स्पष्ट सवाल, जवाब की जगह और अलग वेबसाइट तथा Google Play संस्करण। अपने आप ईमेल नहीं भेजा जाता।',id:'Laporan masalah lebih mudah: pertanyaan jelas, ruang jawaban, serta versi situs dan Google Play terpisah. Tidak ada pengiriman otomatis.',ar:'تسهيل الإبلاغ: أسئلة واضحة ومساحة للإجابات وإصدارات منفصلة للموقع وتطبيق Google Play. دون إرسال تلقائي.',tr:'Sorun bildirimi kolaylaştırıldı: açık sorular, yanıt alanları ve ayrı web ve Google Play sürümleri. Otomatik gönderim yok.'};
-for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=FEEDBACK_RELEASE_NOTES[lang];
+const UPDATE_DISPLAY_NOTES={en:'Update details now distinguish the open web version from the available version. Release notes are labelled with their version.',ru:'В обновлениях отдельно указаны открытая и доступная веб-версии. У списка изменений указан номер версии; сообщение об успешном обновлении не совмещается с предложением применить обновление.',es:'Las versiones web abierta y disponible se muestran por separado, con notas identificadas por versión.',pt:'As versões web aberta e disponível aparecem separadamente, com notas identificadas por versão.',de:'Geöffnete und verfügbare Webversion werden getrennt angezeigt. Versionshinweise sind gekennzeichnet.',fr:'Les versions web ouverte et disponible sont distinctes. Les nouveautés indiquent leur version.',it:'Le versioni web aperta e disponibile sono separate. Le novità indicano la versione.',ja:'表示中と利用可能なウェブ版を区別し、更新内容にバージョンを表示します。',ko:'열린 웹 버전과 사용 가능한 버전을 구분하고 변경 내역에 버전을 표시합니다.',hi:'खुले और उपलब्ध वेब संस्करण अलग दिखते हैं। बदलावों के साथ संस्करण दिखता है।',id:'Versi web terbuka dan tersedia dibedakan. Catatan perubahan diberi versi.',ar:'تمييز إصدار الويب المفتوح عن المتاح مع تحديد إصدار سجل التغييرات.',tr:'Açık ve kullanılabilir web sürümleri ayrıldı. Sürüm notları sürüm numarasıyla gösterilir.'};
+for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=UPDATE_DISPLAY_NOTES[lang];
 let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
 let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
+// Keep the open page distinct from a release found on the server.
+const APP_VERSION_LABELS={en:['Open web version','Available web version'],ru:['Открытая веб-версия','Доступная веб-версия'],es:['Versión web abierta','Versión web disponible'],pt:['Versão web aberta','Versão web disponível'],de:['Geöffnete Webversion','Verfügbare Webversion'],fr:['Version web ouverte','Version web disponible'],it:['Versione web aperta','Versione web disponibile'],ja:['表示中のウェブ版','利用可能なウェブ版'],ko:['열린 웹 버전','사용 가능한 웹 버전'],hi:['खुला वेब संस्करण','उपलब्ध वेब संस्करण'],id:['Versi web terbuka','Versi web tersedia'],ar:['إصدار الويب المفتوح','إصدار الويب المتاح'],tr:['Açık web sürümü','Kullanılabilir web sürümü']};
+let appUpdateAvailableVersion='';
 const updateElement=id=>document.getElementById(id);
 function refreshAppUpdateText(){
  const l=APP_UPDATE_LABELS[LANG]||APP_UPDATE_LABELS.en;
@@ -952,9 +956,12 @@ function refreshAppUpdateText(){
  updateElement('appUpdatesBtn').dataset.ready=String(ready);
  updateElement('appUpdatesBtn').setAttribute('aria-expanded',String(!updateElement('appUpdate').hidden));
  updateElement('appUpdate').setAttribute('aria-label',l[0]);
- updateElement('appUpdateTitle').textContent=l[appUpdateWelcome?8:0];
+ updateElement('appUpdateTitle').textContent=l[appUpdateWelcome&&!ready?8:0];
  updateElement('appUpdateText').textContent=l[appUpdateBusy?11:appUpdateChecking?4:ready?7:appUpdateStatus]+(appUpdateCheckedAt?' · '+appUpdateCheckedAt:'');
- updateElement('appUpdateDetails').textContent=l[9]+' '+APP_VERSION+'\n\n'+l[10]+'\n'+l[15];
+ const versions=APP_VERSION_LABELS[LANG]||APP_VERSION_LABELS.en;
+ updateElement('appUpdateDetails').textContent=versions[0]+': '+APP_VERSION+
+  (appUpdateAvailableVersion&&appUpdateAvailableVersion!==APP_VERSION?'\n'+versions[1]+': '+appUpdateAvailableVersion:'')+
+  '\n\n'+l[10]+' — '+APP_VERSION+'\n'+l[15];
  updateElement('appUpdateApply').textContent=l[2];
  updateElement('appUpdateApply').hidden=!ready;
  updateElement('appUpdateApply').disabled=appUpdateBusy;
@@ -983,7 +990,8 @@ async function checkAppUpdates(){
   const response=await fetch('./release.json',{cache:'no-store'});
   if(!response.ok)throw Error('release unavailable');
   const release=await response.json();
-  if(typeof release.version!=='string')throw Error('invalid release');
+  if(typeof release.version!=='string'||!/^\d{4}\.\d{2}\.\d{2}\.\d+$/.test(release.version))throw Error('invalid release');
+  appUpdateAvailableVersion=release.version;
   appUpdateStatus=release.version===APP_VERSION?6:13;
   appUpdateCheckedAt=new Date().toLocaleTimeString(LANG,{hour:'2-digit',minute:'2-digit'});
  }catch(e){appUpdateStatus=5;}
