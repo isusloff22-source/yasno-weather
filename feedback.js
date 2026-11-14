@@ -34,7 +34,6 @@ const FEEDBACK_HELP = {
 function refreshFeedbackLinks() {
  const labels = FEEDBACK_LABELS[LANG] || FEEDBACK_LABELS.en;
  const help = FEEDBACK_HELP[LANG] || FEEDBACK_HELP.en;
- document.getElementById('reviewLink').textContent = labels[0];
  const report = document.getElementById('reportLink');
  report.textContent = labels[1];
  // Blank lines after each prompt are intentionally editable answer spaces.
