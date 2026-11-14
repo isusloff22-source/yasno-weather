@@ -249,7 +249,8 @@ body.night #stars{opacity:1}
 .c-big i{font:600 clamp(14px,3vw,18px) var(--mono);font-style:normal;color:var(--mut);margin-left:0}
 .c-sub{color:var(--mut);font-size:13.5px;margin-top:7px}
 .span4{grid-column:span 4}.span12{grid-column:span 12}
-#chart{width:100%;height:auto;display:block}
+#chartBox{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(143,216,255,.45) transparent}
+#chart{height:auto;display:block}
 .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-size:12px;color:var(--mut)}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:3px;margin-right:7px;vertical-align:middle;font-style:normal}
 .legend .l1 i{background:linear-gradient(90deg,#ffe066,#ffb703)}.legend .l2 i{background:var(--acc2)}.legend .l3 i{background:rgba(143,216,255,.55)}
@@ -923,7 +924,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 <script>
 'use strict';
 // APP_UPDATE_START
-const APP_VERSION='2026.11.14.2';
+const APP_VERSION='2026.11.14.3';
 const APP_UPDATE_LABELS={
  en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
  ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
@@ -942,7 +943,8 @@ const APP_UPDATE_LABELS={
 const FEEDBACK_RELEASE_NOTES={en:'Simplified problem reports: clearer questions, answer spaces and separate website and Google Play versions. Emails are never sent automatically.',ru:'Сообщить о проблеме стало проще: понятные вопросы, место для ответов и отдельные версии сайта и приложения из Google Play. Автоматической отправки нет.',es:'Informes más sencillos: preguntas claras, espacio para respuestas y versiones web y de Google Play separadas. Sin envío automático.',pt:'Relatos mais simples: perguntas claras, espaço para respostas e versões do site e do Google Play separadas. Sem envio automático.',de:'Einfachere Problemmeldungen mit klaren Fragen, Platz für Antworten und getrennten Web- und Google-Play-Versionen. Kein automatischer Versand.',fr:'Signalement simplifié : questions claires, espace pour les réponses et versions web et Google Play distinctes. Aucun envoi automatique.',it:'Segnalazioni più semplici: domande chiare, spazio per risposte e versioni web e Google Play separate. Nessun invio automatico.',ja:'問題報告を改善：分かりやすい質問、回答欄、ウェブ版とGoogle Play版の区別。自動送信はありません。',ko:'문제 신고 개선: 쉬운 질문, 답변 공간, 웹 및 Google Play 버전 구분. 자동 전송 없음.',hi:'समस्या बताना आसान: स्पष्ट सवाल, जवाब की जगह और अलग वेबसाइट तथा Google Play संस्करण। अपने आप ईमेल नहीं भेजा जाता।',id:'Laporan masalah lebih mudah: pertanyaan jelas, ruang jawaban, serta versi situs dan Google Play terpisah. Tidak ada pengiriman otomatis.',ar:'تسهيل الإبلاغ: أسئلة واضحة ومساحة للإجابات وإصدارات منفصلة للموقع وتطبيق Google Play. دون إرسال تلقائي.',tr:'Sorun bildirimi kolaylaştırıldı: açık sorular, yanıt alanları ve ayrı web ve Google Play sürümleri. Otomatik gönderim yok.'};
 const UPDATE_DISPLAY_NOTES={en:'Update details now distinguish the open web version from the available version. Release notes are labelled with their version.',ru:'В обновлениях отдельно указаны открытая и доступная веб-версии. У списка изменений указан номер версии; сообщение об успешном обновлении не совмещается с предложением применить обновление.',es:'Las versiones web abierta y disponible se muestran por separado, con notas identificadas por versión.',pt:'As versões web aberta e disponível aparecem separadamente, com notas identificadas por versão.',de:'Geöffnete und verfügbare Webversion werden getrennt angezeigt. Versionshinweise sind gekennzeichnet.',fr:'Les versions web ouverte et disponible sont distinctes. Les nouveautés indiquent leur version.',it:'Le versioni web aperta e disponibile sono separate. Le novità indicano la versione.',ja:'表示中と利用可能なウェブ版を区別し、更新内容にバージョンを表示します。',ko:'열린 웹 버전과 사용 가능한 버전을 구분하고 변경 내역에 버전을 표시합니다.',hi:'खुले और उपलब्ध वेब संस्करण अलग दिखते हैं। बदलावों के साथ संस्करण दिखता है।',id:'Versi web terbuka dan tersedia dibedakan. Catatan perubahan diberi versi.',ar:'تمييز إصدار الويب المفتوح عن المتاح مع تحديد إصدار سجل التغييرات.',tr:'Açık ve kullanılabilir web sürümleri ayrıldı. Sürüm notları sürüm numarasıyla gösterilir.'};
 const REVIEW_REMOVAL_NOTES={en:'The review button has been removed. Report a problem is still available.',ru:'Кнопка отзыва убрана. «Сообщить о проблеме» остаётся доступной.',es:'Se ha retirado el botón de reseñas. Informar de un problema sigue disponible.',pt:'O botão de avaliação foi removido. Relatar um problema continua disponível.',de:'Die Bewertungsschaltfläche wurde entfernt. Problem melden bleibt verfügbar.',fr:'Le bouton d’avis a été retiré. Signaler un problème reste disponible.',it:'Il pulsante delle recensioni è stato rimosso. Segnala un problema resta disponibile.',ja:'レビューのボタンを削除しました。問題の報告は引き続き利用できます。',ko:'리뷰 버튼을 삭제했습니다. 문제 신고는 계속 사용할 수 있습니다.',hi:'समीक्षा बटन हटा दिया गया है। समस्या बताने का विकल्प उपलब्ध है।',id:'Tombol ulasan dihapus. Laporkan masalah tetap tersedia.',ar:'تمت إزالة زر التقييم. يظل الإبلاغ عن مشكلة متاحًا.',tr:'Yorum düğmesi kaldırıldı. Sorun bildir kullanılabilir durumda.'};
-for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=REVIEW_REMOVAL_NOTES[lang];
+const WEEK_CHART_NOTES={en:'Weekly chart: readable days, aligned temperatures and separate precipitation. Swipe horizontally on small screens.',ru:'Недельный график: свободные подписи дней, ровные строки температур и отдельная полоса осадков. На небольшом экране можно листать по горизонтали.',es:'Gráfico semanal: días legibles, temperaturas alineadas y precipitaciones separadas. Desliza horizontalmente en pantallas pequeñas.',pt:'Gráfico semanal: dias legíveis, temperaturas alinhadas e precipitação separada. Deslize na horizontal em telas pequenas.',de:'Wochenkurve mit lesbaren Tagen, ausgerichteten Temperaturen und separatem Niederschlag. Auf kleinen Bildschirmen seitlich wischen.',fr:'Graphique hebdomadaire : jours lisibles, températures alignées et précipitations séparées. Défilement horizontal sur petit écran.',it:'Grafico settimanale: giorni leggibili, temperature allineate e precipitazioni separate. Scorri in orizzontale sugli schermi piccoli.',ja:'週間グラフ：読みやすい日付、整列した気温、独立した降水量表示。小さな画面では横にスクロールできます。',ko:'주간 그래프: 읽기 쉬운 날짜, 정렬된 기온과 별도 강수량 영역. 작은 화면에서는 가로로 스크롤하세요.',hi:'साप्ताहिक चार्ट: स्पष्ट दिन, व्यवस्थित तापमान और अलग वर्षा क्षेत्र। छोटी स्क्रीन पर क्षैतिज स्क्रॉल करें।',id:'Grafik mingguan: hari mudah dibaca, suhu sejajar dan curah hujan terpisah. Geser mendatar di layar kecil.',ar:'الرسم الأسبوعي: أيام واضحة ودرجات حرارة مرتبة ومساحة منفصلة للهطول. مرّر أفقيًا على الشاشات الصغيرة.',tr:'Haftalık grafik: okunaklı günler, hizalı sıcaklıklar ve ayrı yağış alanı. Küçük ekranlarda yatay kaydırın.'};
+for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=WEEK_CHART_NOTES[lang];
 let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
 let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
 // Keep the open page distinct from a release found on the server.
@@ -4090,56 +4092,63 @@ function renderMoon(){
 }
 
 function renderChart(data){
-  const d=data.daily, h=data.hourly;
-  const days=d.time.map(tt=>tt.slice(0,10));
-  const W=Math.max(320,Math.min(880,$('#chartBox').clientWidth||880)),H=250,pL=18,pR=18,pT=30,pB=32;
-  const n=days.length, slot=(W-pL-pR)/n;
-  const pts=days.map(iso=>{
-    let j=h.time.indexOf(iso+'T12:00'); if(j<0) j=h.time.findIndex(tt=>tt.slice(0,10)===iso); return j;
-  });
-  const vals=[]; pts.forEach(j=>{ if(j>=0){ vals.push(h.temperature_2m[j],h.apparent_temperature[j]); } });
-  vals.push(...d.temperature_2m_max,...d.temperature_2m_min);
-  const lo=Math.min(...vals)-2, hi=Math.max(...vals)+2;
+  const d=data.daily, h=data.hourly, box=$('#chartBox');
+  const days=d.time.map(tt=>tt.slice(0,10)), n=days.length;
+  if(!n){ box.innerHTML=''; return; }
+  const escapeText=value=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const names=days.map((_,i)=>dayName(d.time[i],i));
+  // Keep readable day columns on phones instead of squeezing seven labels together.
+  const minSlot=Math.max(96,...names.map(name=>Array.from(name).length*9+24));
+  const W=Math.max(box.clientWidth||320,n*minSlot+24), H=324, pL=12, slot=(W-24)/n;
+  const plotTop=104, plotBottom=232, rainTop=264, rainBottom=298;
   const x=i=>pL+slot*(i+.5);
-  const y=v=>pT+(H-pT-pB)*(1-(v-lo)/(hi-lo));
-  function path(key){ let s=''; pts.forEach((j,i)=>{ if(j<0) return;
-    s+=`${s?'L':'M'}${x(i).toFixed(1)},${y(h[key][j]).toFixed(1)} `; }); return s; }
-  const pMax=path('temperature_2m');
-  const pFeel=path('apparent_temperature');
-  const area=pMax+`L${x(n-1).toFixed(1)},${H-pB} L${x(0).toFixed(1)},${H-pB} Z`;
-  const nowDay=data.current.time.slice(0,10), ni=days.indexOf(nowDay);
-  let nightSh='',labels='',dots='',vals2='',marker='',bars='';
-  for(let i=0;i<n;i++){
-    if(i%2!==0) nightSh+=`<rect x="${(pL+slot*i).toFixed(1)}" y="${pT-10}" width="${slot.toFixed(1)}" height="${H-pT-pB+10}" fill="rgba(255,255,255,.035)"/>`;
-    labels+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="middle">${dayName(d.time[i],i)}</text>`;
-    const j=pts[i]; if(j<0) continue;
-    dots+=`<circle cx="${x(i).toFixed(1)}" cy="${y(h.temperature_2m[j]).toFixed(1)}" r="4.2" fill="url(#gSun)" stroke="#0a1a28" stroke-width="2"/>`;
-    vals2+=`<text x="${x(i).toFixed(1)}" y="${y(h.temperature_2m[j]).toFixed(1)-12}" text-anchor="middle" class="cv">${dispT(h.temperature_2m[j])}°</text>`;
-    dots+=`<circle cx="${x(i).toFixed(1)}" cy="${y(h.apparent_temperature[j]).toFixed(1)}" r="4.2" fill="#8fd8ff" stroke="#0a1a28" stroke-width="2"/>`;
-    const feelLabelY=y(h.apparent_temperature[j])+(Math.abs(y(h.temperature_2m[j])-y(h.apparent_temperature[j]))<28?20:-12);
-    vals2+=`<text x="${x(i).toFixed(1)}" y="${feelLabelY.toFixed(1)}" text-anchor="middle" class="cv lo">${dispT(h.apparent_temperature[j])}°</text>`;
+  const pts=days.map(iso=>{
+    let j=h.time.indexOf(iso+'T12:00');
+    if(j<0) j=h.time.findIndex(tt=>tt.slice(0,10)===iso);
+    return j;
+  });
+  const series=key=>pts.map(j=>j>=0&&Number.isFinite(h[key]?.[j])?h[key][j]:null);
+  const daily=series('temperature_2m'), feels=series('apparent_temperature');
+  const values=[...daily,...feels].filter(Number.isFinite);
+  const lo=values.length?Math.min(...values)-2:0, hi=values.length?Math.max(...values)+2:1;
+  const y=v=>plotBottom-(v-lo)/(hi-lo)*(plotBottom-plotTop);
+  function path(values){
+    let result='', connected=false;
+    values.forEach((v,i)=>{
+      if(v===null){ connected=false; return; }
+      result+=`${connected?'L':'M'}${x(i).toFixed(1)},${y(v).toFixed(1)} `;
+      connected=true;
+    });
+    return result;
   }
-  const maxPrec=Math.max(1,...d.precipitation_sum.slice(0,n));
+  let columns='', dots='', bars='';
+  const rain=days.map((_,i)=>Number.isFinite(d.precipitation_sum?.[i])?Math.max(0,d.precipitation_sum[i]):null);
+  const maxRain=Math.max(1,...rain.filter(Number.isFinite));
   for(let i=0;i<n;i++){
-    const pv=d.precipitation_sum[i]||0;
-    if(!pv) continue;
-    const bh=Math.min(30,pv/maxPrec*30);
-    bars+=`<rect x="${(x(i)-Math.min(14,slot*0.28)).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${Math.min(28,slot*0.56).toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="rgba(143,216,255,.4)"/>`;
+    const cx=x(i).toFixed(1), left=(pL+slot*i).toFixed(1);
+    columns+=`<rect x="${left}" y="8" width="${slot.toFixed(1)}" height="308" rx="8" fill="${i%2?'rgba(255,255,255,.025)':'transparent'}"/>
+      <text x="${cx}" y="28" text-anchor="middle" class="${i===0?'today':''}">${escapeText(names[i])}</text>
+      <text x="${cx}" y="46" text-anchor="middle" class="date">${escapeText(dateShort(d.time[i]))}</text>`;
+    // Values have fixed rows, aligned with their day and colour, never with a sloping line.
+    for(const [values,color,row] of [[daily,'#ffd166',69],[feels,'#8fd8ff',91]]){
+      const v=values[i];
+      columns+=`<text x="${cx}" y="${row}" text-anchor="middle" class="value" style="fill:${color}">${v===null?'—':dispT(v)+'°'}</text>`;
+      if(v!==null) dots+=`<circle cx="${cx}" cy="${y(v).toFixed(1)}" r="4.5" fill="${color}" stroke="#0a1a28" stroke-width="2"/>`;
+    }
+    const pv=rain[i], bh=pv===null?0:pv/maxRain*(rainBottom-rainTop);
+    if(bh>0) bars+=`<rect x="${(x(i)-14).toFixed(1)}" y="${(rainBottom-bh).toFixed(1)}" width="28" height="${bh.toFixed(1)}" rx="3" fill="rgba(143,216,255,.55)"/>`;
+    bars+=`<text x="${cx}" y="316" text-anchor="middle" class="rain">${pv===null?'—':escapeText(fmt1(pv)+' '+t('mm'))}</text>`;
   }
-  if(ni>=0) marker=`<line x1="${x(ni).toFixed(1)}" y1="${pT-6}" x2="${x(ni).toFixed(1)}" y2="${H-pB}" stroke="rgba(255,183,3,.5)" stroke-dasharray="3 4"/><text x="${x(ni).toFixed(1)}" y="${pT-12}" text-anchor="middle" class="cv today">${t('today').toLowerCase()}</text>`;
-  $('#chartBox').innerHTML=`<svg id="chart" viewBox="0 0 ${W} ${H}">
-    <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="rgba(255,183,3,.34)"/><stop offset="1" stop-color="rgba(255,183,3,0)"/></linearGradient></defs>
-    ${nightSh}${bars}
-    <path d="${area}" fill="url(#ag)"/>
-    <path d="${pFeel}" fill="none" stroke="#8fd8ff" stroke-width="2" stroke-linecap="round" opacity=".85" pathLength="1" style="stroke-dashoffset:1;transition:stroke-dashoffset 1.6s .3s cubic-bezier(.3,.8,.3,1)"/>
-    <path d="${pMax}" fill="none" stroke="#ffb703" stroke-width="3" stroke-linecap="round" pathLength="1" style="stroke-dashoffset:1;transition:stroke-dashoffset 1.4s .1s cubic-bezier(.3,.8,.3,1)"/>
-    ${marker}${dots}${vals2}${labels}
-    <style>#chart text{font:600 11px 'JetBrains Mono';fill:#7f9bb0}#chart .cv{fill:#ffe3ad;font-size:12px}#chart .cv.lo{fill:#8fb0c6;font-weight:400}#chart .today{fill:#ffd166;letter-spacing:.1em}</style>
+  // Precipitation has its own bounded band and scale; it cannot enter the temperature plot.
+  box.innerHTML=`<svg id="chart" viewBox="0 0 ${W} ${H}" style="width:${W}px" role="img" aria-label="${escapeText(t('week')+' · '+t('legDay')+' · '+t('legFeel')+' · '+t('legPrec'))}">
+    <style>#chart text{font:600 13px var(--mono);fill:#bdd0df}#chart .today{fill:#ffd166}#chart .date{font-size:11px;fill:#9bb4c7}#chart .value{font-size:16px}#chart .rain{font-size:12px;fill:#8fd8ff}</style>
+    ${columns}
+    <path d="${path(daily)}" fill="none" stroke="#ffb703" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${path(feels)}" fill="none" stroke="#8fd8ff" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+    <line x1="12" y1="250" x2="${W-12}" y2="250" stroke="rgba(143,216,255,.2)"/>
+    ${bars}
   </svg>`;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.querySelectorAll('#chart path[pathLength]').forEach(p=>p.style.strokeDashoffset=0);
-  }));
 }
 
 function renderDetails(data){
