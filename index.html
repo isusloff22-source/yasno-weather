@@ -533,6 +533,7 @@ button.priv-link{background:none;border:none;border-bottom:1px dashed rgba(143,2
 </style>
 <base target="_blank">
 <base target="_blank">
+<link rel="stylesheet" href="favorites.css">
 </head>
 <body>
 <div id="geoModal" style="display:none">
@@ -742,10 +743,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
   <div id="errBar" role="status" aria-live="polite"><span id="errMsg"></span><button id="errRetry" data-i18n="retry">Retry</button></div>
   <div id="pickBar"><span id="pickMsg"></span><div id="pickBtns"></div></div>
 
+  <details id="favoritesPanel"><summary id="favoritesSummary"><span id="favoritesLabel">Favourite cities</span> <span id="favoritesCount">0</span></summary><p id="favoritesHint"></p><div id="favoriteList"></div></details>
   <main id="main">
     <section class="hero reveal" style="--d:.08s">
       <div>
-        <h1 class="hcity" id="cityName">—</h1>
+        <div class="city-heading"><h1 class="hcity" id="cityName">—</h1><button id="favoriteToggle" class="icoBtn" type="button" hidden aria-label="Add to favourites" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z"/></svg></button></div>
         <div class="hsub" id="citySub"></div>
         <p class="hdesc" id="condText">—</p>
         <div class="hrow">
@@ -921,10 +923,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 
 <script src="moon-times.js"></script>
 <script src="feedback.js"></script>
+<script src="favorites.js"></script>
 <script>
 'use strict';
 // APP_UPDATE_START
-const APP_VERSION='2026.11.14.3';
+const APP_VERSION='2026.11.14.4';
 const APP_UPDATE_LABELS={
  en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
  ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
@@ -944,7 +947,7 @@ const FEEDBACK_RELEASE_NOTES={en:'Simplified problem reports: clearer questions,
 const UPDATE_DISPLAY_NOTES={en:'Update details now distinguish the open web version from the available version. Release notes are labelled with their version.',ru:'В обновлениях отдельно указаны открытая и доступная веб-версии. У списка изменений указан номер версии; сообщение об успешном обновлении не совмещается с предложением применить обновление.',es:'Las versiones web abierta y disponible se muestran por separado, con notas identificadas por versión.',pt:'As versões web aberta e disponível aparecem separadamente, com notas identificadas por versão.',de:'Geöffnete und verfügbare Webversion werden getrennt angezeigt. Versionshinweise sind gekennzeichnet.',fr:'Les versions web ouverte et disponible sont distinctes. Les nouveautés indiquent leur version.',it:'Le versioni web aperta e disponibile sono separate. Le novità indicano la versione.',ja:'表示中と利用可能なウェブ版を区別し、更新内容にバージョンを表示します。',ko:'열린 웹 버전과 사용 가능한 버전을 구분하고 변경 내역에 버전을 표시합니다.',hi:'खुले और उपलब्ध वेब संस्करण अलग दिखते हैं। बदलावों के साथ संस्करण दिखता है।',id:'Versi web terbuka dan tersedia dibedakan. Catatan perubahan diberi versi.',ar:'تمييز إصدار الويب المفتوح عن المتاح مع تحديد إصدار سجل التغييرات.',tr:'Açık ve kullanılabilir web sürümleri ayrıldı. Sürüm notları sürüm numarasıyla gösterilir.'};
 const REVIEW_REMOVAL_NOTES={en:'The review button has been removed. Report a problem is still available.',ru:'Кнопка отзыва убрана. «Сообщить о проблеме» остаётся доступной.',es:'Se ha retirado el botón de reseñas. Informar de un problema sigue disponible.',pt:'O botão de avaliação foi removido. Relatar um problema continua disponível.',de:'Die Bewertungsschaltfläche wurde entfernt. Problem melden bleibt verfügbar.',fr:'Le bouton d’avis a été retiré. Signaler un problème reste disponible.',it:'Il pulsante delle recensioni è stato rimosso. Segnala un problema resta disponibile.',ja:'レビューのボタンを削除しました。問題の報告は引き続き利用できます。',ko:'리뷰 버튼을 삭제했습니다. 문제 신고는 계속 사용할 수 있습니다.',hi:'समीक्षा बटन हटा दिया गया है। समस्या बताने का विकल्प उपलब्ध है।',id:'Tombol ulasan dihapus. Laporkan masalah tetap tersedia.',ar:'تمت إزالة زر التقييم. يظل الإبلاغ عن مشكلة متاحًا.',tr:'Yorum düğmesi kaldırıldı. Sorun bildir kullanılabilir durumda.'};
 const WEEK_CHART_NOTES={en:'Weekly chart: readable days, aligned temperatures and separate precipitation. Swipe horizontally on small screens.',ru:'Недельный график: свободные подписи дней, ровные строки температур и отдельная полоса осадков. На небольшом экране можно листать по горизонтали.',es:'Gráfico semanal: días legibles, temperaturas alineadas y precipitaciones separadas. Desliza horizontalmente en pantallas pequeñas.',pt:'Gráfico semanal: dias legíveis, temperaturas alinhadas e precipitação separada. Deslize na horizontal em telas pequenas.',de:'Wochenkurve mit lesbaren Tagen, ausgerichteten Temperaturen und separatem Niederschlag. Auf kleinen Bildschirmen seitlich wischen.',fr:'Graphique hebdomadaire : jours lisibles, températures alignées et précipitations séparées. Défilement horizontal sur petit écran.',it:'Grafico settimanale: giorni leggibili, temperature allineate e precipitazioni separate. Scorri in orizzontale sugli schermi piccoli.',ja:'週間グラフ：読みやすい日付、整列した気温、独立した降水量表示。小さな画面では横にスクロールできます。',ko:'주간 그래프: 읽기 쉬운 날짜, 정렬된 기온과 별도 강수량 영역. 작은 화면에서는 가로로 스크롤하세요.',hi:'साप्ताहिक चार्ट: स्पष्ट दिन, व्यवस्थित तापमान और अलग वर्षा क्षेत्र। छोटी स्क्रीन पर क्षैतिज स्क्रॉल करें।',id:'Grafik mingguan: hari mudah dibaca, suhu sejajar dan curah hujan terpisah. Geser mendatar di layar kecil.',ar:'الرسم الأسبوعي: أيام واضحة ودرجات حرارة مرتبة ومساحة منفصلة للهطول. مرّر أفقيًا على الشاشات الصغيرة.',tr:'Haftalık grafik: okunaklı günler, hizalı sıcaklıklar ve ayrı yağış alanı. Küçük ekranlarda yatay kaydırın.'};
-for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=WEEK_CHART_NOTES[lang];
+for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=FAVORITES_LABELS[lang][0]+'. '+FAVORITES_LABELS[lang][4];
 let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
 let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
 // Keep the open page distinct from a release found on the server.
@@ -3737,6 +3740,7 @@ async function refreshCityNameForLanguage(){
 }
 
 function applyLang(){
+  renderFavorites();
   refreshAppUpdateText();
   refreshFeedbackLinks();
   document.documentElement.lang=LANG;
@@ -3917,6 +3921,7 @@ function freezeReveals(){
 }
 
 function renderAll(data,place){
+  renderFavorites();
   const c=data.current, d=data.daily, h=data.hourly;
   let wk=WC[c.weather_code]||'over';
   if(c.rain>0 && c.snowfall>0) wk=pickHigher(wk,'ssn');
@@ -4955,7 +4960,8 @@ for(const [lang,policy] of [['en',PRIVACY_EN],['ru',PRIVACY_RU],...Object.entrie
   policy.p5l5=FORECAST_STORAGE_TEXT[lang];
   const releaseStorage={en:'Last viewed application release, to show release notes once',ru:'Последнюю просмотренную версию приложения, чтобы показывать список изменений один раз',es:'Última versión vista, para mostrar las novedades una vez',pt:'Última versão vista, para mostrar as novidades uma vez',de:'Zuletzt angesehene Version, um Versionshinweise einmal anzuzeigen',fr:'Dernière version consultée, pour afficher les nouveautés une fois',it:'Ultima versione visualizzata, per mostrare le novità una volta',ja:'更新内容を一度だけ表示するための、最後に確認したアプリのバージョン',ko:'변경 내역을 한 번 표시하기 위한 마지막으로 확인한 앱 버전',hi:'बदलावों को एक बार दिखाने के लिए अंतिम देखा गया ऐप संस्करण',id:'Versi terakhir yang dilihat, untuk menampilkan catatan rilis sekali',ar:'آخر إصدار تم عرضه لإظهار سجل التغييرات مرة واحدة',tr:'Sürüm notlarını bir kez göstermek için son görüntülenen sürüm'};
   policy.p5l5+='; '+releaseStorage[lang];
-  policy.pUpdated=new Intl.DateTimeFormat(lang,{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date('2026-11-07T12:00:00Z'));
+  policy.p5l5+='; '+FAVORITES_LABELS[lang][8];
+  policy.pUpdated=new Intl.DateTimeFormat(lang,{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date('2026-11-14T12:00:00Z'));
 }
 let PRIVACY_STR = {...PRIVACY_EN};
 

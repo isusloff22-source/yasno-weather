@@ -1,5 +1,5 @@
 // Bump this version whenever publishing changed application files.
-const CACHE = 'yasno-v13';
+const CACHE = 'yasno-v14';
 const SCOPE = new URL(self.registration.scope);
 const STATIC_FILES = [
   'index.html',
@@ -7,6 +7,8 @@ const STATIC_FILES = [
   'manifest.json',
   'moon-times.js',
   'feedback.js',
+  'favorites.js',
+  'favorites.css',
   'icon-192.png',
   'icon-512.png'
 ];

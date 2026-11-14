@@ -157,9 +157,9 @@ body{
 
   <div class="privf-body">
 
-    <div class="privf-updated">Last updated: 7 November 2026</div>
+    <div class="privf-updated">Last updated: 14 November 2026</div>
 
-    <div class="privf-tldr"><b>TL;DR</b> — Yasno has no own backend or analytics. Preferences, consent, one last selected place and one last forecast are stored locally. Coordinates and city searches go directly to external services.</div>
+    <div class="privf-tldr"><b>TL;DR</b> — Yasno has no own backend or analytics. Preferences, consent, favourite cities, one last selected place and one last forecast are stored locally. Coordinates and city searches go directly to external services.</div>
 
     <div class="privf-section">
       <h3>1. Introduction</h3>
@@ -185,7 +185,7 @@ body{
       <p>If you allow geolocation, coordinates are sent directly from your device to Open-Meteo for a forecast and to Nominatim for reverse geocoding.</p>
       <ul>
         <li>Coordinates are sent directly from your device to the weather API (Open-Meteo) — they never pass through our servers.</li>
-        <li>Yasno does not keep a location history; it stores only the last selected place locally, as described in section 5.</li>
+        <li>Yasno does not keep a history of your device locations. It stores the last selected place and cities you explicitly add to favourites locally, as described in section 5.</li>
         <li>You can always disable location in your device settings or type the city manually.</li>
       </ul>
     </div>
@@ -203,6 +203,7 @@ body{
         <li>Selected language</li>
         <li>Temperature unit (°C / °F)</li>
         <li>Selected forecast length (5 or 7 days)</li>
+        <li>Favourite cities you explicitly save, including their names, coordinates and available region, country, time zone and place identifier. This list stays on this device, without an account or synchronisation. You can remove cities individually from favourites or clear app data to delete the list. Opening a favourite requests its forecast from the providers described in section 4.</li>
         <li>Last viewed application release, to show release notes once</li>
         <li>The last selected place, including its coordinates, and one last forecast with its original receive time, for reuse and offline viewing</li>
         <li>Your consent to this policy and whether the location prompt has been shown</li>
