@@ -123,7 +123,8 @@ body.night #stars{opacity:1}
   background:rgba(10,40,60,.68);border:1px solid rgba(143,216,255,.4);color:#d7ecfb;font-size:14px;
   backdrop-filter:blur(10px);animation:popS .4s both}
 #pickBar.show{display:flex}
-#pickBtns{display:flex;gap:8px;flex-wrap:wrap}
+#pickBtns{display:flex;gap:8px;flex-direction:column;width:100%;max-height:360px;max-height:min(50dvh,480px);overflow-y:auto;overscroll-behavior:contain}
+#pickBtns .pbtn{text-align:start;border-radius:14px;white-space:normal;overflow-wrap:anywhere;flex-shrink:0;min-height:44px}
 .pbtn{padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
   font-weight:600;font-size:13.5px;transition:.2s;color:var(--ink)}
 .pbtn:hover{background:rgba(255,209,102,.22);border-color:rgba(255,209,102,.55);transform:translateY(-1px)}
@@ -927,7 +928,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
 <script>
 'use strict';
 // APP_UPDATE_START
-const APP_VERSION='2026.11.14.4';
+const APP_VERSION='2026.11.15.1';
 const APP_UPDATE_LABELS={
  en:['Updates','Check for updates','Apply now','Close','Checking…','Could not check. Connect to the internet and try again.','You have the latest web version','Update ready. It will apply after all app windows are closed, or you can apply it now.','YASNO updated','Version','What’s new','Updating…','Could not apply. Try again.','An update is downloading. Check again shortly.','Not checked yet','Permanent updates button, background checks and release notes. No forced restart while viewing the forecast.'],
  ru:['Обновления','Проверить обновления','Применить сейчас','Понятно','Проверяем…','Не удалось проверить. Подключитесь к интернету и попробуйте ещё раз.','Установлена последняя веб-версия','Обновление готово. Применится после закрытия всех окон приложения; можно применить сейчас.','YASNO обновлён','Версия','Что нового','Обновление…','Не удалось применить. Попробуйте ещё раз.','Обновление загружается. Проверьте чуть позже.','Проверка ещё не выполнялась','Постоянная кнопка обновлений, фоновая проверка и список изменений. Без внезапной перезагрузки прогноза.'],
@@ -947,7 +948,8 @@ const FEEDBACK_RELEASE_NOTES={en:'Simplified problem reports: clearer questions,
 const UPDATE_DISPLAY_NOTES={en:'Update details now distinguish the open web version from the available version. Release notes are labelled with their version.',ru:'В обновлениях отдельно указаны открытая и доступная веб-версии. У списка изменений указан номер версии; сообщение об успешном обновлении не совмещается с предложением применить обновление.',es:'Las versiones web abierta y disponible se muestran por separado, con notas identificadas por versión.',pt:'As versões web aberta e disponível aparecem separadamente, com notas identificadas por versão.',de:'Geöffnete und verfügbare Webversion werden getrennt angezeigt. Versionshinweise sind gekennzeichnet.',fr:'Les versions web ouverte et disponible sont distinctes. Les nouveautés indiquent leur version.',it:'Le versioni web aperta e disponibile sono separate. Le novità indicano la versione.',ja:'表示中と利用可能なウェブ版を区別し、更新内容にバージョンを表示します。',ko:'열린 웹 버전과 사용 가능한 버전을 구분하고 변경 내역에 버전을 표시합니다.',hi:'खुले और उपलब्ध वेब संस्करण अलग दिखते हैं। बदलावों के साथ संस्करण दिखता है।',id:'Versi web terbuka dan tersedia dibedakan. Catatan perubahan diberi versi.',ar:'تمييز إصدار الويب المفتوح عن المتاح مع تحديد إصدار سجل التغييرات.',tr:'Açık ve kullanılabilir web sürümleri ayrıldı. Sürüm notları sürüm numarasıyla gösterilir.'};
 const REVIEW_REMOVAL_NOTES={en:'The review button has been removed. Report a problem is still available.',ru:'Кнопка отзыва убрана. «Сообщить о проблеме» остаётся доступной.',es:'Se ha retirado el botón de reseñas. Informar de un problema sigue disponible.',pt:'O botão de avaliação foi removido. Relatar um problema continua disponível.',de:'Die Bewertungsschaltfläche wurde entfernt. Problem melden bleibt verfügbar.',fr:'Le bouton d’avis a été retiré. Signaler un problème reste disponible.',it:'Il pulsante delle recensioni è stato rimosso. Segnala un problema resta disponibile.',ja:'レビューのボタンを削除しました。問題の報告は引き続き利用できます。',ko:'리뷰 버튼을 삭제했습니다. 문제 신고는 계속 사용할 수 있습니다.',hi:'समीक्षा बटन हटा दिया गया है। समस्या बताने का विकल्प उपलब्ध है।',id:'Tombol ulasan dihapus. Laporkan masalah tetap tersedia.',ar:'تمت إزالة زر التقييم. يظل الإبلاغ عن مشكلة متاحًا.',tr:'Yorum düğmesi kaldırıldı. Sorun bildir kullanılabilir durumda.'};
 const WEEK_CHART_NOTES={en:'Weekly chart: readable days, aligned temperatures and separate precipitation. Swipe horizontally on small screens.',ru:'Недельный график: свободные подписи дней, ровные строки температур и отдельная полоса осадков. На небольшом экране можно листать по горизонтали.',es:'Gráfico semanal: días legibles, temperaturas alineadas y precipitaciones separadas. Desliza horizontalmente en pantallas pequeñas.',pt:'Gráfico semanal: dias legíveis, temperaturas alinhadas e precipitação separada. Deslize na horizontal em telas pequenas.',de:'Wochenkurve mit lesbaren Tagen, ausgerichteten Temperaturen und separatem Niederschlag. Auf kleinen Bildschirmen seitlich wischen.',fr:'Graphique hebdomadaire : jours lisibles, températures alignées et précipitations séparées. Défilement horizontal sur petit écran.',it:'Grafico settimanale: giorni leggibili, temperature allineate e precipitazioni separate. Scorri in orizzontale sugli schermi piccoli.',ja:'週間グラフ：読みやすい日付、整列した気温、独立した降水量表示。小さな画面では横にスクロールできます。',ko:'주간 그래프: 읽기 쉬운 날짜, 정렬된 기온과 별도 강수량 영역. 작은 화면에서는 가로로 스크롤하세요.',hi:'साप्ताहिक चार्ट: स्पष्ट दिन, व्यवस्थित तापमान और अलग वर्षा क्षेत्र। छोटी स्क्रीन पर क्षैतिज स्क्रॉल करें।',id:'Grafik mingguan: hari mudah dibaca, suhu sejajar dan curah hujan terpisah. Geser mendatar di layar kecil.',ar:'الرسم الأسبوعي: أيام واضحة ودرجات حرارة مرتبة ومساحة منفصلة للهطول. مرّر أفقيًا على الشاشات الصغيرة.',tr:'Haftalık grafik: okunaklı günler, hizalı sıcaklıklar ve ayrı yağış alanı. Küçük ekranlarda yatay kaydırın.'};
-for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=FAVORITES_LABELS[lang][0]+'. '+FAVORITES_LABELS[lang][4];
+const SEARCH_RELEASE_NOTES={en:'Improved place search: more results, international names, small villages and a scrollable list with place names and regions. Country or region after a comma remains optional.',ru:'Улучшен поиск мест: больше результатов, международные названия, небольшие деревни и прокручиваемый список с названиями и регионами. Страну или область через запятую указывать необязательно.',es:'Búsqueda mejorada: más resultados, nombres internacionales, pueblos pequeños y lista desplazable con nombres y regiones. País o región tras una coma opcionales.',pt:'Busca melhorada: mais resultados, nomes internacionais, pequenas localidades e lista rolável com nomes e regiões. País ou região após vírgula são opcionais.',de:'Verbesserte Ortssuche: mehr Treffer, internationale Namen, kleine Dörfer und eine scrollbare Liste mit Namen und Regionen. Land oder Region nach einem Komma bleiben optional.',fr:'Recherche améliorée : plus de résultats, noms internationaux, petits villages et liste défilante avec noms et régions. Pays ou région après une virgule facultatifs.',it:'Ricerca migliorata: più risultati, nomi internazionali, piccoli villaggi ed elenco scorrevole con nomi e regioni. Paese o regione dopo una virgola facoltativi.',ja:'地名検索を改善：検索結果、国際的な名称、小さな村に対応し、地名と地域をスクロール一覧で表示します。カンマの後の国や地域は任意です。',ko:'장소 검색 개선: 더 많은 결과, 국제 지명, 작은 마을과 지명·지역이 표시되는 스크롤 목록. 쉼표 뒤 국가나 지역은 선택 사항입니다.',hi:'स्थान खोज में सुधार: अधिक परिणाम, अंतरराष्ट्रीय नाम, छोटे गाँव और नाम व क्षेत्र वाली स्क्रॉल सूची। अल्पविराम के बाद देश या क्षेत्र लिखना वैकल्पिक है।',id:'Pencarian tempat ditingkatkan: lebih banyak hasil, nama internasional, desa kecil dan daftar gulir dengan nama serta wilayah. Negara atau wilayah setelah koma tetap opsional.',ar:'تحسين البحث عن الأماكن: نتائج أكثر وأسماء دولية وقرى صغيرة وقائمة قابلة للتمرير بأسماء الأماكن والمناطق. تحديد الدولة أو المنطقة بعد فاصلة اختياري.',tr:'Yer araması iyileştirildi: daha fazla sonuç, uluslararası adlar, küçük köyler ve adlarla bölgeleri gösteren kaydırılabilir liste. Virgülden sonra ülke veya bölge isteğe bağlıdır.'};
+for(const lang of Object.keys(APP_UPDATE_LABELS)) APP_UPDATE_LABELS[lang][15]=SEARCH_RELEASE_NOTES[lang]||SEARCH_RELEASE_NOTES.en;
 let appUpdateRegistration=null,appUpdateBusy=false,appUpdateReloaded=false;
 let appUpdateTimer=null,appUpdateChecking=false,appUpdateStatus=14,appUpdateCheckedAt='',appUpdateWelcome=false,appUpdateControllerChanged=false;
 // Keep the open page distinct from a release found on the server.
@@ -2984,21 +2986,18 @@ function filterPlaces(res,forms){
     return !f||f.startsWith('PPL')||f==='ADM1'||f==='ADM2'||f==='ADM3'||f.startsWith('ISL')||f==='RGN';};
   const typed=pool.filter(okCode);
   if(typed.length) pool=typed;
-  const alive=pool.filter(p=>p.population>0);
-  if(alive.length) pool=alive;
+  // Unknown population must not hide small villages.
   const isExact=p=>forms.includes(normStr(p.name||'')) || forms.includes(normStr(p.name_en||''));
-  const exact=pool.filter(isExact);
-  if(exact.length) pool=exact;
-  pool.sort((a,b)=>(b.population||0)-(a.population||0));
+  pool.sort((a,b)=>Number(isExact(b))-Number(isExact(a)) || (b.population||0)-(a.population||0));
   const seen=new Set(), out=[];
   for(const p of pool){
-    const key=(p.latitude!=null?p.latitude.toFixed(2):'?')+'|'+(p.longitude!=null?p.longitude.toFixed(2):'?')+'|'+(p.country_code||'');
+    if(!Number.isFinite(p.latitude)||!Number.isFinite(p.longitude)) continue;
+    const key=p.id!=null?'id:'+p.id:[p.latitude,p.longitude,p.country_code,p.name].join('|');
     if(seen.has(key)) continue; seen.add(key);
     out.push({name:p.name,nameEn:p.name_en||p.name,admin:p.admin1||'',adminEn:p.admin_en||p.admin1||'',admin2:p.admin2||'',admin3:p.admin3||'',admin4:p.admin4||'',country:p.country||'',
       countryEn:p.country_en||p.country||'',cc:p.country_code||'',
       lat:p.latitude,lon:p.longitude,tz:p.timezone||'auto',pop:p.population||0,popReal:true,
       omId:(p.id!=null?p.id:null)});
-    if(out.length>=6) break;
   }
   return out;
 }
@@ -3007,6 +3006,7 @@ function normNMItem(p){
   const a=p.address||{};
   const nd=p.namedetails||{};
   return {
+    osmKey:p.osm_type&&p.osm_id?`${p.osm_type}:${p.osm_id}`:'',
     name:p.name||(p.display_name||'').split(',')[0]||'',
     nameEn:nd['name:en']||p.name||'',
     admin:a.state||a.region||a.province||'',
@@ -3285,7 +3285,7 @@ function showPickBar(items,name){
       }
     }
     const where=whereParts.filter(Boolean).join(', ');
-    let label=`${p.cc?flag(p.cc)+' ':''}${where||p.name}${popLabel(p)}`;
+    let label=`${p.cc?flag(p.cc)+' ':''}${p.name}${where?' · '+where:''}${popLabel(p)}`;
     if(LANG!=='en'&&p.nameEn&&normStr(p.nameEn)!==normStr(p.name)) label+=` · ${p.nameEn}`;
     if(usedLabels[label]!==undefined){ usedLabels[label]++; label=label+' ('+(usedLabels[label]+1)+')'; }
     else usedLabels[label]=0;
@@ -3304,13 +3304,13 @@ function showPickBar(items,name){
 
 async function omSearch(variant,langCode){
   try{
-    const r=await fetchRetry(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(variant)}&count=25&language=${langCode}&format=json`,2);
+    const r=await fetchRetry(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(variant)}&count=100&language=${langCode}&format=json`,2);
     const j=await r.json(); return j.results||[];
   }catch(e){ return null; }
 }
 async function nmSearch(qq){
   try{
-    const r=await nominatimFetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&namedetails=1&limit=10&accept-language=${LANG}&q=${encodeURIComponent(qq)}`);
+    const r=await nominatimFetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&namedetails=1&limit=40&accept-language=${LANG}&q=${encodeURIComponent(qq)}`);
     const j=await r.json(); return (j&&j.length)?j:[];
   }catch(e){ return null; }
 }
@@ -3339,101 +3339,73 @@ async function enrichPlaceNames(place){
 }
 
 
+// Identity first: proximity alone must never merge neighbouring villages.
+function sameSearchPlace(a,b){
+  if(a.omId!=null && b.omId!=null) return a.omId===b.omId;
+  if(a.osmKey && b.osmKey) return a.osmKey===b.osmKey;
+  if(a.cc && b.cc && a.cc!==b.cc) return false;
+  const names=p=>[p.name,p.nameEn].filter(Boolean).map(normStr);
+  if(!names(a).some(n=>names(b).includes(n))) return false;
+  if(normStr(a.admin)!==normStr(b.admin)) return false;
+  return Math.abs(a.lat-b.lat)<0.002 && Math.abs(a.lon-b.lon)<0.002;
+}
 async function geocode(name){
   if(isCountryName(name)) return {country:true};
-  const nq=normStr(name);
-
-  const variants=[name];
-  if(hasNonLatin(name)){
-    const l=toLatin(name);
-    if(l && l!==nq) variants.push(l);
-  }
-  const forms=[...new Set(variants.map(normStr))];
-
-    const om={};
-  const hasCyr=/[\u0400-\u04FF]/.test(name);
-  const hasCJK=/[\u3000-\u9FFF\uF900-\uFAFF]/.test(name);
-  const hasArab=/[\u0600-\u06FF\u0750-\u077F]/.test(name);
-  const hasKor=/[\uAC00-\uD7AF\u1100-\u11FF]/.test(name);
-  const hasHin=/[\u0900-\u097F]/.test(name);
-  const hasGrk=/[\u0370-\u03FF]/.test(name);
-  const hasHeb=/[\u0590-\u05FF]/.test(name);
-  const hasTha=/[\u0E00-\u0E7F]/.test(name);
-  const nativeLang=hasCyr?'ru':(hasCJK?'ja':(hasArab?'ar':(hasKor?'ko':(hasHin?'hi':(hasGrk?'el':(hasHeb?'he':(hasTha?'th':null)))))));
-  const tasks=[
-    omSearch(variants[0],LANG).then(r=>{ om['0:'+LANG]=r; })
-  ];
-  if(LANG!=='en') tasks.push(omSearch(variants[0],'en').then(r=>{ om['0:en']=r; }));
-  // Always also query the language of the typed script. Without this, a
-  // Cyrillic query like "Москва" while LANG=en will not find the real
-  // Moscow — only a transliterated namesake.
-  if(nativeLang && nativeLang!==LANG){
-    tasks.push(omSearch(variants[0],nativeLang).then(r=>{ om['0:'+nativeLang]=r; }));
-  }
-  if(variants[1]) tasks.push(omSearch(variants[1],'en').then(r=>{ om['1:en']=r; }));
-  await Promise.all(tasks);
-  const enPool=[...(om['0:en']||[]),...(om['0:ru']||[]),...(om['0:ja']||[]),...(om['0:ar']||[]),...(om['1:en']||[])];
-  const localPool=om['0:'+LANG]||[];
-  const omOk=(om['0:'+LANG]!=null)||(om['0:en']!=null)||(om['0:ru']!=null)||(om['1:en']!=null);
-  // Determine WHICH physical places matched using the language-neutral
-  // (English) pool. Localized names are overlaid for display only. This
-  // guarantees the same place is selected regardless of the UI language,
-  // so weather never changes when the user switches language.
-  const enById=new Map();
-  for(const p of enPool) if(p&&p.id!=null&&!enById.has(p.id)) enById.set(p.id,p);
-  const localById=new Map();
-  for(const p of localPool) if(p&&p.id!=null&&!localById.has(p.id)) localById.set(p.id,p);
-
-  const primary=enPool.length?enPool:localPool;
-
-  const mergedOM=(primary||[]).map(p=>{
-    const e=enById.get(p.id)||p;
-    const l=localById.get(p.id);
-    return Object.assign({},p,{
-      name:(l&&l.name)||p.name,
-      admin1:(l&&l.admin1)||p.admin1,
-      country:(l&&l.country)||p.country,
-      name_en:e.name||p.name,
-      admin_en:e.admin1||p.admin1,
-      country_en:e.country||p.country
-    });
-  });
-
-  let nmRaw=[]; let nmOk=false;
-  const nm1=await nmSearch(name);
-  if(nm1){ nmOk=true; nmRaw.push(...nm1); }
-  if(variants[1]){
-    await new Promise(s=>setTimeout(s,1100));
-    const nm2=await nmSearch(variants[1]);
-    if(nm2){ nmOk=true;
-      for(const p of nm2){
-        if(!nmRaw.some(x=>Math.abs(x.lat-p.lat)<0.01&&Math.abs(x.lon-p.lon)<0.01)) nmRaw.push(p);
+  const nq=normStr(name), qualified=/[,，]/.test(name);
+  const variants=[name.replace(/，/g,',')];
+  const latin=hasNonLatin(name)?toLatin(name):null;
+  if(latin && latin!==nq) variants.push(latin);
+  const forms=[...new Set(variants.map(x=>normStr(x.split(',')[0])))];
+  const scriptLang=/[\u0400-\u04FF]/.test(name)?'ru':/[\uAC00-\uD7AF]/.test(name)?'ko':/[\u3000-\u9FFF]/.test(name)?'ja':/[\u0600-\u06FF]/.test(name)?'ar':/[\u0900-\u097F]/.test(name)?'hi':null;
+  const languages=[...new Set(['en',LANG,scriptLang].filter(Boolean))];
+  const batches=await Promise.all(languages.map(async lang=>({lang,rows:await omSearch(variants[0],lang)})));
+  if(variants[1]) batches.push({lang:'en',rows:await omSearch(variants[1],'en')});
+  // Resolve the best native match to its international name, rather than
+  // assuming transliteration translates exonyms (e.g. Лондон -> London).
+  // Never drop a country/region qualifier while expanding the search.
+  const candidates=batches.flatMap(b=>b.rows||[]).filter(p=>!COUNTRY_FC.has(p.feature_code)&&!DEAD_CODES.has(p.feature_code));
+  const exact=candidates.filter(p=>forms.includes(normStr(p.name)));
+  // Expand only a verified exact name, never a popular prefix match.
+  const seed=exact.slice().sort((a,b)=>(b.population||0)-(a.population||0))[0];
+  if(!qualified && seed){
+    const en=await localizeByOmId(seed.id,'en');
+    if(en && en.name){
+      forms.push(normStr(en.name));
+      if(normStr(en.name)!==nq){
+        const extra=await Promise.all([...new Set(['en',LANG])].map(async lang=>({lang,rows:await omSearch(en.name,lang)})));
+        batches.push(...extra);
       }
     }
   }
-
-  const omItems=mergedOM.length?filterPlaces(mergedOM,forms):[];
-  const nmItems=nmRaw
+  const enById=new Map(), localById=new Map(), allById=new Map();
+  for(const batch of batches){
+    for(const p of batch.rows||[]){
+      if(p.id==null) continue;
+      if(!allById.has(p.id)) allById.set(p.id,p);
+      if(batch.lang==='en') enById.set(p.id,p);
+      if(batch.lang===LANG) localById.set(p.id,p);
+    }
+  }
+  const mergedOM=[...allById.values()].map(p=>{
+    const e=enById.get(p.id)||p, l=localById.get(p.id)||p;
+    return {...p,name:l.name,admin1:l.admin1||p.admin1,country:l.country||p.country,
+      name_en:e.name,admin_en:e.admin1||p.admin1,country_en:e.country||p.country};
+  });
+  // Explicit search only, never autocomplete or exhaustive API paging.
+  const nmRaw=await nmSearch(variants[0]);
+  const omItems=filterPlaces(mergedOM,forms);
+  const nmItems=(nmRaw||[])
     .filter(p=>p.addresstype!=='country'&&p.category!=='historic')
-    .map(normNMItem)
-    .filter(p=>p.name)
-    .sort((a,b)=>b.pop-a.pop)
-    .slice(0,8);
-
-  const byPop=(a,b)=>(b.pop||0)-(a.pop||0);
-  const mergedArr=[], seenC=new Set();
-  const push=p=>{
-    const key=(p.lat!=null?p.lat.toFixed(2):'?')+','+(p.lon!=null?p.lon.toFixed(2):'?');
-    if(seenC.has(key)) return; seenC.add(key); mergedArr.push(p);
-  };
-    omItems.sort(byPop).forEach(push);
-  nmItems.sort(byPop).forEach(push);
-  const items=mergedArr.slice(0,6);
-  const omCountry=[...mergedOM,...enPool].some(p=>p&&COUNTRY_FC.has(p.feature_code));
-  const nmCountry=nmRaw.length&&nmRaw[0].addresstype==='country';
+    .map(normNMItem).filter(p=>p.name&&Number.isFinite(p.lat)&&Number.isFinite(p.lon));
+  const items=[];
+  for(const p of [...omItems,...nmItems]){
+    if(!items.some(kept=>sameSearchPlace(kept,p))) items.push(p);
+  }
+  const isExact=p=>forms.includes(normStr(p.name))||forms.includes(normStr(p.nameEn));
+  items.sort((a,b)=>Number(isExact(b))-Number(isExact(a)) || Number(!!b.popReal)-Number(!!a.popReal) || (b.pop||0)-(a.pop||0));
   if(items.length) return {country:false,items};
-  if((omCountry||nmCountry) && !CITY_STATES.has(nq)) return {country:true};
-  return (omOk||nmOk)?null:{netfail:true};
+  if((mergedOM.some(p=>COUNTRY_FC.has(p.feature_code))||(nmRaw||[]).some(p=>p.addresstype==='country'))&&!CITY_STATES.has(nq)) return {country:true};
+  return (batches.some(b=>b.rows!==null)||nmRaw!==null)?null:{netfail:true};
 }
 
 async function submitSearch(){
@@ -3451,21 +3423,8 @@ async function submitSearch(){
   if(res&&res.country){ showCountryNotice(); return; }
   if(res&&res.items&&res.items.length){
     hideErr();
-    // Drop duplicates that are the same physical place but arrived from
-    // different pools with slightly different coordinates (within ~5 km).
-    const dedup=[];
-    for(const it of res.items){
-      let isDup=false;
-      for(const kept of dedup){
-        const dLat=Math.abs((it.lat||0)-(kept.lat||0));
-        const dLon=Math.abs((it.lon||0)-(kept.lon||0));
-        if(dLat<0.05 && dLon<0.05){ isDup=true; break; }
-      }
-      if(!isDup) dedup.push(it);
-    }
-    const items=dedup;
-    const sameName=items.length>1&&items.every(p=>canon(p)===canon(items[0]));
-    if(sameName){ showPickBar(items,name); return; }
+    const items=res.items;
+    if(items.length>1){ showPickBar(items,name); return; }
     await enrichPlaceNames(items[0]);
     if(intent===locationIntent) loadWeather(items[0],intent);
     return;
@@ -3938,7 +3897,7 @@ function renderAll(data,place){
     }else{
       $('#cityName').textContent=primary;
     }
-    const sub=(LANG==='en' ? (place.geo ? [place.adminEn||place.admin,place.countryEn||place.country] : [place.nameEn||place.name,place.countryEn||place.country]) : (place.geo ? [place.admin,place.country] : [place.name||place.nameEn,place.country])).filter(Boolean).join(' · ');
+    const sub=(LANG==='en' ? [place.adminEn||place.admin,place.countryEn||place.country] : [place.admin,place.country]).filter(Boolean).join(' · ');
     let subHtml=`<span>${flag(place.cc)}</span><span>${esc(sub)||t('coords')+': '+(+place.lat).toFixed(2)+'°, '+(+place.lon).toFixed(2)+'°'}</span>`;
     if(place.geo) subHtml+=`<span title="GPS">📍 ${(+place.lat).toFixed(2)}°, ${(+place.lon).toFixed(2)}°</span>`;
     $('#citySub').innerHTML=subHtml;
